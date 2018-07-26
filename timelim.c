@@ -21,7 +21,7 @@
  */
 
 /*
- * timelim - wait for the specified period of time
+ * timelim - a program capable of setting ridiculous time limits
  */
 
 #include <getopt.h>
