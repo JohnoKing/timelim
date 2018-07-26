@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	unsigned long months    = 0;
 	unsigned long years     = 0;
 	unsigned long centuries = 0;
-	bool verbose           = false;
+	bool verbose        = false;
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
