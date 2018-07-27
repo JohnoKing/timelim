@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
 	{ "months",    required_argument, NULL, 'o' },
 	{ "run",       required_argument, NULL, 'r' },
 	{ "seconds",   required_argument, NULL, 's' },
-	{ "verbose",   required_argument, NULL, 'v' },
+	{ "verbose",   no_argument,       NULL, 'v' },
 	{ "weeks",     required_argument, NULL, 'w' },
 	{ "years",     required_argument, NULL, 'y' },
 	{ "help",      no_argument,       NULL, '?' },
