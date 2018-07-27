@@ -9,20 +9,20 @@ There is no real point to this program, it is just something
 to experiment with.
 
 ## Building and Usage
-Run `make` and the timelim binary will be compiled. 
+Run `make` and the timelim binary will be compiled.  
 Output from --help:
-`Usage: timelim [-cdhmosvwy?] length ...
-  -c, --centuries     Number of centuries (may break things)
-  -d, --days          Number of days
-  -h, --hours         Number of hours
-  -m, --minutes       Number of minutes
-  -o, --months        Number of months
-  -s, --seconds       Number of seconds
-  -v, --verbose       Display extra info
-  -w, --weeks         Number of weeks
-  -y, --years         Number of years
-  -?, --help          Display this text`
 
+`Usage: timelim [-cdhmosvwy?] length ...`  
+`  -c, --centuries     Number of centuries (may break things)`  
+`  -d, --days          Number of days`  
+`  -h, --hours         Number of hours`  
+`  -m, --minutes       Number of minutes`  
+`  -o, --months        Number of months`  
+`  -s, --seconds       Number of seconds`  
+`  -v, --verbose       Display extra info`  
+`  -w, --weeks         Number of weeks`  
+`  -y, --years         Number of years`  
+`  -?, --help          Display this text`  
 
 ## Examples
 Set a time limit to last a minute: 
