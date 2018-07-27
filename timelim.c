@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Add up the total number of seconds to wait
-	unsigned long total_seconds = centuries * 31104000000 + years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
+	unsigned long total_seconds = centuries * 3110400000 + years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
 
 	// For -v
 	if(verbose == true) {
