@@ -50,6 +50,7 @@ static int usage(int ret, const char *msg, ...)
 	printf("  -h, --hours         Number of hours\n");
 	printf("  -m, --minutes       Number of minutes\n");
 	printf("  -o, --months        Number of months\n");
+	printf("  -r, --run           Run the specified command when the time runs out\n");
 	printf("  -s, --seconds       Number of seconds\n");
 	printf("  -v, --verbose       Display extra info\n");
 	printf("  -w, --weeks         Number of weeks\n");
@@ -67,7 +68,7 @@ int main(int argc, char *argv[])
 	if(argc == 1)
 		return usage(1, "%s requires arguments\n", __progname);
 
-	// bool and long variables
+	// bool, char* and long variables
 	unsigned long seconds   = 0;
 	unsigned long minutes   = 0;
 	unsigned long hours     = 0;
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
 	unsigned long years     = 0;
 	unsigned long centuries = 0;
 	bool verbose        = false;
+	char *cmd           =  NULL;
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
@@ -85,6 +87,7 @@ int main(int argc, char *argv[])
 	{ "hours",     required_argument, NULL, 'h' },
 	{ "minutes",   required_argument, NULL, 'm' },
 	{ "months",    required_argument, NULL, 'o' },
+	{ "run",       required_argument, NULL, 'r' },
 	{ "seconds",   required_argument, NULL, 's' },
 	{ "verbose",   required_argument, NULL, 'v' },
 	{ "weeks",     required_argument, NULL, 'w' },
@@ -94,7 +97,7 @@ int main(int argc, char *argv[])
 
 	// Parse the options
 	int args;
-	while((args = getopt_long(argc, argv, "c:d:h:m:o:s:vw:y:?", long_opts, NULL)) != -1) {
+	while((args = getopt_long(argc, argv, "c:d:h:m:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
 		switch(args) {
 
 			// Usage (return 0)
@@ -124,6 +127,11 @@ int main(int argc, char *argv[])
 			// Months
 			case 'o':
 				months = (unsigned)atol(optarg);
+				break;
+
+			// Run command on completion
+			case 'r':
+				cmd = optarg;
 				break;
 
 			// Seconds
@@ -175,5 +183,7 @@ int main(int argc, char *argv[])
 	// Finish
 	if(verbose == true)
 		printf("Waited for a total of %lu seconds\n", total_seconds);
+	if(cmd != NULL)
+		return system(cmd);
 	return 0;
 }

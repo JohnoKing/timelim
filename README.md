@@ -18,6 +18,7 @@ Output from --help:
 `  -h, --hours         Number of hours`  
 `  -m, --minutes       Number of minutes`  
 `  -o, --months        Number of months`  
+`  -r, --run           Run the specified command when the time runs out`  
 `  -s, --seconds       Number of seconds`  
 `  -v, --verbose       Display extra info`  
 `  -w, --weeks         Number of weeks`  
@@ -33,3 +34,6 @@ Set a time limit to last one year and three weeks:
 
 Set a time limit to last one century and 4 months (long options):
 `./timelim --centuries 1 --months 4`
+
+Run uname after 27 seconds:
+`./timelim --seconds 27 --run "uname -a"`
