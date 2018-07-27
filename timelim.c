@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 	if(argc == 1)
 		return usage(1, "%s requires arguments\n", __progname);
 
-	// bool and int variables
+	// bool and long variables
 	unsigned long seconds   = 0;
 	unsigned long minutes   = 0;
 	unsigned long hours     = 0;
