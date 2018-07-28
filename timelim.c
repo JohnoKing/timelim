@@ -44,7 +44,7 @@ static int usage(int ret, const char *msg, ...)
 	va_end(vargs);
 
 	// Usage info
-	printf("Usage: timelim [-cdhmosvwy?] length ...\n");
+	printf("Usage: timelim [-cdhmorsvwy?] length ...\n");
 	printf("  -c, --centuries     Number of centuries (may break things)\n");
 	printf("  -d, --days          Number of days\n");
 	printf("  -h, --hours         Number of hours\n");
