@@ -45,7 +45,7 @@ static int usage(int ret, const char *msg, ...)
 
 	// Usage info
 	printf("Usage: timelim [-cdhmorsvwy?] length ...\n");
-	printf("  -c, --centuries     Number of centuries (may break things)\n");
+	printf("  -c, --century       Add a century to the time limit (cannot exceed one century)\n");
 	printf("  -d, --days          Number of days\n");
 	printf("  -h, --hours         Number of hours\n");
 	printf("  -m, --minutes       Number of minutes\n");
@@ -69,20 +69,20 @@ int main(int argc, char *argv[])
 		return usage(1, "%s requires arguments\n", __progname);
 
 	// bool, char* and long variables
-	unsigned long seconds   = 0;
-	unsigned long minutes   = 0;
-	unsigned long hours     = 0;
-	unsigned long days      = 0;
-	unsigned long weeks     = 0;
-	unsigned long months    = 0;
-	unsigned long years     = 0;
-	unsigned long centuries = 0;
-	bool verbose        = false;
-	char *cmd           =  NULL;
+	unsigned int seconds   = 0;
+	unsigned int minutes   = 0;
+	unsigned int hours     = 0;
+	unsigned int days      = 0;
+	unsigned int weeks     = 0;
+	unsigned int months    = 0;
+	unsigned int years     = 0;
+	unsigned int century   = 0;
+	bool verbose       = false;
+	char *cmd          =  NULL;
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
-	{ "centuries", required_argument, NULL, 'c' },
+	{ "century",   no_argument,       NULL, 'c' },
 	{ "days",      required_argument, NULL, 'd' },
 	{ "hours",     required_argument, NULL, 'h' },
 	{ "minutes",   required_argument, NULL, 'm' },
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 
 	// Parse the options
 	int args;
-	while((args = getopt_long(argc, argv, "c:d:h:m:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
+	while((args = getopt_long(argc, argv, "cd:h:m:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
 		switch(args) {
 
 			// Usage (return 0)
@@ -106,27 +106,27 @@ int main(int argc, char *argv[])
 
 			// Centuries
 			case 'c':
-				centuries = (unsigned)atol(optarg);
+				century = 1;
 				break;
 
 			// Days
 			case 'd':
-				days = (unsigned)atol(optarg);
+				days = (unsigned)atoi(optarg);
 				break;
 
 			// Hours
 			case 'h':
-				hours = (unsigned)atol(optarg);
+				hours = (unsigned)atoi(optarg);
 				break;
 
 			// Minutes
 			case 'm':
-				minutes = (unsigned)atol(optarg);
+				minutes = (unsigned)atoi(optarg);
 				break;
 
 			// Months
 			case 'o':
-				months = (unsigned)atol(optarg);
+				months = (unsigned)atoi(optarg);
 				break;
 
 			// Run command on completion
@@ -136,7 +136,7 @@ int main(int argc, char *argv[])
 
 			// Seconds
 			case 's':
-				seconds = (unsigned)atol(optarg);
+				seconds = (unsigned)atoi(optarg);
 				break;
 
 			// Display extra info
@@ -146,12 +146,12 @@ int main(int argc, char *argv[])
 
 			// Weeks
 			case 'w':
-				weeks = (unsigned)atol(optarg);
+				weeks = (unsigned)atoi(optarg);
 				break;
 
 			// Years
 			case 'y':
-				years = (unsigned)atol(optarg);
+				years = (unsigned)atoi(optarg);
 				break;
 
 			// Fallback to usage (return 1)
@@ -161,28 +161,26 @@ int main(int argc, char *argv[])
 	}
 
 	// Add up the total number of seconds to wait
-	unsigned long total_seconds = centuries * 3110400000 + years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
+	unsigned int total_seconds = century * 3110400000 + years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
 
 	// For -v
 	if(verbose == true) {
-		printf("Waiting for:\n");
-		printf("    %lu centuries\n", centuries);
-		printf("    %lu years\n",     years);
-		printf("    %lu months\n",    months);
-		printf("    %lu weeks\n",     weeks);
-		printf("    %lu days\n",      days);
-		printf("    %lu hours\n",     hours);
-		printf("    %lu minutes\n",   minutes);
-		printf("and %lu seconds\n",   seconds);
+		printf("Waiting for a total of %u seconds, consisting of:\n", total_seconds);
+		printf("    %u century\n",   century);
+		printf("    %u years\n",     years);
+		printf("    %u months\n",    months);
+		printf("    %u weeks\n",     weeks);
+		printf("    %u days\n",      days);
+		printf("    %u hours\n",     hours);
+		printf("    %u minutes\n",   minutes);
+		printf("and %u seconds\n",   seconds);
 	}
 
 	// sleep(3) for total_seconds, then notify on completion
-	sleep((unsigned int)total_seconds);
+	sleep(total_seconds);
 	printf("Time's up!\n");
 
 	// Finish
-	if(verbose == true)
-		printf("Waited for a total of %lu seconds\n", total_seconds);
 	if(cmd != NULL)
 		return system(cmd);
 	return 0;
