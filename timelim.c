@@ -21,7 +21,7 @@
  */
 
 /*
- * timelim - a program capable of setting ridiculous time limits
+ * timelim - A program capable of setting very long time limits
  */
 
 #include <getopt.h>
@@ -45,7 +45,7 @@ static int usage(int ret, const char *msg, ...)
 
 	// Usage info
 	printf("Usage: timelim [-cdhmorsvwy?] length ...\n");
-	printf("  -c, --century       Add a century to the time limit (cannot exceed one century)\n");
+	printf("  -c, --century       Add one century to the time limit\n");
 	printf("  -d, --days          Number of days\n");
 	printf("  -h, --hours         Number of hours\n");
 	printf("  -m, --minutes       Number of minutes\n");

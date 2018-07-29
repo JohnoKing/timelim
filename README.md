@@ -4,7 +4,7 @@ _A program capable of setting very long time limits_
 
 ## What is this
 This is a random program I made to sort of function as a 
-stopwatch, but with time limits that can span centuries. 
+stopwatch, but with time limits that can span up to a century. 
 There is no real point to this program, it is just something 
 to experiment with.
 
@@ -12,8 +12,8 @@ to experiment with.
 Run `make` and the timelim binary will be compiled.  
 Output from --help:
 
-`Usage: timelim [-cdhmosvwy?] length ...`  
-`  -c, --centuries     Number of centuries (may break things)`  
+`Usage: timelim [-cdhmorsvwy?] length ...`  
+`  -c, --century       Add one century to the time limit`  
 `  -d, --days          Number of days`  
 `  -h, --hours         Number of hours`  
 `  -m, --minutes       Number of minutes`  
@@ -33,7 +33,7 @@ Set a time limit to last one year and three weeks:
 `./timelim -y 1 -w 3`
 
 Set a time limit to last one century and 4 months (long options):
-`./timelim --centuries 1 --months 4`
+`./timelim --century --months 4`
 
 Run uname after 27 seconds:
 `./timelim --seconds 27 --run "uname -a"`
