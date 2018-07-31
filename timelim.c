@@ -34,7 +34,7 @@
 // This is used for usage info
 extern char *__progname;
 
-// Used in iprintf()
+// Used for accurate output
 static int iand = 0;
 
 // Display usage of timelim
@@ -197,6 +197,7 @@ int main(int argc, char *argv[])
 	else if(total_seconds == 1)
 		tseconds_c = "second";
 
+	// Verbose output
 	printf("Waiting for a total of %u %s, consisting of:\n", total_seconds, tseconds_c);
 	iprint(century, century_c);
 	iprint(years,   years_c);
