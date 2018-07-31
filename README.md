@@ -12,7 +12,7 @@ to experiment with.
 Run `make` and the timelim binary will be compiled.  
 Output from --help:
 
-`Usage: timelim [-cdhmorsvwy?] length ...`  
+`Usage: timelim [-cdhmorswy?] length ...`  
 `  -c, --century       Add one century to the time limit`  
 `  -d, --days          Number of days`  
 `  -h, --hours         Number of hours`  
@@ -20,7 +20,6 @@ Output from --help:
 `  -o, --months        Number of months`  
 `  -r, --run           Run the specified command when the time runs out`  
 `  -s, --seconds       Number of seconds`  
-`  -v, --verbose       Display extra info`  
 `  -w, --weeks         Number of weeks`  
 `  -y, --years         Number of years`  
 `  -?, --help          Display this text`  
