@@ -63,7 +63,7 @@ static int usage(int ret, const char *msg, ...)
 	return ret;
 }
 
-// length cannot be 0, or else printf doesn't occur
+// length cannot be 0, or else iprint doesn't occur
 static void iprint(unsigned int length, const char *length_c)
 {
 	if(length != 0) {
