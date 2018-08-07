@@ -1,5 +1,6 @@
 timelim
 ========
+**The primary repo has been moved to https://gitlab.com/JohnoKing/timelim**
 _A program capable of setting very long time limits_
 
 ## What is this
