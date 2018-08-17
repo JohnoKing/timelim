@@ -3,21 +3,23 @@ timelim
 _A program capable of setting very long time limits_
 
 ## What is this
-This is a version of the sleep(1) utility that can set time limits that are as short as a few microseconds or span up to a century. 
+This is a version of the sleep(1) utility that can set time limits that are as short as a few microseconds or as long as multiple centuries. 
 There is no real point to this program, it is just something to experiment with.
 
 ## Building and Usage
 Run `make` and the timelim binary will be compiled.  
 
 ## Usage
-`Usage: sleep/timelim [-cdhmorswy?] length ...`  
-`  -c, --century       Add one century to the time limit`  
+`Usage: sleep/timelim [-cdhmnorsvwy?] length ...`  
+`  -c, --centuries     Number of centuries`  
 `  -d, --days          Number of days`  
 `  -h, --hours         Number of hours`  
 `  -m, --minutes       Number of minutes`  
+`  -n, --micro         Number of microseconds`  
 `  -o, --months        Number of months`  
 `  -r, --run           Run the specified command when the time runs out`  
 `  -s, --seconds       Number of seconds`  
+`  -v, --verbose       Enable verbose output`  
 `  -w, --weeks         Number of weeks`  
 `  -y, --years         Number of years`  
 `  -?, --help          Display this text`  

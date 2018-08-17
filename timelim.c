@@ -43,7 +43,7 @@ static int usage(void)
 {
 	// Usage info
 	printf("Usage: %s [-cdhmnorsvwy?] length ...\n", __progname);
-	printf("  -c, --century       Add one century to the time limit\n");
+	printf("  -c, --centuries     Number of centuries\n");
 	printf("  -d, --days          Number of days\n");
 	printf("  -h, --hours         Number of hours\n");
 	printf("  -m, --minutes       Number of minutes\n");
@@ -77,46 +77,46 @@ int main(int argc, char *argv[])
 		return usage();
 
 	// Variables
-	bool verbose          =  false;
-	char *cmd             =  NULL;
-	char *useconds_c      = "microseconds";
-	char *seconds_c       = "seconds";
-	char *minutes_c       = "minutes";
-	char *hours_c         = "hours";
-	char *days_c          = "days";
-	char *weeks_c         = "weeks";
-	char *months_c        = "months";
-	char *years_c         = "years";
-	char *century_c       = "centurys";
-	useconds_t   useconds = 0;
-	unsigned int seconds  = 0;
-	unsigned int minutes  = 0;
-	unsigned int hours    = 0;
-	unsigned int days     = 0;
-	unsigned int weeks    = 0;
-	unsigned int months   = 0;
-	unsigned int years    = 0;
-	unsigned int century  = 0;
+	bool verbose           =  false;
+	char *cmd              =  NULL;
+	char *useconds_c       = "microseconds";
+	char *seconds_c        = "seconds";
+	char *minutes_c        = "minutes";
+	char *hours_c          = "hours";
+	char *days_c           = "days";
+	char *weeks_c          = "weeks";
+	char *months_c         = "months";
+	char *years_c          = "years";
+	char *centuries_c      = "centuries";
+	useconds_t   useconds  = 0;
+	unsigned int seconds   = 0;
+	unsigned int minutes   = 0;
+	unsigned int hours     = 0;
+	unsigned int days      = 0;
+	unsigned int weeks     = 0;
+	unsigned int months    = 0;
+	unsigned int years     = 0;
+	unsigned int centuries = 0;
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
-	{ "century",  no_argument,       NULL, 'c' },
-	{ "days",     required_argument, NULL, 'd' },
-	{ "hours",    required_argument, NULL, 'h' },
-	{ "minutes",  required_argument, NULL, 'm' },
-	{ "micro",    required_argument, NULL, 'n' },
-	{ "months",   required_argument, NULL, 'o' },
-	{ "run",      required_argument, NULL, 'r' },
-	{ "seconds",  required_argument, NULL, 's' },
-	{ "verbose",  no_argument,       NULL, 'v' },
-	{ "weeks",    required_argument, NULL, 'w' },
-	{ "years",    required_argument, NULL, 'y' },
-	{ "help",     no_argument,       NULL, '?' },
+	{ "centuries", required_argument, NULL, 'c' },
+	{ "days",      required_argument, NULL, 'd' },
+	{ "hours",     required_argument, NULL, 'h' },
+	{ "minutes",   required_argument, NULL, 'm' },
+	{ "micro",     required_argument, NULL, 'n' },
+	{ "months",    required_argument, NULL, 'o' },
+	{ "run",       required_argument, NULL, 'r' },
+	{ "seconds",   required_argument, NULL, 's' },
+	{ "verbose",   no_argument,       NULL, 'v' },
+	{ "weeks",     required_argument, NULL, 'w' },
+	{ "years",     required_argument, NULL, 'y' },
+	{ "help",      no_argument,       NULL, '?' },
 	};
 
 	// Parse the options
 	int args;
-	while((args = getopt_long(argc, argv, "cd:h:m:n:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
+	while((args = getopt_long(argc, argv, "c:d:h:m:n:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
 		switch(args) {
 
 			// Usage (return 0)
@@ -125,8 +125,9 @@ int main(int argc, char *argv[])
 
 			// Centuries
 			case 'c':
-				century = 1;
-				century_c = "century";
+				centuries = (unsigned)atoi(optarg);
+				if(centuries == 1)
+					centuries_c = "century";
 				break;
 
 			// Days
@@ -197,10 +198,10 @@ int main(int argc, char *argv[])
 	}
 
 	// Add up the total number of seconds to wait
-	unsigned int total_seconds = century * 3110400000 + years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
+	unsigned int total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
 
 	// Function as sleep(1)
-	if(total_seconds == 0) {
+	if((total_seconds == 0) && (centuries == 0)) {
 		if(argc == 2)
 			total_seconds = (unsigned)atoi(argv[1]);
 		else
@@ -215,19 +216,27 @@ int main(int argc, char *argv[])
 	// Verbose output
 	if(verbose == true) {
 		printf("Waiting for a total of %u %s, consisting of:\n", total_seconds, seconds_c);
-		lprint(century,  century_c);
-		lprint(years,    years_c);
-		lprint(months,   months_c);
-		lprint(weeks,    weeks_c);
-		lprint(days,     days_c);
-		lprint(hours,    hours_c);
-		lprint(minutes,  minutes_c);
-		lprint(seconds,  seconds_c);
-		lprint(useconds, useconds_c);
+		lprint(centuries, centuries_c);
+		lprint(years,     years_c);
+		lprint(months,    months_c);
+		lprint(weeks,     weeks_c);
+		lprint(days,      days_c);
+		lprint(hours,     hours_c);
+		lprint(minutes,   minutes_c);
+		lprint(seconds,   seconds_c);
+		lprint(useconds,  useconds_c);
 	}
 
-	// Sleep for total_seconds and useconds
+	// Sleep for total_seconds
 	sleep(total_seconds);
+
+	// Support for multiple centuries
+	while(centuries != 0) {
+		sleep(3110400000);
+		--centuries;
+	}
+
+	// Support for microseconds
 	if(useconds != 0)
 		usleep(useconds);
 
