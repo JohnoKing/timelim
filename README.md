@@ -35,7 +35,7 @@ Set a time limit to last one year and three weeks:
 Set a time limit to only last 24 microseconds:
 `timelim --micro 24`
 
-Set a time limit to last one century and 4 months (long options):
+Set a time limit to last one century and 4 months:
 `timelim --century --months 4`
 
 Run uname after 27 seconds:
