@@ -27,7 +27,6 @@
 
 #include <getopt.h>
 #include <stdarg.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -77,7 +76,6 @@ int main(int argc, char *argv[])
 		return usage();
 
 	// Variables
-	bool verbose           =  false;
 	char *cmd              =  NULL;
 	char *useconds_c       = "microseconds";
 	char *seconds_c        = "seconds";
@@ -88,6 +86,7 @@ int main(int argc, char *argv[])
 	char *months_c         = "months";
 	char *years_c          = "years";
 	char *centuries_c      = "centuries";
+	int verbose            = 1;
 	useconds_t   useconds  = 0;
 	unsigned int seconds   = 0;
 	unsigned int minutes   = 0;
@@ -178,7 +177,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'v':
-				verbose = true;
+				verbose = 0;
 				break;
 
 			// Weeks
@@ -214,7 +213,7 @@ int main(int argc, char *argv[])
 		seconds_c = "second";
 
 	// Verbose output
-	if(verbose == true) {
+	if(verbose == 0) {
 		printf("Waiting for a total of %u %s, consisting of:\n", total_seconds, seconds_c);
 		lprint(centuries, centuries_c);
 		lprint(years,     years_c);
@@ -241,7 +240,7 @@ int main(int argc, char *argv[])
 		usleep(useconds);
 
 	// Notify completion
-	if(verbose == true)
+	if(verbose == 0)
 		printf("Time's up!\n");
 
 	// Run command
