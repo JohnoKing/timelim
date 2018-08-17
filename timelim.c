@@ -173,6 +173,8 @@ int main(int argc, char *argv[])
 			// Seconds
 			case 's':
 				seconds = (unsigned)atoi(optarg);
+				if(seconds == 1)
+					seconds_c = "second";
 				break;
 
 			case 'v':
