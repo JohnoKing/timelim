@@ -38,14 +38,8 @@ extern char *__progname;
 static int iand = 0;
 
 // Display usage of timelim
-static int usage(int ret, const char *msg, ...)
+static int usage(void)
 {
-	// Print msg
-	va_list vargs;
-	va_start(vargs, msg);
-	vprintf(msg, vargs);
-	va_end(vargs);
-
 	// Usage info
 	printf("Usage: %s [-cdhmorswy?] length ...\n", __progname);
 	printf("  -c, --century       Add one century to the time limit\n");
@@ -59,8 +53,8 @@ static int usage(int ret, const char *msg, ...)
 	printf("  -y, --years         Number of years\n");
 	printf("  -?, --help          Display this text\n");
 
-	// Return ret
-	return ret;
+	// Return 1
+	return 1;
 }
 
 // length cannot be 0, or else iprint doesn't occur
@@ -77,7 +71,7 @@ int main(int argc, char *argv[])
 {
 	// Arguments are required
 	if(argc == 1)
-		return usage(1, "%s requires arguments\n", __progname);
+		return usage();
 
 	// char* and unsigned int variables
 	char *cmd            =  NULL     ;
@@ -119,7 +113,7 @@ int main(int argc, char *argv[])
 
 			// Usage (return 0)
 			case '?':
-				return usage(0, "");
+				return usage();
 
 			// Centuries
 			case 'c':
@@ -180,10 +174,6 @@ int main(int argc, char *argv[])
 				if(years == 1)
 					years_c = "year";
 				break;
-
-			// Fallback to usage (return 1)
-			default:
-				return usage(1, "");
 		}
 	}
 
