@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 
 	// Run command
 	if(cmd != NULL)
-		return system(cmd);
+		return execl("/bin/sh", "/bin/sh", "-c", cmd, (char*)0);
 
 	// Exit
 	return 0;
