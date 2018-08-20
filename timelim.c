@@ -69,12 +69,6 @@ int main(int argc, char *argv[])
 	if(argc == 1)
 		return usage();
 
-	// When only given one argument, sleep for argv[1]
-	else if(argc == 2) {
-		sleep((unsigned)atoi(argv[1]));
-		return 0;
-	}
-
 	// Variables
 	char *cmd              =  NULL;
 	char *useconds_c       = "microseconds";
@@ -201,7 +195,7 @@ int main(int argc, char *argv[])
 
 	// Function as sleep(1)
 	if((total_seconds == 0) && (centuries == 0) && (useconds == 0))
-		seconds = total_seconds = (unsigned)atoi(argv[2]);
+		seconds = total_seconds = (unsigned)atoi(argv[--argc]);
 	else if(total_seconds == 1)
 		seconds_c = "second";
 
@@ -219,7 +213,7 @@ int main(int argc, char *argv[])
 		lprint(useconds,  useconds_c);
 	}
 
-	// Sleep for total_seconds
+	// Sleep for total_seconds and useconds
 	sleep(total_seconds);
 	usleep(useconds);
 
