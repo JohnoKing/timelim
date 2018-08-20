@@ -220,16 +220,13 @@ int main(int argc, char *argv[])
 
 	// Sleep for total_seconds
 	sleep(total_seconds);
+	usleep(useconds);
 
 	// Support for multiple centuries
 	while(centuries != 0) {
 		sleep(3110400000);
 		--centuries;
 	}
-
-	// Support for microseconds
-	if(useconds != 0)
-		usleep(useconds);
 
 	// Notify completion
 	if(verbose == 0)
