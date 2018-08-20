@@ -200,16 +200,14 @@ int main(int argc, char *argv[])
 	unsigned int total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
 
 	// Function as sleep(1)
-	if((total_seconds == 0) && (centuries == 0)) {
+	if((total_seconds == 0) && (centuries == 0) && (useconds == 0)) {
 		if(argc == 2)
 			total_seconds = (unsigned)atoi(argv[1]);
 		else
 			total_seconds = (unsigned)atoi(argv[2]);
 
 		seconds = total_seconds;
-	}
-
-	if(total_seconds == 1)
+	} else if(total_seconds == 1)
 		seconds_c = "second";
 
 	// Verbose output
