@@ -34,9 +34,6 @@
 // This is used for usage info
 extern char *__progname;
 
-// Used for accurate output
-static int iand = 0;
-
 // Display usage of timelim
 static int usage(void)
 {
@@ -62,10 +59,8 @@ static int usage(void)
 // length cannot be 0, or else lprint doesn't occur
 static void lprint(unsigned int length, const char *length_c)
 {
-	if(length != 0) {
+	if(length != 0)
 		printf("    %u %s\n", length, length_c);
-		iand++;
-	}
 }
 
 // Main function
