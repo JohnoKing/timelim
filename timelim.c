@@ -31,7 +31,7 @@
 #include <string.h>
 #include <unistd.h>
 
-// Used for converting an arguments into an unsigned int
+// Used for converting arguments into unsigned ints
 #define OPTARG (unsigned)atoi(optarg)
 #define ARGV   (unsigned)atoi(argv[args])
 
