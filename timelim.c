@@ -31,6 +31,10 @@
 #include <string.h>
 #include <unistd.h>
 
+// Used for converting an arguments into an unsigned int
+#define OPTARG (unsigned)atoi(optarg)
+#define ARGV   (unsigned)atoi(argv[args])
+
 // This is used for usage info
 extern char *__progname;
 
@@ -57,10 +61,15 @@ static int usage(void)
 }
 
 // length cannot be 0, or else lprint doesn't occur
-static void lprint(unsigned int length, const char *length_c)
+static void lprint(unsigned int length, const char *length_c, const char *length_custom)
 {
-	if(length != 0)
+	if(length == 0) return;
+	if(length == 1)
 		printf("    %u %s\n", length, length_c);
+	else if(length_custom != NULL)
+		printf("    %u %s\n", length, length_custom);
+	else
+		printf("    %u %ss\n", length, length_c);
 }
 
 // Main function
@@ -72,17 +81,9 @@ int main(int argc, char *argv[])
 
 	// Variables
 	char *cmd              =  NULL;
-	char *useconds_c       = "microseconds";
-	char *seconds_c        = "seconds";
-	char *minutes_c        = "minutes";
-	char *hours_c          = "hours";
-	char *days_c           = "days";
-	char *weeks_c          = "weeks";
-	char *months_c         = "months";
-	char *years_c          = "years";
-	char *centuries_c      = "centuries";
 	int verbose            = 1;
 	useconds_t   useconds  = 0;
+	unsigned int centuries = 0;
 	unsigned int seconds   = 0;
 	unsigned int minutes   = 0;
 	unsigned int hours     = 0;
@@ -90,7 +91,6 @@ int main(int argc, char *argv[])
 	unsigned int weeks     = 0;
 	unsigned int months    = 0;
 	unsigned int years     = 0;
-	unsigned int centuries = 0;
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
@@ -119,44 +119,32 @@ int main(int argc, char *argv[])
 
 			// Centuries
 			case 'c':
-				centuries = (unsigned)atoi(optarg);
-				if(centuries == 1)
-					centuries_c = "century";
+				centuries = OPTARG;
 				break;
 
 			// Days
 			case 'd':
-				days = (unsigned)atoi(optarg);
-				if(days == 1)
-					days_c = "day";
+				days = OPTARG;
 				break;
 
 			// Hours
 			case 'h':
-				hours = (unsigned)atoi(optarg);
-				if(hours == 1)
-					hours_c = "hour";
+				hours = OPTARG;
 				break;
 
 			// Minutes
 			case 'm':
-				minutes = (unsigned)atoi(optarg);
-				if(minutes == 1)
-					minutes_c = "minute";
+				minutes = OPTARG;
 				break;
 
 			// Microseconds
 			case 'n':
-				useconds = (useconds_t)atoi(optarg);
-				if(useconds == 1)
-					useconds_c = "microsecond";
+				useconds = OPTARG;
 				break;
 
 			// Months
 			case 'o':
-				months = (unsigned)atoi(optarg);
-				if(months == 1)
-					months_c = "month";
+				months = OPTARG;
 				break;
 
 			// Run command on completion
@@ -166,9 +154,7 @@ int main(int argc, char *argv[])
 
 			// Seconds
 			case 's':
-				seconds = (unsigned)atoi(optarg);
-				if(seconds == 1)
-					seconds_c = "second";
+				seconds = OPTARG;
 				break;
 
 			case 'v':
@@ -177,16 +163,12 @@ int main(int argc, char *argv[])
 
 			// Weeks
 			case 'w':
-				weeks = (unsigned)atoi(optarg);
-				if(weeks == 1)
-					weeks_c = "week";
+				weeks = OPTARG;
 				break;
 
 			// Years
 			case 'y':
-				years = (unsigned)atoi(optarg);
-				if(years == 1)
-					years_c = "year";
+				years = OPTARG;
 				break;
 		}
 	}
@@ -199,40 +181,24 @@ int main(int argc, char *argv[])
 		int args = --argc;
 		while(args != 0) {
 			if(strchr(argv[args], '-') != NULL) break;
-			if(strchr(argv[args], 'm') != NULL) {
-				minutes = (unsigned)atoi(argv[args]);
-				if(minutes == 1)
-					minutes_c = "minute";
-			} else if(strchr(argv[args], 'h') != NULL) {
-				hours = (unsigned)atoi(argv[args]);
-				if(hours == 1)
-					hours_c = "hour";
-			} else if(strchr(argv[args], 'd') != NULL) {
-				days = (unsigned)atoi(argv[args]);
-				if(days == 1)
-					days_c = "day";
-			} else if(strchr(argv[args], 'w') != NULL) {
-				weeks = (unsigned)atoi(argv[args]);
-				if(weeks == 1)
-					weeks_c = "week";
-			} else if(strchr(argv[args], 'o') != NULL) {
-				months = (unsigned)atoi(argv[args]);
-				if(months == 1)
-					months_c = "month";
-			} else if(strchr(argv[args], 'n') != NULL) {
-				useconds = (unsigned)atoi(argv[args]);
-				if(useconds == 1)
-					useconds_c = "microsecond";
-			} else if(strchr(argv[args], 'c') != NULL) {
-				centuries = (unsigned)atoi(argv[args]);
-				if(centuries == 1)
-					centuries_c = "century";
-			} else if(strchr(argv[args], 'y') != NULL) {
-				years = (unsigned)atoi(argv[args]);
-				if(years == 1)
-					years_c = "year";
-			} else
-				seconds = (unsigned)atoi(argv[args]);
+			if(strchr(argv[args], 'm') != NULL)
+				minutes = ARGV;
+			else if(strchr(argv[args], 'h') != NULL)
+				hours = ARGV;
+			else if(strchr(argv[args], 'd') != NULL)
+				days = ARGV;
+			else if(strchr(argv[args], 'w') != NULL)
+				weeks = ARGV;
+			else if(strchr(argv[args], 'o') != NULL)
+				months = ARGV;
+			else if(strchr(argv[args], 'n') != NULL)
+				useconds = ARGV;
+			else if(strchr(argv[args], 'c') != NULL)
+				centuries = ARGV;
+			else if(strchr(argv[args], 'y') != NULL)
+				years = ARGV;
+			else
+				seconds = ARGV;
 
 			--args;
 		}
@@ -240,22 +206,36 @@ int main(int argc, char *argv[])
 		total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
 	}
 
-	// If total_seconds is equal to one, then seconds_c must be 'second'
-	if(total_seconds == 1)
-		seconds_c = "second";
-
 	// Verbose output
 	if(verbose == 0) {
-		printf("Waiting for a total of %u %s, consisting of:\n", total_seconds, seconds_c);
-		lprint(centuries, centuries_c);
-		lprint(years,     years_c);
-		lprint(months,    months_c);
-		lprint(weeks,     weeks_c);
-		lprint(days,      days_c);
-		lprint(hours,     hours_c);
-		lprint(minutes,   minutes_c);
-		lprint(seconds,   seconds_c);
-		lprint(useconds,  useconds_c);
+
+		// Variables
+		char tseconds_c[8];
+		if(total_seconds == 1)
+			memcpy(tseconds_c, "second", 7);
+		else
+			memcpy(tseconds_c, "seconds", 8);
+		char *centuries_c = "century";
+		char *useconds_c  = "microsecond";
+		char *seconds_c   = "second";
+		char *minutes_c   = "minute";
+		char *hours_c     = "hour";
+		char *days_c      = "day";
+		char *weeks_c     = "week";
+		char *months_c    = "month";
+		char *years_c     = "year";
+
+		// Print
+		printf("Waiting for a total of %u %s, consisting of:\n", total_seconds, tseconds_c);
+		lprint(centuries, centuries_c, "centuries");
+		lprint(years,    years_c,    NULL);
+		lprint(months,   months_c,   NULL);
+		lprint(weeks,    weeks_c,    NULL);
+		lprint(days,     days_c,     NULL);
+		lprint(hours,    hours_c,    NULL);
+		lprint(minutes,  minutes_c,  NULL);
+		lprint(seconds,  seconds_c,  NULL);
+		lprint(useconds, useconds_c, NULL);
 	}
 
 	// Sleep for total_seconds and useconds
