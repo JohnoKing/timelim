@@ -26,6 +26,7 @@
  */
 
 #include <getopt.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -38,8 +39,11 @@
 // This is used for usage info
 extern char *__progname;
 
+// Used for --run
+static char *cmd = NULL;
+
 // Display usage of timelim
-static int usage(void)
+static void usage(void)
 {
 	// Usage info
 	printf("Usage: %s [-cdhmnorsvwy?] length ...\n", __progname);
@@ -56,8 +60,8 @@ static int usage(void)
 	printf("  -y, --years         Number of years\n");
 	printf("  -?, --help          Display this text\n");
 
-	// Return 1
-	return 1;
+	// Exit with status 1
+	exit(1);
 }
 
 // length cannot be 0, or else lprint doesn't occur
@@ -72,15 +76,28 @@ static void lprint(unsigned int length, const char *length_c, const char *length
 		printf("    %u %ss\n", length, length_c);
 }
 
+// Finishes execution of timelim
+static void finish(int sig)
+{
+	// Run command
+	if(cmd != NULL)
+		execl("/bin/sh", "/bin/sh", "-c", cmd, (char*)0);
+
+	// Exit
+	char *posix = getenv("POSIXLY_CORRECT");
+	if((sig == SIGALRM) && (posix == NULL || (strncmp(posix, "1", 1) != 0)))
+		exit(142);
+	exit(0);
+}
+
 // Main function
-int main(int argc, char *argv[])
+void main(int argc, char *argv[])
 {
 	// Arguments are required
 	if(argc == 1)
-		return usage();
+		usage();
 
 	// Variables
-	char *cmd              =  NULL;
 	int verbose            = 1;
 	useconds_t   useconds  = 0;
 	unsigned int centuries = 0;
@@ -113,9 +130,10 @@ int main(int argc, char *argv[])
 	while((args = getopt_long(argc, argv, "c:d:h:m:n:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
 		switch(args) {
 
-			// Usage (return 0)
+			// Usage
 			case '?':
-				return usage();
+				usage();
+				break;
 
 			// Centuries
 			case 'c':
@@ -239,6 +257,12 @@ int main(int argc, char *argv[])
 		lprint(useconds, useconds_c, NULL);
 	}
 
+	// Catch SIGALRM
+	struct sigaction actor;
+	memset(&actor, 0, sizeof(actor));
+	actor.sa_handler = finish;
+	sigaction(SIGALRM, &actor, (struct sigaction*)NULL);
+
 	// Sleep for total_seconds and useconds
 	sleep(total_seconds);
 	usleep(useconds);
@@ -253,10 +277,6 @@ int main(int argc, char *argv[])
 	if(verbose == 0)
 		printf("Time's up!\n");
 
-	// Run command
-	if(cmd != NULL)
-		return execl("/bin/sh", "/bin/sh", "-c", cmd, (char*)0);
-
-	// Exit
-	return 0;
+	// Run finish
+	finish(SIGTERM);
 }
