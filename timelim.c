@@ -198,29 +198,51 @@ void main(int argc, char *argv[])
 	if((total_seconds == 0) && (centuries == 0) && (useconds == 0)) {
 		int args = --argc;
 		while(args != 0) {
+
+			// If the argument has a dash, skip it
 			if(strchr(argv[args], '-') != NULL) break;
+
+			// Minutes
 			if(strchr(argv[args], 'm') != NULL)
 				minutes = ARGV;
+
+			// Hours
 			else if(strchr(argv[args], 'h') != NULL)
 				hours = ARGV;
+
+			// Days
 			else if(strchr(argv[args], 'd') != NULL)
 				days = ARGV;
+
+			// Weeks
 			else if(strchr(argv[args], 'w') != NULL)
 				weeks = ARGV;
+
+			// Months
 			else if(strchr(argv[args], 'o') != NULL)
 				months = ARGV;
+
+			// Microseconds
 			else if(strchr(argv[args], 'n') != NULL)
 				useconds = ARGV;
+
+			// Centuries
 			else if(strchr(argv[args], 'c') != NULL)
 				centuries = ARGV;
+
+			// Years
 			else if(strchr(argv[args], 'y') != NULL)
 				years = ARGV;
+
+			// Seconds (fallback)
 			else
 				seconds = ARGV;
 
+			// Subtract 1 from args (for args != 0)
 			--args;
 		}
 
+		// Re-add total_seconds
 		total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
 	}
 
@@ -244,7 +266,7 @@ void main(int argc, char *argv[])
 		else
 			memcpy(tseconds_c, "seconds", 8);
 
-		// Print
+		// Print info
 		printf("Waiting for a total of %lu %s, consisting of:\n", true_seconds, tseconds_c);
 		lprint(centuries, centuries_c, "centuries");
 		lprint(years,    years_c,    NULL);
