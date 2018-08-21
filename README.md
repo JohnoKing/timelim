@@ -24,9 +24,14 @@ Run `make` and the timelim binary will be compiled.
 `  -y, --years         Number of years`  
 `  -?, --help          Display this text`  
 
+Timelim will also accept suffix arguments such as `10h` for 10 hours when used in place of the above options.
+
 ## Examples
 Sleep for 2 seconds with verbose output (when run as sleep):
-`sleep -v 2`
+`sleep -v 2` or `sleep -v 2s`
+
+Sleep for 4 months, 2 weeks and 2000 microseconds (with verbose output, suffixes):
+`timelim --verbose 4m 2w 2000n`
 
 Set a time limit to last a minute: 
 `timelim -m 1` or `./timelim -s 60`

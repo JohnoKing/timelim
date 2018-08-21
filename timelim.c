@@ -226,7 +226,8 @@ int main(int argc, char *argv[])
 		char *years_c     = "year";
 
 		// Print
-		printf("Waiting for a total of %u %s, consisting of:\n", total_seconds, tseconds_c);
+		long true_seconds = total_seconds + centuries * 3110400000;
+		printf("Waiting for a total of %ld %s, consisting of:\n", true_seconds, tseconds_c);
 		lprint(centuries, centuries_c, "centuries");
 		lprint(years,    years_c,    NULL);
 		lprint(months,   months_c,   NULL);
@@ -242,7 +243,7 @@ int main(int argc, char *argv[])
 	sleep(total_seconds);
 	usleep(useconds);
 
-	// Support for multiple centuries
+	// Sleep for multiple centuries (workaround for 32-bit int)
 	while(centuries != 0) {
 		sleep(3110400000);
 		--centuries;
