@@ -210,11 +210,6 @@ int main(int argc, char *argv[])
 	if(verbose == 0) {
 
 		// Variables
-		char tseconds_c[8];
-		if(total_seconds == 1)
-			memcpy(tseconds_c, "second", 7);
-		else
-			memcpy(tseconds_c, "seconds", 8);
 		char *centuries_c = "century";
 		char *useconds_c  = "microsecond";
 		char *seconds_c   = "second";
@@ -224,9 +219,14 @@ int main(int argc, char *argv[])
 		char *weeks_c     = "week";
 		char *months_c    = "month";
 		char *years_c     = "year";
+		unsigned long true_seconds = total_seconds + centuries * 3110400000 + useconds / 1000000;
+		char tseconds_c[8];
+		if(true_seconds == 1)
+			memcpy(tseconds_c, "second", 7);
+		else
+			memcpy(tseconds_c, "seconds", 8);
 
 		// Print
-		unsigned long true_seconds = total_seconds + centuries * 3110400000;
 		printf("Waiting for a total of %lu %s, consisting of:\n", true_seconds, tseconds_c);
 		lprint(centuries, centuries_c, "centuries");
 		lprint(years,    years_c,    NULL);
