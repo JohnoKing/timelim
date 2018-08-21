@@ -28,6 +28,7 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 // This is used for usage info
@@ -140,7 +141,7 @@ int main(int argc, char *argv[])
 			// Minutes
 			case 'm':
 				minutes = (unsigned)atoi(optarg);
-				if(days == 1)
+				if(minutes == 1)
 					minutes_c = "minute";
 				break;
 
@@ -194,9 +195,53 @@ int main(int argc, char *argv[])
 	unsigned int total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
 
 	// Function as sleep(1)
-	if((total_seconds == 0) && (centuries == 0) && (useconds == 0))
-		seconds = total_seconds = (unsigned)atoi(argv[--argc]);
-	else if(total_seconds == 1)
+	if((total_seconds == 0) && (centuries == 0) && (useconds == 0)) {
+		int args = --argc;
+		while(args != 0) {
+			if(strchr(argv[args], '-') != NULL) break;
+			if(strchr(argv[args], 'm') != NULL) {
+				minutes = (unsigned)atoi(argv[args]);
+				if(minutes == 1)
+					minutes_c = "minute";
+			} else if(strchr(argv[args], 'h') != NULL) {
+				hours = (unsigned)atoi(argv[args]);
+				if(hours == 1)
+					hours_c = "hour";
+			} else if(strchr(argv[args], 'd') != NULL) {
+				days = (unsigned)atoi(argv[args]);
+				if(days == 1)
+					days_c = "day";
+			} else if(strchr(argv[args], 'w') != NULL) {
+				weeks = (unsigned)atoi(argv[args]);
+				if(weeks == 1)
+					weeks_c = "week";
+			} else if(strchr(argv[args], 'o') != NULL) {
+				months = (unsigned)atoi(argv[args]);
+				if(months == 1)
+					months_c = "month";
+			} else if(strchr(argv[args], 'n') != NULL) {
+				useconds = (unsigned)atoi(argv[args]);
+				if(useconds == 1)
+					useconds_c = "microsecond";
+			} else if(strchr(argv[args], 'c') != NULL) {
+				centuries = (unsigned)atoi(argv[args]);
+				if(centuries == 1)
+					centuries_c = "century";
+			} else if(strchr(argv[args], 'y') != NULL) {
+				years = (unsigned)atoi(argv[args]);
+				if(years == 1)
+					years_c = "year";
+			} else
+				seconds = (unsigned)atoi(argv[args]);
+
+			--args;
+		}
+
+		total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
+	}
+
+	// If total_seconds is equal to one, then seconds_c must be 'second'
+	if(total_seconds == 1)
 		seconds_c = "second";
 
 	// Verbose output
