@@ -226,8 +226,8 @@ int main(int argc, char *argv[])
 		char *years_c     = "year";
 
 		// Print
-		long true_seconds = total_seconds + centuries * 3110400000;
-		printf("Waiting for a total of %ld %s, consisting of:\n", true_seconds, tseconds_c);
+		unsigned long true_seconds = total_seconds + centuries * 3110400000;
+		printf("Waiting for a total of %lu %s, consisting of:\n", true_seconds, tseconds_c);
 		lprint(centuries, centuries_c, "centuries");
 		lprint(years,    years_c,    NULL);
 		lprint(months,   months_c,   NULL);
