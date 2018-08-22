@@ -94,7 +94,7 @@ static void finish(int sig)
 
 	// Exit
 	char *posix = getenv("POSIXLY_CORRECT");
-	if((sig == SIGALRM) && (posix == NULL || (strncmp(posix, "1", 1) != 0)))
+	if((sig == SIGALRM) && (posix == NULL || strncmp(posix, "1", 1) != 0))
 		exit(142);
 	exit(0);
 }
