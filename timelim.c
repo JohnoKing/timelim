@@ -99,8 +99,8 @@ static void finish(int sig)
 	exit(0);
 }
 
-// Support decimal arguments (such as 1.12)
-static unsigned int decimal(char *arg)
+// This function properly parses decimal arguments (such as 1.12 or 4.5w)
+static useconds_t decimal(char *arg)
 {
 	// If there is no decimal, return
 	if(strchr(arg, '.') == NULL) return 0;
