@@ -129,7 +129,7 @@ static useconds_t decimal(char *arg)
 		multiplier = 1;
 
 	// Return the microsecond value of base
-	return (unsigned)atoi(base) * multiplier;
+	return (useconds_t)atoi(base) * multiplier;
 }
 
 // Main function
