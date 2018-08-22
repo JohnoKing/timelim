@@ -312,7 +312,7 @@ void main(int argc, char *argv[])
 		char *weeks_c     = "week";
 		char *months_c    = "month";
 		char *years_c     = "year";
-		unsigned long true_seconds = total_seconds + centuries * CINT + useconds / 1000000;
+		unsigned long true_seconds = total_seconds + centuries * CINT + useconds / 1e6;
 		char tseconds_c[8];
 		if(true_seconds == 1)
 			memcpy(tseconds_c, "second", 7);
