@@ -36,6 +36,15 @@
 #define OPTARG (unsigned)atoi(optarg)
 #define ARGV   (unsigned)atoi(argv[args])
 
+// Muliply seconds by one of these for conversion into minutes, weeks, etc.
+#define CINT 3110400000
+#define MINT 60
+#define HINT 3600
+#define DINT 86400
+#define WINT 604800
+#define OINT 2592000
+#define YINT 31104000
+
 // This is used for usage info
 extern char *__progname;
 
@@ -90,6 +99,39 @@ static void finish(int sig)
 	exit(0);
 }
 
+// Support decimal arguments (such as 1.12)
+static unsigned int decimal(char *arg)
+{
+	// If there is no decimal, return
+	if(strchr(arg, '.') == NULL) return 0;
+
+	// Set a char variable called 'base' to the relevant position
+	strsep(&arg, ".");
+	const char *base = strsep(&arg, ".");
+	size_t sz = strlen(base);
+	if(strchr(base, 'm') != NULL || strchr(base, 'h') != NULL || strchr(base, 'd') != NULL || strchr(base, 'w') != NULL || \
+		 strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || strchr(base, 's') != NULL)
+		--sz;
+
+	// Set the multiplier depending on the length of base
+	int multiplier;
+	if(sz == 1)
+		multiplier = 1e5;
+	else if(sz == 2)
+		multiplier = 1e4;
+	else if(sz == 3)
+		multiplier = 1e3;
+	else if(sz == 4)
+		multiplier = 1e2;
+	else if(sz == 5)
+		multiplier = 10;
+	else
+		multiplier = 1;
+
+	// Return the microsecond value of base
+	return (unsigned)atoi(base) * multiplier;
+}
+
 // Main function
 void main(int argc, char *argv[])
 {
@@ -98,16 +140,10 @@ void main(int argc, char *argv[])
 		usage();
 
 	// Variables
-	int verbose            = 1;
-	useconds_t   useconds  = 0;
-	unsigned int centuries = 0;
-	unsigned int seconds   = 0;
-	unsigned int minutes   = 0;
-	unsigned int hours     = 0;
-	unsigned int days      = 0;
-	unsigned int weeks     = 0;
-	unsigned int months    = 0;
-	unsigned int years     = 0;
+	useconds_t useconds = 0;
+	unsigned int centuries, seconds, minutes, hours, days, weeks, months, years;
+	centuries = seconds = minutes = hours = days = weeks = months = years = 0;
+	int verbose = 1;
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
@@ -138,21 +174,25 @@ void main(int argc, char *argv[])
 			// Centuries
 			case 'c':
 				centuries = OPTARG;
+				useconds = decimal(optarg) * CINT;
 				break;
 
 			// Days
 			case 'd':
 				days = OPTARG;
+				useconds = decimal(optarg) * DINT;
 				break;
 
 			// Hours
 			case 'h':
 				hours = OPTARG;
+				useconds = decimal(optarg) * HINT;
 				break;
 
 			// Minutes
 			case 'm':
 				minutes = OPTARG;
+				useconds = decimal(optarg) * MINT;
 				break;
 
 			// Microseconds
@@ -163,6 +203,7 @@ void main(int argc, char *argv[])
 			// Months
 			case 'o':
 				months = OPTARG;
+				useconds = decimal(optarg) * OINT;
 				break;
 
 			// Run command on completion
@@ -173,6 +214,7 @@ void main(int argc, char *argv[])
 			// Seconds
 			case 's':
 				seconds = OPTARG;
+				useconds = decimal(optarg);
 				break;
 
 			case 'v':
@@ -182,17 +224,19 @@ void main(int argc, char *argv[])
 			// Weeks
 			case 'w':
 				weeks = OPTARG;
+				useconds = decimal(optarg) * WINT;
 				break;
 
 			// Years
 			case 'y':
 				years = OPTARG;
+				useconds = decimal(optarg) * YINT;
 				break;
 		}
 	}
 
 	// Add up the total number of seconds to wait
-	unsigned int total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
+	unsigned int total_seconds = years * YINT + months * OINT + weeks * WINT + days * DINT + hours * HINT + minutes * MINT + seconds;
 
 	// Function as sleep(1)
 	if((total_seconds == 0) && (centuries == 0) && (useconds == 0)) {
@@ -203,47 +247,56 @@ void main(int argc, char *argv[])
 			if(strchr(argv[args], '-') != NULL) break;
 
 			// Minutes
-			if(strchr(argv[args], 'm') != NULL)
+			if(strchr(argv[args], 'm') != NULL) {
 				minutes = ARGV;
+				useconds = decimal(argv[args]) * MINT;
 
 			// Hours
-			else if(strchr(argv[args], 'h') != NULL)
+			} else if(strchr(argv[args], 'h') != NULL) {
 				hours = ARGV;
+				useconds = decimal(argv[args]) * HINT;
 
 			// Days
-			else if(strchr(argv[args], 'd') != NULL)
+			} else if(strchr(argv[args], 'd') != NULL) {
 				days = ARGV;
+				useconds = decimal(argv[args]) * DINT;
 
 			// Weeks
-			else if(strchr(argv[args], 'w') != NULL)
+			} else if(strchr(argv[args], 'w') != NULL) {
 				weeks = ARGV;
+				useconds = decimal(argv[args]) * WINT;
 
 			// Months
-			else if(strchr(argv[args], 'o') != NULL)
+			} else if(strchr(argv[args], 'o') != NULL) {
 				months = ARGV;
+				useconds = decimal(argv[args]) * OINT;
 
 			// Microseconds
-			else if(strchr(argv[args], 'n') != NULL)
+			} else if(strchr(argv[args], 'n') != NULL)
 				useconds = ARGV;
 
 			// Centuries
-			else if(strchr(argv[args], 'c') != NULL)
+			else if(strchr(argv[args], 'c') != NULL) {
 				centuries = ARGV;
+				useconds = decimal(argv[args]) * CINT;
 
 			// Years
-			else if(strchr(argv[args], 'y') != NULL)
+			} else if(strchr(argv[args], 'y') != NULL) {
 				years = ARGV;
+				useconds = decimal(argv[args]) * YINT;
 
 			// Seconds (fallback)
-			else
+			} else {
 				seconds = ARGV;
+				useconds = decimal(argv[args]);
+			}
 
 			// Subtract 1 from args (for args != 0)
 			--args;
 		}
 
 		// Re-add total_seconds
-		total_seconds = years * 31104000 + months * 2592000 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds;
+		total_seconds = years * YINT + months * OINT + weeks * WINT + days * DINT + hours * HINT + minutes * MINT + seconds;
 	}
 
 	// Verbose output
@@ -259,7 +312,7 @@ void main(int argc, char *argv[])
 		char *weeks_c     = "week";
 		char *months_c    = "month";
 		char *years_c     = "year";
-		unsigned long true_seconds = total_seconds + centuries * 3110400000 + useconds / 1000000;
+		unsigned long true_seconds = total_seconds + centuries * CINT + useconds / 1000000;
 		char tseconds_c[8];
 		if(true_seconds == 1)
 			memcpy(tseconds_c, "second", 7);
@@ -291,7 +344,7 @@ void main(int argc, char *argv[])
 
 	// Sleep for multiple centuries (workaround for 32-bit int)
 	while(centuries != 0) {
-		sleep(3110400000);
+		sleep(CINT);
 		--centuries;
 	}
 
