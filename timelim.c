@@ -115,18 +115,26 @@ static useconds_t decimal(char *arg)
 
 	// Set the multiplier depending on the length of base
 	int multiplier;
-	if(sz == 1)
-		multiplier = 1e5;
-	else if(sz == 2)
-		multiplier = 1e4;
-	else if(sz == 3)
-		multiplier = 1e3;
-	else if(sz == 4)
-		multiplier = 1e2;
-	else if(sz == 5)
-		multiplier = 10;
-	else
-		multiplier = 1;
+	switch(sz) {
+		case 1:
+			multiplier = 1e5;
+			break;
+		case 2:
+			multiplier = 1e4;
+			break;
+		case 3:
+			multiplier = 1e3;
+			break;
+		case 4:
+			multiplier = 1e2;
+			break;
+		case 5:
+			multiplier = 10;
+			break;
+		default:
+			multiplier = 1;
+			break;
+	}
 
 	// Return the microsecond value of base
 	return (useconds_t)atoi(base) * multiplier;
