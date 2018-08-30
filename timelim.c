@@ -49,7 +49,7 @@
 extern char *__progname;
 
 // Used for --run
-static char *cmd = NULL;
+static char *cmd = (char*)NULL;
 
 // Display usage of timelim
 static void usage(void)
@@ -171,7 +171,7 @@ void main(int argc, char *argv[])
 
 	// Parse the options
 	int args;
-	while((args = getopt_long(argc, argv, "c:d:h:m:n:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
+	while((args = getopt_long(argc, argv, "c:d:h:m:n:o:r:s:vw:y:?", long_opts, (int*)0)) != -1) {
 		switch(args) {
 
 			// Usage
@@ -330,14 +330,14 @@ void main(int argc, char *argv[])
 		// Print info
 		printf("Waiting for a total of %lu %s, consisting of:\n", true_seconds, tseconds_c);
 		lprint(centuries, centuries_c, "centuries");
-		lprint(years,    years_c,    NULL);
-		lprint(months,   months_c,   NULL);
-		lprint(weeks,    weeks_c,    NULL);
-		lprint(days,     days_c,     NULL);
-		lprint(hours,    hours_c,    NULL);
-		lprint(minutes,  minutes_c,  NULL);
-		lprint(seconds,  seconds_c,  NULL);
-		lprint(useconds, useconds_c, NULL);
+		lprint(years,    years_c,    (char*)NULL);
+		lprint(months,   months_c,   (char*)NULL);
+		lprint(weeks,    weeks_c,    (char*)NULL);
+		lprint(days,     days_c,     (char*)NULL);
+		lprint(hours,    hours_c,    (char*)NULL);
+		lprint(minutes,  minutes_c,  (char*)NULL);
+		lprint(seconds,  seconds_c,  (char*)NULL);
+		lprint(useconds, useconds_c, (char*)NULL);
 	}
 
 	// Catch SIGALRM
