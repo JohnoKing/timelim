@@ -181,37 +181,37 @@ void main(int argc, char *argv[])
 
 			// Centuries
 			case 'c':
-				centuries = OPTARG;
-				useconds = decimal(optarg) * CINT;
+				centuries += OPTARG;
+				useconds += decimal(optarg) * CINT;
 				break;
 
 			// Days
 			case 'd':
-				days = OPTARG;
-				useconds = decimal(optarg) * DINT;
+				days += OPTARG;
+				useconds += decimal(optarg) * DINT;
 				break;
 
 			// Hours
 			case 'h':
-				hours = OPTARG;
-				useconds = decimal(optarg) * HINT;
+				hours += OPTARG;
+				useconds += decimal(optarg) * HINT;
 				break;
 
 			// Minutes
 			case 'm':
-				minutes = OPTARG;
-				useconds = decimal(optarg) * MINT;
+				minutes += OPTARG;
+				useconds += decimal(optarg) * MINT;
 				break;
 
 			// Microseconds
 			case 'n':
-				useconds = OPTARG;
+				useconds += OPTARG;
 				break;
 
 			// Months
 			case 'o':
-				months = OPTARG;
-				useconds = decimal(optarg) * OINT;
+				months += OPTARG;
+				useconds += decimal(optarg) * OINT;
 				break;
 
 			// Run command on completion
@@ -221,8 +221,8 @@ void main(int argc, char *argv[])
 
 			// Seconds
 			case 's':
-				seconds = OPTARG;
-				useconds = decimal(optarg);
+				seconds += OPTARG;
+				useconds += decimal(optarg);
 				break;
 
 			case 'v':
@@ -231,14 +231,14 @@ void main(int argc, char *argv[])
 
 			// Weeks
 			case 'w':
-				weeks = OPTARG;
-				useconds = decimal(optarg) * WINT;
+				weeks += OPTARG;
+				useconds += decimal(optarg) * WINT;
 				break;
 
 			// Years
 			case 'y':
-				years = OPTARG;
-				useconds = decimal(optarg) * YINT;
+				years += OPTARG;
+				useconds += decimal(optarg) * YINT;
 				break;
 		}
 	}
@@ -256,47 +256,47 @@ void main(int argc, char *argv[])
 
 			// Minutes
 			if(strchr(argv[args], 'm') != NULL) {
-				minutes = ARGV;
-				useconds = decimal(argv[args]) * MINT;
+				minutes += ARGV;
+				useconds += decimal(argv[args]) * MINT;
 
 			// Hours
 			} else if(strchr(argv[args], 'h') != NULL) {
-				hours = ARGV;
-				useconds = decimal(argv[args]) * HINT;
+				hours += ARGV;
+				useconds += decimal(argv[args]) * HINT;
 
 			// Days
 			} else if(strchr(argv[args], 'd') != NULL) {
-				days = ARGV;
-				useconds = decimal(argv[args]) * DINT;
+				days += ARGV;
+				useconds += decimal(argv[args]) * DINT;
 
 			// Weeks
 			} else if(strchr(argv[args], 'w') != NULL) {
-				weeks = ARGV;
-				useconds = decimal(argv[args]) * WINT;
+				weeks += ARGV;
+				useconds += decimal(argv[args]) * WINT;
 
 			// Months
 			} else if(strchr(argv[args], 'o') != NULL) {
-				months = ARGV;
-				useconds = decimal(argv[args]) * OINT;
+				months += ARGV;
+				useconds += decimal(argv[args]) * OINT;
 
 			// Microseconds
 			} else if(strchr(argv[args], 'n') != NULL)
-				useconds = ARGV;
+				useconds += ARGV;
 
 			// Centuries
 			else if(strchr(argv[args], 'c') != NULL) {
-				centuries = ARGV;
-				useconds = decimal(argv[args]) * CINT;
+				centuries += ARGV;
+				useconds += decimal(argv[args]) * CINT;
 
 			// Years
 			} else if(strchr(argv[args], 'y') != NULL) {
-				years = ARGV;
-				useconds = decimal(argv[args]) * YINT;
+				years += ARGV;
+				useconds += decimal(argv[args]) * YINT;
 
 			// Seconds (fallback)
 			} else {
-				seconds = ARGV;
-				useconds = decimal(argv[args]);
+				seconds += ARGV;
+				useconds += decimal(argv[args]);
 			}
 
 			// Subtract 1 from args (for args != 0)
