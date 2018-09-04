@@ -10,7 +10,7 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled.  
 
 ## Usage
-`Usage: sleep/timelim [-cdhmnorsvwy?] length ...`  
+`Usage: sleep/timelim [-cdhmnorsvwy?] length[suffix] ...`  
 `  -c, --centuries     Number of centuries`  
 `  -d, --days          Number of days`  
 `  -h, --hours         Number of hours`  

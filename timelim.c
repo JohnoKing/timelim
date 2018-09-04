@@ -55,7 +55,7 @@ static char *cmd = (char*)NULL;
 static void usage(void)
 {
 	// Usage info
-	printf("Usage: %s [-cdhmnorsvwy?] length ...\n", __progname);
+	printf("Usage: %s [-cdhmnorsvwy?] length[suffix] ...\n", __progname);
 	printf("  -c, --centuries     Number of centuries\n");
 	printf("  -d, --days          Number of days\n");
 	printf("  -h, --hours         Number of hours\n");
