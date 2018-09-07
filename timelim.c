@@ -131,8 +131,11 @@ static useconds_t decimal(char *arg)
 		case 5:
 			multiplier = 10;
 			break;
-		default:
+		case 6:
 			multiplier = 1;
+			break;
+		default:
+			usage();
 			break;
 	}
 
