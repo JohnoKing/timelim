@@ -324,14 +324,12 @@ void main(int argc, char *argv[])
 		char *months_c    = "month";
 		char *years_c     = "year";
 		unsigned long true_seconds = total_seconds + centuries * CINT + useconds / 1e6;
-		char tseconds_c[8];
-		if(true_seconds == 1)
-			memcpy(tseconds_c, "second", 7);
-		else
-			memcpy(tseconds_c, "seconds", 8);
 
 		// Print info
-		printf("Waiting for a total of %lu %s, consisting of:\n", true_seconds, tseconds_c);
+		if(true_seconds == 1)
+			printf("Waiting for a total of %lu second, consisting of:\n", true_seconds);
+		else
+			printf("Waiting for a total of %lu seconds, consisting of:\n", true_seconds);
 		lprint(centuries, centuries_c, "centuries");
 		lprint(years,    years_c,    (char*)NULL);
 		lprint(months,   months_c,   (char*)NULL);
