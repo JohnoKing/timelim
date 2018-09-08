@@ -147,7 +147,7 @@ static useconds_t decimal(char *arg)
 void main(int argc, char *argv[])
 {
 	// Arguments are required
-	if(argc == 1)
+	if(argc < 2)
 		usage();
 
 	// Variables
