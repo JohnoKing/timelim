@@ -313,16 +313,7 @@ void main(int argc, char *argv[])
 	// Verbose output
 	if(verbose == 0) {
 
-		// Variables
-		char *centuries_c = "century";
-		char *useconds_c  = "microsecond";
-		char *seconds_c   = "second";
-		char *minutes_c   = "minute";
-		char *hours_c     = "hour";
-		char *days_c      = "day";
-		char *weeks_c     = "week";
-		char *months_c    = "month";
-		char *years_c     = "year";
+		// Use a long variable to get the full number of actual seconds
 		unsigned long true_seconds = total_seconds + centuries * CINT + useconds / 1e6;
 
 		// Print info
@@ -330,15 +321,15 @@ void main(int argc, char *argv[])
 			printf("Waiting for a total of %lu second, consisting of:\n", true_seconds);
 		else
 			printf("Waiting for a total of %lu seconds, consisting of:\n", true_seconds);
-		lprint(centuries, centuries_c, "centuries");
-		lprint(years,    years_c,    (char*)NULL);
-		lprint(months,   months_c,   (char*)NULL);
-		lprint(weeks,    weeks_c,    (char*)NULL);
-		lprint(days,     days_c,     (char*)NULL);
-		lprint(hours,    hours_c,    (char*)NULL);
-		lprint(minutes,  minutes_c,  (char*)NULL);
-		lprint(seconds,  seconds_c,  (char*)NULL);
-		lprint(useconds, useconds_c, (char*)NULL);
+		lprint(centuries, "century",     "centuries");
+		lprint(years,     "year",        (char*)NULL);
+		lprint(months,    "month",       (char*)NULL);
+		lprint(weeks,     "week",        (char*)NULL);
+		lprint(days,      "day",         (char*)NULL);
+		lprint(hours,     "hour",        (char*)NULL);
+		lprint(minutes,   "minute",      (char*)NULL);
+		lprint(seconds,   "second",      (char*)NULL);
+		lprint(useconds,  "microsecond", (char*)NULL);
 	}
 
 	// Catch SIGALRM
