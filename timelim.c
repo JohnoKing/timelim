@@ -49,7 +49,7 @@
 extern char *__progname;
 
 // Used for --run
-static char *cmd = (char*)NULL;
+static char *cmd = NULL;
 
 // Display usage of timelim
 static void usage(void)
@@ -90,7 +90,7 @@ static void finish(int sig)
 {
 	// Run command
 	if(cmd != NULL)
-		execl("/bin/sh", "/bin/sh", "-c", cmd, (char*)0);
+		execl("/bin/sh", "/bin/sh", "-c", cmd, NULL);
 
 	// Exit
 	char *posix = getenv("POSIXLY_CORRECT");
@@ -174,7 +174,7 @@ void main(int argc, char *argv[])
 
 	// Parse the options
 	int args;
-	while((args = getopt_long(argc, argv, "c:d:h:m:n:o:r:s:vw:y:?", long_opts, (int*)0)) != -1) {
+	while((args = getopt_long(argc, argv, "c:d:h:m:n:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
 		switch(args) {
 
 			// Usage
@@ -322,21 +322,21 @@ void main(int argc, char *argv[])
 		else
 			printf("Waiting for a total of %lu seconds, consisting of:\n", true_seconds);
 		lprint(centuries, "century",     "centuries");
-		lprint(years,     "year",        (char*)NULL);
-		lprint(months,    "month",       (char*)NULL);
-		lprint(weeks,     "week",        (char*)NULL);
-		lprint(days,      "day",         (char*)NULL);
-		lprint(hours,     "hour",        (char*)NULL);
-		lprint(minutes,   "minute",      (char*)NULL);
-		lprint(seconds,   "second",      (char*)NULL);
-		lprint(useconds,  "microsecond", (char*)NULL);
+		lprint(years,     "year",        NULL);
+		lprint(months,    "month",       NULL);
+		lprint(weeks,     "week",        NULL);
+		lprint(days,      "day",         NULL);
+		lprint(hours,     "hour",        NULL);
+		lprint(minutes,   "minute",      NULL);
+		lprint(seconds,   "second",      NULL);
+		lprint(useconds,  "microsecond", NULL);
 	}
 
 	// Catch SIGALRM
 	struct sigaction actor;
 	memset(&actor, 0, sizeof(actor));
 	actor.sa_handler = finish;
-	sigaction(SIGALRM, &actor, (struct sigaction*)NULL);
+	sigaction(SIGALRM, &actor, NULL);
 
 	// Sleep for total_seconds and useconds
 	sleep(total_seconds);
