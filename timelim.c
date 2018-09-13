@@ -321,7 +321,7 @@ void main(int argc, char *argv[])
 			printf("Waiting for a total of %lu second, consisting of:\n", true_seconds);
 		else
 			printf("Waiting for a total of %lu seconds, consisting of:\n", true_seconds);
-		lprint(centuries, "century",     "centuries");
+		lprint(centuries, "century",    "centuries");
 		lprint(years,     "year",        NULL);
 		lprint(months,    "month",       NULL);
 		lprint(weeks,     "week",        NULL);
