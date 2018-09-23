@@ -30,11 +30,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
-
-// Used for converting arguments into unsigned ints
-#define OPTARG (unsigned)atoi(optarg)
-#define ARGV   (unsigned)atoi(argv[args])
 
 // Muliply seconds by one of these for conversion into minutes, weeks, etc.
 #define CINT 3110400000
@@ -55,18 +52,9 @@ static char *cmd = NULL;
 static void usage(void)
 {
 	// Usage info
-	printf("Usage: %s [-cdhmnorsvwy?] length[suffix] ...\n", __progname);
-	printf("  -c, --centuries     Number of centuries\n");
-	printf("  -d, --days          Number of days\n");
-	printf("  -h, --hours         Number of hours\n");
-	printf("  -m, --minutes       Number of minutes\n");
-	printf("  -n, --micro         Number of microseconds\n");
-	printf("  -o, --months        Number of months\n");
+	printf("Usage: %s [-rv?] length[suffix] ...\n", __progname);
 	printf("  -r, --run           Run the specified command when the time runs out\n");
-	printf("  -s, --seconds       Number of seconds\n");
 	printf("  -v, --verbose       Enable verbose output\n");
-	printf("  -w, --weeks         Number of weeks\n");
-	printf("  -y, --years         Number of years\n");
 	printf("  -?, --help          Display this text\n");
 
 	// Exit with status 1
@@ -86,21 +74,17 @@ static void lprint(unsigned int length, const char *length_c, const char *length
 }
 
 // Finishes execution of timelim
-static void finish(int sig)
+static void finish(__attribute((unused)) int sig)
 {
 	// Run command
 	if(cmd != NULL)
 		execl("/bin/sh", "/bin/sh", "-c", cmd, NULL);
 
-	// Exit
-	char *posix = getenv("POSIXLY_CORRECT");
-	if((sig == SIGALRM) && (posix == NULL || strncmp(posix, "1", 1) != 0))
-		exit(142);
 	exit(0);
 }
 
 // This function properly parses decimal arguments (such as 1.12 or 4.5w)
-static useconds_t decimal(char *arg)
+static long decimal(char *arg)
 {
 	// If there is no decimal, return
 	if(strchr(arg, '.') == NULL) return 0;
@@ -114,24 +98,33 @@ static useconds_t decimal(char *arg)
 		--sz;
 
 	// Set the multiplier depending on the length of base
-	int multiplier;
+	unsigned int multiplier = 0;
 	switch(sz) {
 		case 1:
-			multiplier = 1e5;
+			multiplier = 1e8;
 			break;
 		case 2:
-			multiplier = 1e4;
+			multiplier = 1e7;
 			break;
 		case 3:
-			multiplier = 1e3;
+			multiplier = 1e6;
 			break;
 		case 4:
-			multiplier = 1e2;
+			multiplier = 1e5;
 			break;
 		case 5:
-			multiplier = 10;
+			multiplier = 1e4;
 			break;
 		case 6:
+			multiplier = 1e3;
+			break;
+		case 7:
+			multiplier = 1e2;
+			break;
+		case 8:
+			multiplier = 10;
+			break;
+		case 9:
 			multiplier = 1;
 			break;
 		default:
@@ -140,7 +133,7 @@ static useconds_t decimal(char *arg)
 	}
 
 	// Return the microsecond value of base
-	return (useconds_t)atoi(base) * multiplier;
+	return atol(base) * multiplier;
 }
 
 // Main function
@@ -151,185 +144,116 @@ void main(int argc, char *argv[])
 		usage();
 
 	// Variables
-	useconds_t useconds = 0;
-	unsigned int centuries, seconds, minutes, hours, days, weeks, months, years;
-	centuries = seconds = minutes = hours = days = weeks = months = years = 0;
-	int verbose = 1;
+	unsigned int centuries = 0;
+	unsigned int verbose   = 1;
+	struct timespec time   = {0};
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
-	{ "centuries", required_argument, NULL, 'c' },
-	{ "days",      required_argument, NULL, 'd' },
-	{ "hours",     required_argument, NULL, 'h' },
-	{ "minutes",   required_argument, NULL, 'm' },
-	{ "micro",     required_argument, NULL, 'n' },
-	{ "months",    required_argument, NULL, 'o' },
 	{ "run",       required_argument, NULL, 'r' },
-	{ "seconds",   required_argument, NULL, 's' },
 	{ "verbose",   no_argument,       NULL, 'v' },
-	{ "weeks",     required_argument, NULL, 'w' },
-	{ "years",     required_argument, NULL, 'y' },
 	{ "help",      no_argument,       NULL, '?' },
 	};
 
 	// Parse the options
-	int args;
-	while((args = getopt_long(argc, argv, "c:d:h:m:n:o:r:s:vw:y:?", long_opts, NULL)) != -1) {
-		switch(args) {
+	int getopt_args;
+	while((getopt_args = getopt_long(argc, argv, "r:v?", long_opts, NULL)) != -1) {
+		switch(getopt_args) {
 
 			// Usage
 			case '?':
 				usage();
 				break;
 
-			// Centuries
-			case 'c':
-				centuries += OPTARG;
-				useconds += decimal(optarg) * CINT;
-				break;
-
-			// Days
-			case 'd':
-				days += OPTARG;
-				useconds += decimal(optarg) * DINT;
-				break;
-
-			// Hours
-			case 'h':
-				hours += OPTARG;
-				useconds += decimal(optarg) * HINT;
-				break;
-
-			// Minutes
-			case 'm':
-				minutes += OPTARG;
-				useconds += decimal(optarg) * MINT;
-				break;
-
-			// Microseconds
-			case 'n':
-				useconds += OPTARG;
-				break;
-
-			// Months
-			case 'o':
-				months += OPTARG;
-				useconds += decimal(optarg) * OINT;
-				break;
-
-			// Run command on completion
+			// Run a command on completion
 			case 'r':
 				cmd = optarg;
 				break;
 
-			// Seconds
-			case 's':
-				seconds += OPTARG;
-				useconds += decimal(optarg);
-				break;
-
+			// Verbose output
 			case 'v':
 				verbose = 0;
-				break;
-
-			// Weeks
-			case 'w':
-				weeks += OPTARG;
-				useconds += decimal(optarg) * WINT;
-				break;
-
-			// Years
-			case 'y':
-				years += OPTARG;
-				useconds += decimal(optarg) * YINT;
 				break;
 		}
 	}
 
-	// Add up the total number of seconds to wait
-	unsigned int total_seconds = years * YINT + months * OINT + weeks * WINT + days * DINT + hours * HINT + minutes * MINT + seconds;
-
 	// Function as sleep(1)
-	if((total_seconds == 0) && (centuries == 0) && (useconds == 0)) {
-		int args = --argc;
-		while(args != 0) {
+	int args = --argc;
+	while(args != 0) {
 
-			// If the argument has a dash, skip it
-			if(strchr(argv[args], '-') != NULL) break;
+		// If the argument has a dash, skip it
+		if(strchr(argv[args], '-') != NULL) break;
 
-			// Minutes
-			if(strchr(argv[args], 'm') != NULL) {
-				minutes += ARGV;
-				useconds += decimal(argv[args]) * MINT;
+		// Minutes
+		if(strchr(argv[args], 'm') != NULL) {
+			time.tv_sec  += atoi(argv[args])    * MINT;
+			time.tv_nsec += decimal(argv[args]) * MINT;
 
-			// Hours
-			} else if(strchr(argv[args], 'h') != NULL) {
-				hours += ARGV;
-				useconds += decimal(argv[args]) * HINT;
+		// Hours
+		} else if(strchr(argv[args], 'h') != NULL) {
+			time.tv_sec  += atoi(argv[args])    * HINT;
+			time.tv_nsec += decimal(argv[args]) * HINT;
 
-			// Days
-			} else if(strchr(argv[args], 'd') != NULL) {
-				days += ARGV;
-				useconds += decimal(argv[args]) * DINT;
+		// Days
+		} else if(strchr(argv[args], 'd') != NULL) {
+			time.tv_sec  += atoi(argv[args])    * DINT;
+			time.tv_nsec += decimal(argv[args]) * DINT;
 
-			// Weeks
-			} else if(strchr(argv[args], 'w') != NULL) {
-				weeks += ARGV;
-				useconds += decimal(argv[args]) * WINT;
+		// Weeks
+		} else if(strchr(argv[args], 'w') != NULL) {
+			time.tv_sec  += atoi(argv[args])    * WINT;
+			time.tv_nsec += decimal(argv[args]) * WINT;
 
-			// Months
-			} else if(strchr(argv[args], 'o') != NULL) {
-				months += ARGV;
-				useconds += decimal(argv[args]) * OINT;
+		// Months
+		} else if(strchr(argv[args], 'o') != NULL) {
+			time.tv_sec  += atoi(argv[args])    * OINT;
+			time.tv_nsec += decimal(argv[args]) * OINT;
 
-			// Microseconds
-			} else if(strchr(argv[args], 'n') != NULL)
-				useconds += ARGV;
+		// Microseconds
+		} else if(strchr(argv[args], 'n') != NULL)
+			time.tv_nsec += atol(argv[args]);
 
-			// Centuries
-			else if(strchr(argv[args], 'c') != NULL) {
-				centuries += ARGV;
-				useconds += decimal(argv[args]) * CINT;
+		// Centuries
+		else if(strchr(argv[args], 'c') != NULL) {
+			centuries    += (unsigned)atoi(argv[args]);
+			time.tv_nsec += decimal(argv[args]) * CINT;
 
-			// Years
-			} else if(strchr(argv[args], 'y') != NULL) {
-				years += ARGV;
-				useconds += decimal(argv[args]) * YINT;
+		// Years
+		} else if(strchr(argv[args], 'y') != NULL) {
+			time.tv_sec  += atoi(argv[args])    * YINT;
+			time.tv_nsec += decimal(argv[args]) * YINT;
 
-			// Seconds (fallback)
-			} else {
-				seconds += ARGV;
-				useconds += decimal(argv[args]);
-			}
-
-			// Subtract 1 from args (for args != 0)
-			--args;
+		// Seconds (fallback)
+		} else {
+			time.tv_sec  += atoi(argv[args]);
+			time.tv_nsec += decimal(argv[args]);
 		}
 
-		// Re-add total_seconds
-		total_seconds = years * YINT + months * OINT + weeks * WINT + days * DINT + hours * HINT + minutes * MINT + seconds;
+		// Subtract 1 from args (for args != 0)
+		--args;
+	}
+
+	// time.tv_nsec cannot exceed one billion
+	while(time.tv_nsec > 1000000000) {
+		time_t esec  = time.tv_nsec / 1e9;
+		time.tv_sec += esec;
+		time.tv_nsec = time.tv_nsec = esec;
 	}
 
 	// Verbose output
 	if(verbose == 0) {
 
 		// Use a long variable to get the full number of actual seconds
-		unsigned long true_seconds = total_seconds + centuries * CINT + useconds / 1e6;
+		unsigned long long total_seconds = (centuries * CINT) + time.tv_sec;
 
 		// Print info
-		if(true_seconds == 1)
-			printf("Waiting for a total of %lu second, consisting of:\n", true_seconds);
+		if(total_seconds == 1)
+			printf("Waiting for a total of %llu second, consisting of:\n",  total_seconds);
 		else
-			printf("Waiting for a total of %lu seconds, consisting of:\n", true_seconds);
-		lprint(centuries, "century",    "centuries");
-		lprint(years,     "year",        NULL);
-		lprint(months,    "month",       NULL);
-		lprint(weeks,     "week",        NULL);
-		lprint(days,      "day",         NULL);
-		lprint(hours,     "hour",        NULL);
-		lprint(minutes,   "minute",      NULL);
-		lprint(seconds,   "second",      NULL);
-		lprint(useconds,  "microsecond", NULL);
+			printf("Waiting for a total of %llu seconds, consisting of:\n", total_seconds);
+		lprint(centuries,    "century",    "centuries");
+		lprint(time.tv_sec,  "second",      NULL);
+		lprint(time.tv_nsec, "microsecond", NULL);
 	}
 
 	// Catch SIGALRM
@@ -338,9 +262,8 @@ void main(int argc, char *argv[])
 	actor.sa_handler = finish;
 	sigaction(SIGALRM, &actor, NULL);
 
-	// Sleep for total_seconds and useconds
-	sleep(total_seconds);
-	usleep(useconds);
+	// Sleep
+	nanosleep(&time, NULL);
 
 	// Sleep for multiple centuries (workaround for 32-bit int)
 	while(centuries != 0) {

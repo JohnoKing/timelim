@@ -10,18 +10,9 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled.  
 
 ## Usage
-`Usage: sleep/timelim [-cdhmnorsvwy?] length[suffix] ...`  
-`  -c, --centuries     Number of centuries`  
-`  -d, --days          Number of days`  
-`  -h, --hours         Number of hours`  
-`  -m, --minutes       Number of minutes`  
-`  -n, --micro         Number of microseconds`  
-`  -o, --months        Number of months`  
+`Usage: sleep/timelim [-rv?] length[suffix] ...`  
 `  -r, --run           Run the specified command when the time runs out`  
-`  -s, --seconds       Number of seconds`  
 `  -v, --verbose       Enable verbose output`  
-`  -w, --weeks         Number of weeks`  
-`  -y, --years         Number of years`  
 `  -?, --help          Display this text`  
 
 Timelim also accepts suffix arguments such as `10h` for 10 hours when used in place of the above options.
@@ -34,16 +25,16 @@ Sleep for 4 months, 2 weeks and 2000 microseconds (with verbose output, suffixes
 `timelim --verbose 4m 2w 2000n`
 
 Set a time limit to last a minute: 
-`timelim -m 1` or `./timelim -s 60`
+`timelim 1m` or `./timelim 60s`
 
 Set a time limit to last one year and three weeks:
-`timelim -y 1 -w 3`
+`timelim 1y 3w`
 
-Set a time limit to only last 24 microseconds:
-`timelim --micro 24`
+Set a time limit to only last 24000 microseconds:
+`timelim 24000n`
 
 Set a time limit to last 3.6 centuries and 4.1 months:
-`timelim --centuries 3.6 --months 4.1`
+`timelim 3.6c 4.1o`
 
 Run uname after 27 seconds:
-`timelim --seconds 27 --run "uname -a"`
+`timelim --run "uname -a" 27s`
