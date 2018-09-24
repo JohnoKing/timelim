@@ -91,7 +91,9 @@ static long decimal(char *arg)
 		--sz;
 
 	// Convert base into a number that is the proper length
-	long num = atol(base) * 1e8;
+	long num = atol(base);
+	if(num < 1e9)
+		num = num * 1e8;
 	while(num > 999999999)
 		num = num / 10;
 
