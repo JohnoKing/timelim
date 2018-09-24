@@ -21,7 +21,7 @@
 
 # Variables (each one may be overridden)
 CC      := cc
-WFLAGS  := -Wall -Wextra -Wpedantic -Wno-main -Wno-main-return-type
+WFLAGS  := -Wall -Wextra -Wpedantic
 CFLAGS  := -O2 -fno-math-errno -fomit-frame-pointer -fPIC -pipe
 
 # Compile

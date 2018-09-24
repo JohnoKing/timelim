@@ -73,14 +73,10 @@ static void lprint(unsigned int length, const char *length_c, const char *length
 		printf("    %u %ss\n", length, length_c);
 }
 
-// Finishes execution of timelim
-static void finish(__attribute((unused)) int sig)
+// Do nothing
+static void sighandle(__attribute((unused)) int sig)
 {
-	// Run command
-	if(cmd != NULL)
-		execl("/bin/sh", "/bin/sh", "-c", cmd, NULL);
-
-	exit(0);
+	return;
 }
 
 // This function properly parses decimal arguments (such as 1.12 or 4.5w)
@@ -126,7 +122,7 @@ static long decimal(char *arg)
 }
 
 // Main function
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	// Arguments are required
 	if(argc < 2)
@@ -248,7 +244,7 @@ void main(int argc, char *argv[])
 	// Catch SIGALRM
 	struct sigaction actor;
 	memset(&actor, 0, sizeof(actor));
-	actor.sa_handler = finish;
+	actor.sa_handler = sighandle;
 	sigaction(SIGALRM, &actor, NULL);
 
 	// Sleep
@@ -264,6 +260,9 @@ void main(int argc, char *argv[])
 	if(verbose == 0)
 		printf("Time's up!\n");
 
-	// Run finish
-	finish(SIGTERM);
+	// Run command
+	if(cmd != NULL)
+		execl("/bin/sh", "/bin/sh", "-c", cmd, NULL);
+
+	return 0;
 }
