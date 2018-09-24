@@ -98,42 +98,31 @@ static long decimal(char *arg)
 		--sz;
 
 	// Set the multiplier depending on the length of base
-	unsigned int multiplier = 0;
+	long num = atol(base);
 	switch(sz) {
 		case 1:
-			multiplier = 1e8;
-			break;
+			return num * 1e8;
 		case 2:
-			multiplier = 1e7;
-			break;
+			return num * 1e7;
 		case 3:
-			multiplier = 1e6;
-			break;
+			return num * 1e6;
 		case 4:
-			multiplier = 1e5;
-			break;
+			return num * 1e5;
 		case 5:
-			multiplier = 1e4;
-			break;
+			return num * 1e4;
 		case 6:
-			multiplier = 1e3;
-			break;
+			return num * 1e3;
 		case 7:
-			multiplier = 1e2;
-			break;
+			return num * 1e2;
 		case 8:
-			multiplier = 10;
-			break;
+			return num * 10;
 		case 9:
-			multiplier = 1;
-			break;
+			return num;
 		default:
-			usage();
-			break;
+			while(num > 999999999)
+				num = num / 10;
+			return num;
 	}
-
-	// Return the microsecond value of base
-	return atol(base) * multiplier;
 }
 
 // Main function
