@@ -70,7 +70,7 @@ static void lprint(unsigned long length, const char *length_c)
 }
 
 // Set current_signal to the signal that was sent to timelim
-static void sighandle(__attribute((unused)) int sig)
+static void sighandle(int sig)
 {
 	current_signal = sig;
 	return;
