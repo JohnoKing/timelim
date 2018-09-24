@@ -61,15 +61,12 @@ static void usage(void)
 }
 
 // length cannot be 0, or else lprint doesn't occur
-static void lprint(unsigned int length, const char *length_c, const char *length_custom)
+static void lprint(unsigned int length, const char *length_c)
 {
-	if(length == 0) return;
 	if(length == 1)
-		printf("    %u %s\n", length, length_c);
-	else if(length_custom != NULL)
-		printf("    %u %s\n", length, length_custom);
+		printf("%u %s",  length, length_c);
 	else
-		printf("    %u %ss\n", length, length_c);
+		printf("%u %ss", length, length_c);
 }
 
 // Set current_signal to the signal that was sent to timelim
@@ -93,32 +90,13 @@ static long decimal(char *arg)
 		 strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || strchr(base, 's') != NULL)
 		--sz;
 
-	// Set the multiplier depending on the length of base
-	long num = atol(base);
-	switch(sz) {
-		case 1:
-			return num * 1e8;
-		case 2:
-			return num * 1e7;
-		case 3:
-			return num * 1e6;
-		case 4:
-			return num * 1e5;
-		case 5:
-			return num * 1e4;
-		case 6:
-			return num * 1e3;
-		case 7:
-			return num * 1e2;
-		case 8:
-			return num * 10;
-		case 9:
-			return num;
-		default:
-			while(num > 999999999)
-				num = num / 10;
-			return num;
-	}
+	// Convert base into a number that is the proper length
+	long num = atol(base) * 1e8;
+	while(num > 999999999)
+		num = num / 10;
+
+	// Return the number
+	return num;
 }
 
 // Main function
@@ -228,17 +206,12 @@ int main(int argc, char *argv[])
 	// Verbose output
 	if(verbose == 0) {
 
-		// Use a long variable to get the full number of actual seconds
-		unsigned long long total_seconds = (centuries * CINT) + time.tv_sec;
-
 		// Print info
-		if(total_seconds == 1)
-			printf("Waiting for a total of %llu second, consisting of:\n",  total_seconds);
-		else
-			printf("Waiting for a total of %llu seconds, consisting of:\n", total_seconds);
-		lprint(centuries,    "century",    "centuries");
-		lprint(time.tv_sec,  "second",      NULL);
-		lprint(time.tv_nsec, "microsecond", NULL);
+		printf("Sleeping for ");
+		lprint(time.tv_sec + (centuries * CINT), "second");
+		printf(" and ");
+		lprint(time.tv_nsec, "nanosecond");
+		printf("\n");
 	}
 
 	// Catch SIGINFO, SIGPWR and SIGALRM
