@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
 	}
 
 	// time.tv_nsec cannot exceed one billion
-	while(time.tv_nsec > 1000000000) {
+	while(time.tv_nsec > 999999999) {
 		time_t esec  = time.tv_nsec / 1e9;
 		time.tv_sec += esec;
 		time.tv_nsec = time.tv_nsec = esec;
