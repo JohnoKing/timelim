@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 	while(time.tv_nsec > 999999999) {
 		time_t esec  = time.tv_nsec / 1e9;
 		time.tv_sec += esec;
-		time.tv_nsec = time.tv_nsec - (esec * 1000000000);
+		time.tv_nsec = time.tv_nsec - (esec * 1e9);
 	}
 
 	// Verbose output
