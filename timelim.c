@@ -42,11 +42,10 @@
 #define OINT 2592000
 #define YINT 31104000
 
-// This is used for usage info
+// Variables
+static int current_signal = 0;
+static char *cmd       = NULL;
 extern char *__progname;
-
-// Used for --run
-static char *cmd = NULL;
 
 // Display usage of timelim
 static void usage(void)
@@ -73,9 +72,10 @@ static void lprint(unsigned int length, const char *length_c, const char *length
 		printf("    %u %ss\n", length, length_c);
 }
 
-// Do nothing
+// Set current_signal to the signal that was sent to timelim
 static void sighandle(__attribute((unused)) int sig)
 {
+	current_signal = sig;
 	return;
 }
 
@@ -241,14 +241,22 @@ int main(int argc, char *argv[])
 		lprint(time.tv_nsec, "microsecond", NULL);
 	}
 
-	// Catch SIGALRM
+	// Catch SIGINFO, SIGPWR and SIGALRM
 	struct sigaction actor;
 	memset(&actor, 0, sizeof(actor));
 	actor.sa_handler = sighandle;
 	sigaction(SIGALRM, &actor, NULL);
+	sigaction(SIGPWR, &actor, NULL);
+#	ifdef SIGINFO
+	sigaction(SIGINFO, &actor, NULL);
+#	endif
 
 	// Sleep
-	nanosleep(&time, NULL);
+	while(nanosleep(&time, &time) != 0) {
+		if(current_signal == SIGALRM) break;
+		printf("Remaining seconds: %ld\n", (long)time.tv_sec);
+		printf("Remaining nanoseconds: %ld\n", time.tv_nsec);
+	}
 
 	// Sleep for multiple centuries (workaround for 32-bit int)
 	while(centuries != 0) {
