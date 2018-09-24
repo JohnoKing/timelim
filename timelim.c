@@ -200,13 +200,11 @@ int main(int argc, char *argv[])
 	while(time.tv_nsec > 999999999) {
 		time_t esec  = time.tv_nsec / 1e9;
 		time.tv_sec += esec;
-		time.tv_nsec = time.tv_nsec = esec;
+		time.tv_nsec = time.tv_nsec - 1000000000;
 	}
 
 	// Verbose output
 	if(verbose == 0) {
-
-		// Print info
 		printf("Sleeping for ");
 		lprint(time.tv_sec + (centuries * CINT), "second");
 		printf(" and ");
