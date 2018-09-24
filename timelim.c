@@ -61,12 +61,12 @@ static void usage(void)
 }
 
 // length cannot be 0, or else lprint doesn't occur
-static void lprint(unsigned int length, const char *length_c)
+static void lprint(unsigned long length, const char *length_c)
 {
 	if(length == 1)
-		printf("%u %s",  length, length_c);
+		printf("%lu %s",  length, length_c);
 	else
-		printf("%u %ss", length, length_c);
+		printf("%lu %ss", length, length_c);
 }
 
 // Set current_signal to the signal that was sent to timelim
@@ -200,7 +200,7 @@ int main(int argc, char *argv[])
 	while(time.tv_nsec > 999999999) {
 		time_t esec  = time.tv_nsec / 1e9;
 		time.tv_sec += esec;
-		time.tv_nsec = time.tv_nsec - 1000000000;
+		time.tv_nsec = time.tv_nsec - (esec * 1000000000);
 	}
 
 	// Verbose output
