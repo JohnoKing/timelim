@@ -22,7 +22,7 @@
 # Variables (each one may be overridden)
 CC      := cc
 WFLAGS  := -Wall -Wextra -Wpedantic
-CFLAGS  := -O2 -fno-math-errno -fomit-frame-pointer -fPIC -pipe
+CFLAGS  := -O2 -ffast-math -fomit-frame-pointer -fPIC -pipe
 
 # Compile
 all:
