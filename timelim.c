@@ -48,16 +48,14 @@ static char *cmd       = NULL;
 extern char *__progname;
 
 // Display usage of timelim
-static void usage(void)
+static int usage(void)
 {
 	// Usage info
 	printf("Usage: %s [-rv?] length[suffix] ...\n", __progname);
 	printf("  -r, --run           Run the specified command when the time runs out\n");
 	printf("  -v, --verbose       Enable verbose output\n");
 	printf("  -?, --help          Display this text\n");
-
-	// Exit with status 1
-	exit(1);
+	return 1;
 }
 
 // length cannot be 0, or else lprint doesn't occur
@@ -106,7 +104,7 @@ int main(int argc, char *argv[])
 {
 	// Arguments are required
 	if(argc < 2)
-		usage();
+		return usage();
 
 	// Variables
 	unsigned int centuries = 0;
@@ -127,8 +125,7 @@ int main(int argc, char *argv[])
 
 			// Usage
 			case '?':
-				usage();
-				break;
+				return usage();
 
 			// Run a command on completion
 			case 'r':
