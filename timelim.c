@@ -44,7 +44,7 @@
 
 // Variables
 static int current_signal = 0;
-static char *cmd       = NULL;
+static char *cmd = NULL;
 extern char *__progname;
 
 // Display usage of timelim
