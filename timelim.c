@@ -34,13 +34,13 @@
 #include <unistd.h>
 
 // Muliply seconds by one of these for conversion into minutes, weeks, etc.
-#define CINT 3110400000
 #define MINT 60
 #define HINT 3600
 #define DINT 86400
 #define WINT 604800
 #define OINT 2592000
 #define YINT 31104000
+#define CINT 3110400000
 
 // Variables
 static int current_signal = 0;
