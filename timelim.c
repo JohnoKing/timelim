@@ -119,9 +119,9 @@ int main(int argc, char *argv[])
 	};
 
 	// Parse the options
-	int getopt_args;
-	while((getopt_args = getopt_long(argc, argv, "r:v?", long_opts, NULL)) != -1) {
-		switch(getopt_args) {
+	int args;
+	while((args = getopt_long(argc, argv, "r:v?", long_opts, NULL)) != -1) {
+		switch(args) {
 
 			// Usage
 			case '?':
@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Function as sleep(1)
-	int args = --argc;
+	args = --argc;
 	while(args != 0) {
 
 		// If the argument has a dash, skip it
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 
 	// Run command
 	if(cmd != NULL)
-		execl("/bin/sh", "/bin/sh", "-c", cmd, NULL);
+		return execl("/bin/sh", "/bin/sh", "-c", cmd, NULL);
 
 	return 0;
 }
