@@ -24,6 +24,9 @@ Sleep for 2 seconds with verbose output (when run as sleep):
 Sleep for 4 months, 2 weeks and 2000 nanoseconds (with verbose output, suffixes):
 `timelim --verbose 4m 2w 2000n`
 
+Sleep for 7 millennia and a month:
+`timelim 7M 1o`
+
 Set a time limit to last a minute: 
 `timelim 1m` or `./timelim 60s`
 

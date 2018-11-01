@@ -33,14 +33,16 @@
 #include <time.h>
 #include <unistd.h>
 
-// Muliply seconds by one of these for conversion into minutes, weeks, etc.
+/* Muliply the seconds by one of these for conversion into minutes, weeks, etc.
+   This assumes each month is 30 days */
 #define MINT 60
 #define HINT 3600
 #define DINT 86400
 #define WINT 604800
-#define OINT 2592000
+#define OINT 2592000  // 31 days = 2678400
 #define YINT 31104000
 #define CINT 3110400000
+#define LINT 31104000000
 
 // Variables
 static int current_signal = 0;
@@ -85,7 +87,8 @@ static long decimal(char *arg)
 	const char *base = strsep(&arg, ".");
 	size_t sz = strlen(base);
 	if(strchr(base, 'm') != NULL || strchr(base, 'h') != NULL || strchr(base, 'd') != NULL || strchr(base, 'w') != NULL || \
-		 strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || strchr(base, 's') != NULL)
+		strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || \
+		strchr(base, 's') != NULL || strchr(base, 'M') != NULL)
 		--sz;
 
 	// Convert base into a number that is the proper length
@@ -107,9 +110,9 @@ int main(int argc, char *argv[])
 		return usage();
 
 	// Variables
-	unsigned int centuries = 0;
-	unsigned int verbose   = 1;
-	struct timespec time   = {0};
+	unsigned long centuries = 0;
+	unsigned int  verbose   = 1;
+	struct timespec time    = {0};
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
@@ -175,15 +178,20 @@ int main(int argc, char *argv[])
 		} else if(strchr(argv[args], 'n') != NULL)
 			time.tv_nsec += atol(argv[args]);
 
-		// Centuries
-		else if(strchr(argv[args], 'c') != NULL) {
-			centuries    += (unsigned)atoi(argv[args]);
-			time.tv_nsec += decimal(argv[args]) * CINT;
-
 		// Years
-		} else if(strchr(argv[args], 'y') != NULL) {
+		else if(strchr(argv[args], 'y') != NULL) {
 			time.tv_sec  += atoi(argv[args])    * YINT;
 			time.tv_nsec += decimal(argv[args]) * YINT;
+
+		// Centuries
+		} else if(strchr(argv[args], 'c') != NULL) {
+			centuries    += (unsigned)atol(argv[args]);
+			time.tv_nsec += decimal(argv[args]) * CINT;
+
+		// Millennia
+		} else if(strchr(argv[args], 'M') != NULL) {
+			centuries    += (unsigned)atol(argv[args]) * 10;
+			time.tv_nsec += decimal(argv[args]) * LINT;
 
 		// Seconds (fallback)
 		} else {
