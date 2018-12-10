@@ -224,7 +224,7 @@ int main(int argc, char *argv[])
 	memset(&actor, 0, sizeof(actor));
 	actor.sa_handler = sighandle;
 	sigaction(SIGALRM, &actor, NULL);
-	sigaction(SIGPWR, &actor, NULL);
+	sigaction(SIGPWR,  &actor, NULL);
 #	ifdef SIGINFO
 	sigaction(SIGINFO, &actor, NULL);
 #	endif
