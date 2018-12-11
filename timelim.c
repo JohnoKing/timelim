@@ -116,9 +116,9 @@ int main(int argc, char *argv[])
 
 	// Long options for getopt_long
 	struct option long_opts[] = {
-	{ "run",       required_argument, NULL, 'r' },
-	{ "verbose",   no_argument,       NULL, 'v' },
-	{ "help",      no_argument,       NULL, '?' },
+	{ "run",      required_argument, NULL, 'r' },
+	{ "verbose",  no_argument,       NULL, 'v' },
+	{ "help",     no_argument,       NULL, '?' },
 	};
 
 	// Parse the options
