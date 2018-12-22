@@ -26,20 +26,23 @@ WFLAGS  := -Wall -Wextra -Wpedantic
 
 # Compile
 all:
-	$(CC) $(CFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
+	@$(CC) $(CFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
+	@echo "Successfully built timelim!"
 
 # Install
 install: all
-	mkdir -p $(DESTDIR)/usr/local/bin
-	install -Dm0755 timelim $(DESTDIR)/usr/local/bin
+	@mkdir -p $(DESTDIR)/usr/local/bin
+	@install -Dm0755 timelim $(DESTDIR)/usr/local/bin
+	@echo "Successfully installed timelim!"
 
 # Uninstall
 uninstall:
-	rm -f $(DESTDIR)/usr/local/bin/timelim
+	@rm -f $(DESTDIR)/usr/local/bin/timelim
+	@echo "Successfully uninstalled timelim!"
 
 # Cleanup
 clean:
-	rm -rf timelim
+	@rm -rf timelim
 
 # Calls clean, then resets the git repo
 clobber: clean
