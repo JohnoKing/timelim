@@ -10,9 +10,10 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled.  
 
 ## Usage
-`Usage: sleep/timelim [-rv?] length[suffix] ...`  
+`Usage: sleep/timelim [-rvV?] length[suffix] ...`  
 `  -r, --run           Run the specified command when the time runs out`  
 `  -v, --verbose       Enable verbose output`  
+`  -V, --version       Show timelim's version number`  
 `  -?, --help          Display this text`  
 
 Timelim also accepts suffix arguments such as `10h` for 10 hours when used in place of the above options.

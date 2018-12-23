@@ -33,6 +33,9 @@
 #include <time.h>
 #include <unistd.h>
 
+// Timelim's version number
+#define TIMELIM_VERSION "1.0-RC1"
+
 /* Muliply the seconds by one of these for conversion into minutes, weeks, etc.
    This assumes each month is 30 days */
 #define MINT 60
@@ -44,6 +47,11 @@
 #define CINT 3110400000
 #define LINT 31104000000
 
+// Colors
+#define CYAN  "\x1b[1;36m"
+#define WHITE "\x1b[1;37m"
+#define RESET "\x1b[m"
+
 // Variables
 static int current_signal = 0;
 static char *cmd = NULL;
@@ -53,9 +61,10 @@ extern char *__progname;
 static int usage(void)
 {
 	// Usage info
-	printf("Usage: %s [-rv?] length[suffix] ...\n", __progname);
+	printf("Usage: %s [-rvV?] length[suffix] ...\n", __progname);
 	printf("  -r, --run           Run the specified command when the time runs out\n");
 	printf("  -v, --verbose       Enable verbose output\n");
+	printf("  -V, --version       Show timelim's version number\n");
 	printf("  -?, --help          Display this text\n");
 	return 1;
 }
@@ -118,17 +127,23 @@ int main(int argc, char *argv[])
 	struct option long_opts[] = {
 	{ "run",      required_argument, NULL, 'r' },
 	{ "verbose",  no_argument,       NULL, 'v' },
+	{ "version",  no_argument,       NULL, 'V' },
 	{ "help",     no_argument,       NULL, '?' },
 	};
 
 	// Parse the options
 	int args;
-	while((args = getopt_long(argc, argv, "r:v?", long_opts, NULL)) != -1) {
+	while((args = getopt_long(argc, argv, "r:vV?", long_opts, NULL)) != -1) {
 		switch(args) {
 
 			// Usage
 			case '?':
 				return usage();
+
+			// Version info
+			case 'V':
+				printf(WHITE "Timelim version " CYAN TIMELIM_VERSION RESET "\n");
+				return 0;
 
 			// Run a command on completion
 			case 'r':
