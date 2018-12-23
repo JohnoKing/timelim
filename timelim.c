@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 	}
 
 	// Function as sleep(1)
-	args = --argc;
+	args = argc - 1;
 	while(args != 0) {
 
 		// If the argument has a dash, skip it
