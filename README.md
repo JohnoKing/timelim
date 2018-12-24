@@ -37,8 +37,8 @@ Set a time limit to last one year and three weeks:
 Set a time limit to only last 24000 nanoseconds:
 `timelim 24000n`
 
-Set a time limit to last 3.6 centuries and 4.1 months:
-`timelim 3.6c 4.1o`
+Set a time limit to last 3.6 centuries, 2.4 decades and 4.1 months:
+`timelim 3.6c 2.4D 4.1o`
 
 Run uname after 27 seconds:
 `timelim --run "uname -a" 27s`
