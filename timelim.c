@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "1.0-RC2"
+#define TIMELIM_VERSION "1.0"
 
 /* Muliply the seconds by one of these for conversion into minutes, weeks, etc.
    This assumes each month is 30 days */
