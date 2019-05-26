@@ -10,8 +10,9 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled.  
 
 ## Usage
-`Usage: sleep/timelim [-rvV?] length[suffix] ...`  
+`Usage: sleep/timelim [-rsvV?] length[suffix] ...`  
 `  -r, --run           Run the specified command when the time runs out`  
+`  -s, --sidereal      Use sidereal units of time`  
 `  -v, --verbose       Enable verbose output`  
 `  -V, --version       Show timelim's version number`  
 `  -?, --help          Display this text`  
@@ -22,8 +23,8 @@ Timelim also accepts suffix arguments such as `10h` for 10 hours when used in pl
 Sleep for 2 seconds with verbose output (when run as sleep):
 `sleep -v 2` or `sleep -v 2s`
 
-Sleep for 4 months, 2 weeks and 2000 nanoseconds (with verbose output, suffixes):
-`timelim --verbose 4m 2w 2000n`
+Sleep for 4 months, 1 fortnight, 2 weeks and 2000 nanoseconds (with verbose output, suffixes):
+`timelim --verbose 4m 1f 2w 2000n`
 
 Sleep for 7 millennia and a month:
 `timelim 7M 1o`
@@ -31,8 +32,8 @@ Sleep for 7 millennia and a month:
 Set a time limit to last a minute: 
 `timelim 1m` or `./timelim 60s`
 
-Set a time limit to last one year and three weeks:
-`timelim 1y 3w`
+Set a time limit to last one sidereal year and three weeks:
+`timelim -s 1y 3w`
 
 Set a time limit to only last 24000 nanoseconds:
 `timelim 24000n`
