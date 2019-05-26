@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "1.0"
+#define TIMELIM_VERSION "1.0.1"
 
 /* Multiply the seconds by one of these for conversion into minutes, weeks, etc.
    This assumes each month is 30 days */
@@ -95,11 +95,6 @@ static long decimal(char *arg)
 	// Set a char variable called 'base' to the relevant position
 	strsep(&arg, ".");
 	const char *base = strsep(&arg, ".");
-	size_t sz = strlen(base);
-	if(strchr(base, 'm') != NULL || strchr(base, 'h') != NULL || strchr(base, 'd') != NULL || strchr(base, 'w') != NULL || \
-		strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || \
-		strchr(base, 's') != NULL || strchr(base, 'M') != NULL || strchr(base, 'D'))
-		--sz;
 
 	// Convert base into a number that is the proper length
 	long num = atol(base);
