@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "1.1.0"
+#define TIMELIM_VERSION "1.1.1"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -92,7 +92,6 @@ static long decimal(char *arg)
 static void sighandle(int sig)
 {
 	current_signal = sig;
-	return;
 }
 
 // Main function
