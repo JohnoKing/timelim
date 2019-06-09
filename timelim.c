@@ -230,7 +230,7 @@ end:
 
 	// Sleep
 	while(nanosleep(&time, &time) != 0) {
-		if(current_signal == SIGALRM) break;
+		if(current_signal == SIGALRM) return 0;
 		printf("Remaining seconds: %ld\n", (long)time.tv_sec);
 		printf("Remaining nanoseconds: %ld\n", time.tv_nsec);
 	}
