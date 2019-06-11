@@ -29,7 +29,7 @@ LDFLAGS := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
 # Compile
 all:
 	@$(CC) $(CFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
-	@$(STRIP) --strip-unneeded -R .comment -R .gnu.version timelim
+	@$(STRIP) --strip-unneeded -R .comment -R .gnu.version -R .GCC.command.line -R .note.gnu.gold-version timelim
 	@echo "Successfully built timelim!"
 
 # Install

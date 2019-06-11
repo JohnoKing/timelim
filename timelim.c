@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v1.1.2"
+#define TIMELIM_VERSION "v1.1.3"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
