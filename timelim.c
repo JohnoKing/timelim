@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "1.1.1"
+#define TIMELIM_VERSION "v1.1.2"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -135,7 +135,7 @@ int main(int argc, char *argv[])
 
 			// Version info
 			case 'V':
-				printf(WHITE "Timelim version " CYAN TIMELIM_VERSION RESET "\n");
+				printf(WHITE "Timelim " CYAN TIMELIM_VERSION RESET "\n");
 				return 0;
 
 			// Run a command on completion
