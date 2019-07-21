@@ -34,13 +34,13 @@ all:
 
 # Install
 install: all
-	@mkdir -p $(DESTDIR)/usr/local/bin
-	@install -Dm0755 timelim $(DESTDIR)/usr/local/bin
+	@mkdir -p "$(DESTDIR)/usr/local/bin"
+	@install -Dm0755 timelim "$(DESTDIR)/usr/local/bin"
 	@echo "Successfully installed timelim!"
 
 # Uninstall
 uninstall:
-	@rm -f $(DESTDIR)/usr/local/bin/timelim
+	@rm -f "$(DESTDIR)/usr/local/bin/timelim"
 	@echo "Successfully uninstalled timelim!"
 
 # Cleanup
