@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v1.1.4"
+#define TIMELIM_VERSION "v1.1.5"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -79,8 +79,8 @@ static long decimal(char *arg)
 
     // Convert base into a number that is the proper length
     long num = atol(base);
-    if(num < 1e9)
-        num = num * 1e8;
+    if(num < 1000000000)
+        num = num * 100000000;
     while(num > 999999999)
         num = num / 10;
 
@@ -186,7 +186,7 @@ int main(int argc, char *argv[])
         // Millennia
         } else if(strchr(argv[args], 'M') != NULL) {
             centuries    += strtoul(argv[args], NULL, 10) * 10;
-            multiplier = year * 1e3;
+            multiplier = year * 1000;
             goto tv_nsec_end;
         }
 
@@ -204,17 +204,17 @@ end:
 
     // time.tv_nsec cannot exceed one billion
     while(time.tv_nsec > 999999999) {
-        time_t esec  = time.tv_nsec / 1e9;
+        time_t esec  = time.tv_nsec / 1000000000;
         time.tv_sec += esec;
-        time.tv_nsec = time.tv_nsec - (esec * 1e9);
+        time.tv_nsec = time.tv_nsec - (esec * 1000000000);
     }
 
     // Verbose output
     if(verbose == 0) {
         printf("Sleeping for ");
-        lprint(centuries * (year * 100) + time.tv_sec, "second");
+        lprint(centuries * ((unsigned)year * 100) + (unsigned)time.tv_sec, "second");
         printf(" and ");
-        lprint(time.tv_nsec, "nanosecond");
+        lprint((unsigned)time.tv_nsec, "nanosecond");
         printf("\n");
     }
 
@@ -237,7 +237,7 @@ end:
 
     // Sleep for multiple centuries (workaround for 32-bit int)
     while(centuries != 0) {
-        sleep(year * 100);
+        sleep((unsigned)year * 100);
         --centuries;
     }
 
