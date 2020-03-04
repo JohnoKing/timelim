@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018-2019 Johnothan King. All rights reserved.
+ * Copyright (c) 2018-2020 Johnothan King. All rights reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v1.1.5"
+#define TIMELIM_VERSION "v1.1.6"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
     { "verbose",  no_argument, NULL, 'v' },
     { "version",  no_argument, NULL, 'V' },
     { "help",     no_argument, NULL, '?' },
+    {  0,                   0, 0,     0  }
     };
 
     // Parse the options
