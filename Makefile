@@ -20,15 +20,16 @@
 #
 
 # Variables (each one may be overridden)
-CC      := cc
-STRIP   := strip
-CFLAGS  := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -D_FORTIFY_SOURCE=2 -pipe
-WFLAGS  := -Wall -Wextra -Wpedantic
-LDFLAGS := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
+CC       := cc
+STRIP    := strip
+CFLAGS   := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -pipe
+CPPFLAGS := -D_FORTIFY_SOURCE=2
+WFLAGS   := -Wall -Wextra -Wpedantic
+LDFLAGS  := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
 
 # Compile
 all:
-	@$(CC) $(CFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
+	@$(CC) $(CFLAGS) $(CPPFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
 	@$(STRIP) --strip-unneeded -R .comment -R .gnu.version -R .GCC.command.line -R .note.gnu.gold-version timelim
 	@echo "Successfully built timelim!"
 
