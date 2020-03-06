@@ -1,4 +1,4 @@
-# Copyright (c) 2018-2019 Johnothan King. All rights reserved.
+# Copyright (c) 2018-2020 Johnothan King. All rights reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
 # Variables (each one may be overridden)
 CC      := cc
 STRIP   := strip
-CFLAGS  := -O2 -ffast-math -fomit-frame-pointer -fPIC -pipe
+CFLAGS  := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -D_FORTIFY_SOURCE=2 -pipe
 WFLAGS  := -Wall -Wextra -Wpedantic
 LDFLAGS := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
 
