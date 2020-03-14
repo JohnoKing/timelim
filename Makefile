@@ -47,6 +47,8 @@ uninstall:
 # Cleanup
 clean:
 	@rm -rf timelim
+	@git gc
+	@git repack
 
 # Calls clean, then resets the git repo
 clobber: clean
