@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    // Function as sleep(1)
+    // Parse suffixes
     args = argc - 1;
     while(args != 0) {
         int multiplier = 1;
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
         else if(strchr(argv[args], 'y') != NULL)  multiplier = year;      // Years
         else if(strchr(argv[args], 'D') != NULL)  multiplier = year * 10; // Decades
 
-        // Microseconds
+        // Nanoseconds
         else if(strchr(argv[args], 'n') != NULL) {
             time.tv_nsec += atol(argv[args]);
             goto end;
