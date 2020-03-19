@@ -50,7 +50,7 @@ uninstall:
 
 # Cleanup
 clean:
-	@rm -rf timelim timelim.1.zst
+	@rm -rf timelim *.zst
 	@git gc >> /dev/null 2> /dev/null
 	@git repack >> /dev/null 2> /dev/null
 
