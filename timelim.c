@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v1.1.9"
+#define TIMELIM_VERSION "v1.1.10"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -76,13 +76,22 @@ static long decimal(char *arg)
     // Set a char variable called 'base' to the relevant position
     strsep(&arg, ".");
     const char *base = strsep(&arg, ".");
-
-    // Convert base into a number that is the proper length
     long num = atol(base);
+
+    // Count the number of preceding zeros in base
+    unsigned int len_diff = strlen(base) - printf("%ld", num);
+
+    // Ensure num is the proper length
     if(num < 1000000000)
         num = num * 100000000;
     while(num > 999999999)
         num = num / 10;
+
+    // Divide by 10 for each zero, does not work with && or || in the above loop
+    while(len_diff != 0) {
+        num = num / 10;
+        --len_diff;
+    }
 
     // Return the number
     return num;
