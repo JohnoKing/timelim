@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v1.1.9"
+#define TIMELIM_VERSION "v2.0.0"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -43,15 +43,13 @@
 
 // Variables
 static int current_signal = 0;
-static char *cmd = NULL;
 extern char *__progname;
 
 // Display usage of timelim
 static int usage(void)
 {
     // Usage info
-    printf("Usage: %s [-rsvV?] length[suffix] ...\n", __progname);
-    printf("  -r, --run           Run the specified command when the time runs out\n");
+    printf("Usage: %s [-svV?] length[suffix] ...\n", __progname);
     printf("  -s, --sidereal      Use sidereal units of time\n");
     printf("  -v, --verbose       Enable verbose output\n");
     printf("  -V, --version       Show timelim's version number\n");
@@ -76,16 +74,38 @@ static long decimal(char *arg)
     // Set a char variable called 'base' to the relevant position
     strsep(&arg, ".");
     const char *base = strsep(&arg, ".");
+    size_t sz = strlen(base);
+    if(strchr(base, 'm') != NULL || strchr(base, 'h') != NULL || strchr(base, 'd') != NULL || strchr(base, 'w') != NULL || \
+        strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || strchr(base, 's') != NULL || \
+        strchr(base, 'D') != NULL || strchr(base, 'f') != NULL || strchr(base, 'M') != NULL)
+        --sz;
 
-    // Convert base into a number that is the proper length
+    // Set the multiplier depending on the length of base
     long num = atol(base);
-    if(num < 1000000000)
-        num = num * 100000000;
-    while(num > 999999999)
-        num = num / 10;
-
-    // Return the number
-    return num;
+    switch(sz) {
+       case 1:
+           return num * 100000000;
+       case 2:
+           return num * 10000000;
+       case 3:
+           return num * 1000000;
+       case 4:
+           return num * 100000;
+       case 5:
+           return num * 10000;
+       case 6:
+           return num * 1000;
+       case 7:
+           return num * 100;
+       case 8:
+           return num * 10;
+       case 9:
+           return num;
+       default:
+           while(num > 999999999)
+               num = num / 10;
+           return num;
+    }
 }
 
 // Set current_signal to the signal that was sent to timelim
@@ -117,12 +137,11 @@ int main(int argc, char *argv[])
 
     // Long options for getopt_long
     struct option long_opts[] = {
-    { "run",      required_argument, NULL, 'r' },
     { "sidereal", no_argument, NULL, 's' },
     { "verbose",  no_argument, NULL, 'v' },
     { "version",  no_argument, NULL, 'V' },
     { "help",     no_argument, NULL, '?' },
-    {  0,                   0, 0,     0  }
+    {  0,                   0,    0,  0  }
     };
 
     // Parse the options
@@ -138,11 +157,6 @@ int main(int argc, char *argv[])
             case 'V':
                 printf(WHITE "Timelim " CYAN TIMELIM_VERSION RESET "\n");
                 return 0;
-
-            // Run a command on completion
-            case 'r':
-                cmd = optarg;
-                break;
 
             // Use sidereal measurements
             case 's':
@@ -245,10 +259,6 @@ end:
     // Notify completion
     if(verbose == 0)
         printf("Time's up!\n");
-
-    // Run command
-    if(cmd != NULL)
-        return execl("/bin/sh", "/bin/sh", "-c", cmd, NULL);
 
     return 0;
 }
