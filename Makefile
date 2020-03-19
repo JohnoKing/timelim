@@ -26,27 +26,31 @@ CFLAGS   := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -pipe
 CPPFLAGS := -D_FORTIFY_SOURCE=2
 WFLAGS   := -Wall -Wextra -Wpedantic
 LDFLAGS  := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
+prefix   := /usr/local
 
-# Compile
+# Compile (needs zstd(1))
 all:
 	@$(CC) $(CFLAGS) $(CPPFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
 	@$(STRIP) --strip-unneeded -R .comment -R .gnu.version -R .GCC.command.line -R .note.gnu.gold-version timelim
+	@zstd timelim.1
 	@echo "Successfully built timelim!"
 
 # Install
 install: all
-	@mkdir -p "$(DESTDIR)/usr/local/bin"
-	@install -Dm0755 timelim "$(DESTDIR)/usr/local/bin"
+	@mkdir -p "$(DESTDIR)/$(prefix)/bin" "$(DESTDIR)/$(prefix)/share/man/man1" "$(DESTDIR)/$(prefix)/share/licenses/timelim"
+	@install -Dm0755 timelim "$(DESTDIR)/$(prefix)/bin"
+	@install -Dm0644 timelim.1.zst "$(DESTDIR)/$(prefix)/share/man/man1"
+	@install -Dm0644 LICENSE "$(DESTDIR)/$(prefix)/share/licenses/timelim"
 	@echo "Successfully installed timelim!"
 
 # Uninstall
 uninstall:
-	@rm -f "$(DESTDIR)/usr/local/bin/timelim"
+	@rm -rf "$(DESTDIR)/$(prefix)/bin/timelim" "$(DESTDIR)/$(prefix)/share/man/man1/timelim.1.zst" "$(DESTDIR)/$(prefix)/share/licenses/timelim"
 	@echo "Successfully uninstalled timelim!"
 
 # Cleanup
 clean:
-	@rm -rf timelim
+	@rm -rf timelim timelim.1.zst
 	@git gc >> /dev/null 2> /dev/null
 	@git repack >> /dev/null 2> /dev/null
 
