@@ -10,8 +10,7 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled.  
 
 ## Usage
-`Usage: sleep/timelim [-rsvV?] length[suffix] ...`  
-`  -r, --run           Run the specified command when the time runs out`  
+`Usage: sleep/timelim [-svV?] length[suffix] ...`  
 `  -s, --sidereal      Use sidereal units of time`  
 `  -v, --verbose       Enable verbose output`  
 `  -V, --version       Show timelim's version number`  
@@ -40,6 +39,3 @@ Set a time limit to only last 24000 nanoseconds:
 
 Set a time limit to last 3.6 centuries, 2.4 decades and 4.1 months:
 `timelim 3.6c 2.4D 4.1o`
-
-Run uname after 27 seconds:
-`timelim --run "uname -a" 27s`

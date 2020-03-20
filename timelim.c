@@ -49,8 +49,9 @@ extern char *__progname;
 static int usage(void)
 {
     // Usage info
-    printf("Usage: %s [-svV?] length[suffix] ...\n", __progname);
-    printf("  -s, --sidereal      Use sidereal units of time\n");
+    printf("Usage: %s [-jsvV?] length[suffix] ...\n", __progname);
+    printf("  -j, --julian        Use the Julian calendar instead of the Gregorian calendar\n");
+    printf("  -s, --sidereal      Use the Sidereal year instead of the Gregorian year\n");
     printf("  -v, --verbose       Enable verbose output\n");
     printf("  -V, --version       Show timelim's version number\n");
     printf("  -?, --help          Display this text\n");
@@ -128,7 +129,7 @@ int main(int argc, char *argv[])
     int week      = 604800;
     int fortnight = 1209600;
     int month     = 2629800;
-    int year      = 31557600;
+    int year      = 31556952;
 
     // General variables
     unsigned long centuries = 0;
@@ -137,6 +138,7 @@ int main(int argc, char *argv[])
 
     // Long options for getopt_long
     struct option long_opts[] = {
+    { "julian",   no_argument, NULL, 'j' },
     { "sidereal", no_argument, NULL, 's' },
     { "verbose",  no_argument, NULL, 'v' },
     { "version",  no_argument, NULL, 'V' },
@@ -146,7 +148,7 @@ int main(int argc, char *argv[])
 
     // Parse the options
     int args;
-    while((args = getopt_long(argc, argv, "r:svV?", long_opts, NULL)) != -1) {
+    while((args = getopt_long(argc, argv, "jsvV?", long_opts, NULL)) != -1) {
         switch(args) {
 
             // Usage
@@ -158,7 +160,12 @@ int main(int argc, char *argv[])
                 printf(WHITE "Timelim " CYAN TIMELIM_VERSION RESET "\n");
                 return 0;
 
-            // Use sidereal measurements
+            // Use the Julian calendar
+            case 'j':
+                year = 31557600;
+                break;
+
+            // Use the Sidereal year
             case 's':
                 year = 31558150;
                 break;
