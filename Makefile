@@ -38,18 +38,18 @@ all:
 install: all
 	@mkdir -p "$(DESTDIR)/$(prefix)/bin" "$(DESTDIR)/$(prefix)/share/man/man1" "$(DESTDIR)/$(prefix)/share/licenses/timelim"
 	@install -Dm0755 timelim "$(DESTDIR)/$(prefix)/bin"
-	@install -Dm0644 timelim.1.zst "$(DESTDIR)/$(prefix)/share/man/man1"
+	@install -Dm0644 timelim.1 "$(DESTDIR)/$(prefix)/share/man/man1"
 	@install -Dm0644 LICENSE "$(DESTDIR)/$(prefix)/share/licenses/timelim"
 	@echo "Successfully installed timelim!"
 
 # Uninstall
 uninstall:
-	@rm -rf "$(DESTDIR)/$(prefix)/bin/timelim" "$(DESTDIR)/$(prefix)/share/man/man1/timelim.1.zst" "$(DESTDIR)/$(prefix)/share/licenses/timelim"
+	@rm -rf "$(DESTDIR)/$(prefix)/bin/timelim" "$(DESTDIR)/$(prefix)/share/man/man1/timelim.1" "$(DESTDIR)/$(prefix)/share/licenses/timelim"
 	@echo "Successfully uninstalled timelim!"
 
 # Cleanup
 clean:
-	@rm -rf timelim *.zst
+	@rm -rf timelim
 	@git gc >> /dev/null 2> /dev/null
 	@git repack >> /dev/null 2> /dev/null
 
