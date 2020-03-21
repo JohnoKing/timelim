@@ -28,11 +28,10 @@ WFLAGS   := -Wall -Wextra -Wpedantic
 LDFLAGS  := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
 prefix   := /usr/local
 
-# Compile (needs zstd(1))
+# Compile timelim
 all:
 	@$(CC) $(CFLAGS) $(CPPFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
 	@$(STRIP) --strip-unneeded -R .comment -R .gnu.version -R .GCC.command.line -R .note.gnu.gold-version timelim
-	@zstd timelim.1
 	@echo "Successfully built timelim!"
 
 # Install
