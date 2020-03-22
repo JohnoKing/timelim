@@ -224,8 +224,14 @@ end:
         --args;
     }
 
+    // time.tv_nsec cannot exceed one billion
+    while(time.tv_nsec > 999999999) {
+        time_t esec  = time.tv_nsec / 1000000000;
+        time.tv_sec += esec;
+        time.tv_nsec = time.tv_nsec - (esec * 1000000000);
+    }
     // To improve accuracy, subtract 490,000 nanoseconds to account for natural overhead
-    if(time.tv_sec > 0 && time.tv_nsec == 0) {
+    if(time.tv_sec > 0 && time.tv_nsec < 999510000) {
         time.tv_sec  = time.tv_sec - 1;
         time.tv_nsec = time.tv_nsec + 1000000000;
         time.tv_nsec = time.tv_nsec - 490000;
