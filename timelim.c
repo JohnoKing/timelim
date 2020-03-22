@@ -224,14 +224,12 @@ end:
         --args;
     }
 
-    // To improve accuracy, subtract 850,000 nanoseconds to account for natural overhead
+    // To improve accuracy, subtract 490,000 nanoseconds to account for natural overhead
     if(time.tv_sec > 0 && time.tv_nsec == 0) {
         time.tv_sec  = time.tv_sec - 1;
         time.tv_nsec = time.tv_nsec + 1000000000;
-        time.tv_nsec = time.tv_nsec - 850000;
+        time.tv_nsec = time.tv_nsec - 490000;
     }
-
-    // If there are no required seconds, only subtract 490,000 nanoseconds
     else if(time.tv_nsec > 490000)
         time.tv_nsec = time.tv_nsec - 490000;
 
