@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v2.0.1"
+#define TIMELIM_VERSION "v2.1.0"
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -224,12 +224,20 @@ end:
         --args;
     }
 
-    // time.tv_nsec cannot exceed one billion
-    while(time.tv_nsec > 999999999) {
-        time_t esec  = time.tv_nsec / 1000000000;
-        time.tv_sec += esec;
-        time.tv_nsec = time.tv_nsec - (esec * 1000000000);
+    // To improve accuracy, subtract 850,000 nanoseconds to account for natural overhead
+    if(time.tv_sec > 0 && time.tv_nsec == 0) {
+        time.tv_sec  = time.tv_sec - 1;
+        time.tv_nsec = time.tv_nsec + 1000000000;
+        time.tv_nsec = time.tv_nsec - 850000;
     }
+
+    // If there are no required seconds, only subtract 490,000 nanoseconds
+    else if(time.tv_nsec > 490000)
+        time.tv_nsec = time.tv_nsec - 490000;
+
+    // The natural overhead of just executing by this point usually reaches 490,000 nanoseconds, so just set tv_nsec to 0
+    else
+        time.tv_nsec = 0;
 
     // Verbose output
     if(verbose == 0) {
