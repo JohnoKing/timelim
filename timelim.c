@@ -36,6 +36,17 @@
 // Timelim's version number
 #define TIMELIM_VERSION "v2.1.0"
 
+/*
+ * Define the number of seconds wasted during execution on average
+ * When compiling timelim statically, add -DSTATIC to the CPPFLAGS
+ * to get the correct value for OVERHEAD_MASK
+ */
+#ifdef STATIC
+#define OVERHEAD_MASK 390000
+#else
+#define OVERHEAD_MASK 490000
+#endif
+
 // Colors
 #define CYAN  "\x1b[1;36m"
 #define WHITE "\x1b[1;37m"
@@ -224,24 +235,24 @@ end:
         --args;
     }
 
+    // To improve accuracy, subtract 490,000 nanoseconds to account for natural overhead
+    if(time.tv_nsec > OVERHEAD_MASK) {
+        if(time.tv_sec > 0) {
+            time.tv_sec  = time.tv_sec - 1;
+            time.tv_nsec = time.tv_nsec + 1000000000 - OVERHEAD_MASK;
+        } else
+            time.tv_nsec = time.tv_nsec - OVERHEAD_MASK;
+
+    // The natural overhead of just executing causes inaccuracy at this point, so tv_nsec is set to 0
+    } else
+        time.tv_nsec = 0;
+
     // time.tv_nsec cannot exceed one billion
     while(time.tv_nsec > 999999999) {
         time_t esec  = time.tv_nsec / 1000000000;
         time.tv_sec += esec;
         time.tv_nsec = time.tv_nsec - (esec * 1000000000);
     }
-    // To improve accuracy, subtract 490,000 nanoseconds to account for natural overhead
-    if(time.tv_sec > 0 && time.tv_nsec < 999510000) {
-        time.tv_sec  = time.tv_sec - 1;
-        time.tv_nsec = time.tv_nsec + 1000000000;
-        time.tv_nsec = time.tv_nsec - 490000;
-    }
-    else if(time.tv_nsec > 490000)
-        time.tv_nsec = time.tv_nsec - 490000;
-
-    // The natural overhead of just executing by this point usually reaches 490,000 nanoseconds, so just set tv_nsec to 0
-    else
-        time.tv_nsec = 0;
 
     // Verbose output
     if(verbose == 0) {
