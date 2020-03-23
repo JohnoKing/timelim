@@ -263,14 +263,15 @@ end:
         printf("\n");
     }
 
-    // Catch SIGINFO, SIGPWR and SIGALRM
+    // Catch SIGINFO/SIGPWR and SIGALRM
     struct sigaction actor;
     memset(&actor, 0, sizeof(actor));
     actor.sa_handler = sighandle;
     sigaction(SIGALRM, &actor, NULL);
-    sigaction(SIGPWR,  &actor, NULL);
 #   ifdef SIGINFO
     sigaction(SIGINFO, &actor, NULL);
+#   else
+    sigaction(SIGPWR,  &actor, NULL);
 #   endif
 
     // Sleep
