@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v2.1.0"
+#define TIMELIM_VERSION "v2.1.1"
 
 /*
  * Define the number of seconds wasted during execution on average
@@ -60,7 +60,7 @@ extern char *__progname;
 static int usage(void)
 {
     // Usage info
-    printf("Usage: %s [-jsvV?] length[suffix] ...\n", __progname);
+    printf("Usage: %s [-jsvV?] number[suffix] ...\n", __progname);
     printf("  -j, --julian        Use the Julian calendar instead of the Gregorian calendar\n");
     printf("  -s, --sidereal      Use the Sidereal year instead of the Gregorian year\n");
     printf("  -v, --verbose       Enable verbose output\n");
