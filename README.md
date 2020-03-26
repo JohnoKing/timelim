@@ -30,7 +30,7 @@ Timelim also accepts suffix arguments such as `10h` for 10 hours when used in pl
 `y: Years`
 `D: Decades`
 `c: Centuries`
-`M: Millenia`
+`M: Millennia`
 
 ## Examples
 Sleep for 2 seconds with verbose output (when run as sleep):
