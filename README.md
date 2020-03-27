@@ -10,7 +10,7 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled. If Timelim needs to be statically compiled, add `-DSTATIC` to `CPPFLAGS` to ensure the correct value is used for `OVERHEAD_MASK`.
 
 ## Usage
-`Usage: timelim [-jsvV?] length[suffix] ...`
+`Usage: timelim [-jsvV?] number[suffix] ...`
 `  -j, --julian        Use the Julian calendar instead of the Gregorian calendar`
 `  -s, --sidereal      Use the Sidereal year instead of the Gregorian year`
 `  -v, --verbose       Enable verbose output`
