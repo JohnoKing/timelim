@@ -22,7 +22,7 @@
 
 /*
  * timelim - A program capable of setting very long time limits
- *  This program can function as a replacement for sleep(1)
+ * This program can function as a replacement for POSIX sleep(1)
  */
 
 #include <getopt.h>
@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v2.1.1"
+#define TIMELIM_VERSION "v2.1.2"
 
 /*
  * Define the number of seconds wasted during execution on average
