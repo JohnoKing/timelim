@@ -7,7 +7,7 @@ Timelim is a POSIX-compliant implementation of the sleep(1) utility capable of s
 There is no real point to this program, it is just something to experiment with.
 
 ## Building and Usage
-Run `make` and the timelim binary will be compiled. If Timelim needs to be statically compiled, add `-DSTATIC` to `CPPFLAGS` to ensure the correct value is used for `OVERHEAD_MASK`.
+Run `make` and the timelim binary will be compiled.
 
 ## Usage
 `Usage: timelim [-jsvV?] number[suffix] ...`
