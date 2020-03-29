@@ -37,15 +37,10 @@
 #define TIMELIM_VERSION "v2.1.2"
 
 /*
- * Define the number of seconds wasted during execution on average
- * When compiling timelim statically, add -DSTATIC to the CPPFLAGS
- * to get the correct value for OVERHEAD_MASK
+ * Define the number of seconds wasted during execution to subtract from the total time to sleep
+ * This number is rather conservative, most machines will benefit from increasing the OVERHEAD_MASK
  */
-#ifdef STATIC
-#define OVERHEAD_MASK 390000
-#else
-#define OVERHEAD_MASK 490000
-#endif
+#define OVERHEAD_MASK 335000
 
 // Colors
 #define CYAN  "\x1b[1;36m"
