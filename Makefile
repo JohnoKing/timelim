@@ -22,10 +22,10 @@
 # Variables (each one may be overridden)
 CC       := cc
 STRIP    := strip
-CFLAGS   := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -pipe
+CFLAGS   := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -fdata-sections -ffunction-sections -pipe
 CPPFLAGS := -D_FORTIFY_SOURCE=2
 WFLAGS   := -Wall -Wextra -Wpedantic
-LDFLAGS  := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
+LDFLAGS  := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now,--gc-sections
 prefix   := /usr/local
 
 # Compile timelim
