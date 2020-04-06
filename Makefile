@@ -20,18 +20,18 @@
 #
 
 # Variables (each one may be overridden)
-CC       := cc
-STRIP    := strip
-CFLAGS   := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -fdata-sections -ffunction-sections -pipe
-CPPFLAGS := -D_FORTIFY_SOURCE=2
-WFLAGS   := -Wall -Wextra -Wpedantic
-LDFLAGS  := -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now,--gc-sections
-prefix   := /usr/local
+CC       = cc
+STRIP    = strip
+CFLAGS   = -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -fdata-sections -ffunction-sections -pipe
+CPPFLAGS = -D_FORTIFY_SOURCE=2
+WFLAGS   = -Wall -Wextra -Wpedantic
+LDFLAGS  = -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now,--gc-sections
+prefix   = /usr/local
 
 # Compile timelim
 all:
 	@$(CC) $(CFLAGS) $(CPPFLAGS) $(WFLAGS) -o timelim timelim.c $(LDFLAGS)
-	@$(STRIP) --strip-unneeded -R .comment -R .gnu.version -R .GCC.command.line -R .note.gnu.gold-version timelim
+	@$(STRIP) --strip-unneeded -R .comment -R .gnu.version -R .GCC.command.line -R .note.gnu.gold-version timelim || true
 	@echo "Successfully built timelim!"
 
 # Install
