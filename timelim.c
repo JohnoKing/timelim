@@ -56,11 +56,11 @@ static int usage(void)
 {
     // Usage info
     printf("Usage: %s [-jsvV?] number[suffix] ...\n", __progname);
-    printf("  -j, --julian        Use the Julian calendar instead of the Gregorian calendar\n");
-    printf("  -s, --sidereal      Use the Sidereal year instead of the Gregorian year\n");
-    printf("  -v, --verbose       Enable verbose output\n");
-    printf("  -V, --version       Show timelim's version number\n");
-    printf("  -?, --help          Display this text\n");
+    printf("  -j, --julian     Use the Julian calendar instead of the Gregorian calendar\n");
+    printf("  -s, --sidereal   Use the Sidereal year instead of the Gregorian year\n");
+    printf("  -v, --verbose    Enable verbose output\n");
+    printf("  -V, --version    Show timelim's version number\n");
+    printf("  -?, --help       Display this text\n");
     return 1;
 }
 

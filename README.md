@@ -11,11 +11,11 @@ Run `make` and the timelim binary will be compiled.
 
 ## Usage
 `Usage: timelim [-jsvV?] number[suffix] ...`
-`  -j, --julian        Use the Julian calendar instead of the Gregorian calendar`
-`  -s, --sidereal      Use the Sidereal year instead of the Gregorian year`
-`  -v, --verbose       Enable verbose output`
-`  -V, --version       Show timelim's version number`
-`  -?, --help          Display this text`
+`  -j, --julian     Use the Julian calendar instead of the Gregorian calendar`
+`  -s, --sidereal   Use the Sidereal year instead of the Gregorian year`
+`  -v, --verbose    Enable verbose output`
+`  -V, --version    Show timelim's version number`
+`  -?, --help       Display this text`
 
 ## Suffixes
 Timelim also accepts suffix arguments such as `10h` for 10 hours when used in place of the above options. Here is a list of supported suffixes:
