@@ -10,9 +10,10 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled.
 
 ## Usage
-`Usage: timelim [-jsvV?] number[suffix] ...`
+`Usage: timelim [-jsSvV?] number[suffix] ...`
 `  -j, --julian     Use the Julian calendar instead of the Gregorian calendar`
-`  -s, --sidereal   Use the Sidereal year instead of the Gregorian year`
+`  -s, --signal     Sleep until Timelim receives a signal or times out`
+`  -S, --sidereal   Use the Sidereal year instead of the Gregorian year`
 `  -v, --verbose    Enable verbose output`
 `  -V, --version    Show timelim's version number`
 `  -?, --help       Display this text`
@@ -42,14 +43,14 @@ Sleep for 4 months, 1 fortnight, 2 weeks and 2000 nanoseconds (with verbose outp
 Sleep for 7 millennia and a month, using the Julian calendar:
 `timelim -j 7M 1o`
 
-Set a time limit to last a minute: 
-`timelim 1m` or `./timelim 60s`
+Set a time limit to last a minute unless a signal is received:
+`timelim -s 1m` or `./timelim -s 60s`
 
 Set a time limit to last one sidereal year and three weeks:
-`timelim -s 1y 3w`
+`timelim -S 1y 3w`
 
-Set a time limit to only last 24000 nanoseconds:
-`timelim 24000n`
+Set a time limit to 740000 nanoseconds:
+`timelim 740000n`
 
-Set a time limit to last 3.6 centuries, 2.4 decades and 4.1 months:
+Set the time limit to 3.6 centuries, 2.4 decades and 4.1 months:
 `timelim 3.6c 2.4D 4.1o`

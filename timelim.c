@@ -34,7 +34,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v2.1.2"
+#define TIMELIM_VERSION "v3.0.0"
 
 /*
  * Define the number of seconds wasted during execution to subtract from the total time to sleep
@@ -57,7 +57,8 @@ static int usage(void)
     // Usage info
     printf("Usage: %s [-jsvV?] number[suffix] ...\n", __progname);
     printf("  -j, --julian     Use the Julian calendar instead of the Gregorian calendar\n");
-    printf("  -s, --sidereal   Use the Sidereal year instead of the Gregorian year\n");
+    printf("  -s, --signal     Sleep until Timelim receives a signal or times out\n");
+    printf("  -S, --sidereal   Use the Sidereal year instead of the Gregorian year\n");
     printf("  -v, --verbose    Enable verbose output\n");
     printf("  -V, --version    Show timelim's version number\n");
     printf("  -?, --help       Display this text\n");
@@ -138,14 +139,16 @@ int main(int argc, char *argv[])
     int year      = 31556952;
 
     // General variables
-    unsigned long centuries = 0;
-    unsigned int  verbose   = 1;
-    struct timespec time    = {0};
+    unsigned long centuries   = 0;
+    unsigned int  signal_wait = 1;
+    unsigned int  verbose     = 1;
+    struct timespec time      = {0};
 
     // Long options for getopt_long
     struct option long_opts[] = {
     { "julian",   no_argument, NULL, 'j' },
-    { "sidereal", no_argument, NULL, 's' },
+    { "signal",   no_argument, NULL, 's' },
+    { "sidereal", no_argument, NULL, 'S' },
     { "verbose",  no_argument, NULL, 'v' },
     { "version",  no_argument, NULL, 'V' },
     { "help",     no_argument, NULL, '?' },
@@ -154,7 +157,7 @@ int main(int argc, char *argv[])
 
     // Parse the options
     int args;
-    while((args = getopt_long(argc, argv, "jsvV?", long_opts, NULL)) != -1) {
+    while((args = getopt_long(argc, argv, "jsSvV?", long_opts, NULL)) != -1) {
         switch(args) {
 
             // Usage
@@ -171,8 +174,13 @@ int main(int argc, char *argv[])
                 year = 31557600;
                 break;
 
-            // Use the Sidereal year
             case 's':
+                // TODO: Implement ksh -s flag
+                signal_wait = 0;
+                break;
+
+            // Use the Sidereal year
+            case 'S':
                 year = 31558150;
                 break;
 
@@ -226,11 +234,11 @@ tv_nsec_end:
         time.tv_nsec += decimal(argv[args]) * multiplier;
 
 end:
-        // Subtract 1 from args (for args != 0)
+        // Go to the next argument
         --args;
     }
 
-    // To improve accuracy, subtract 490,000 nanoseconds to account for natural overhead
+    // To improve accuracy, subtract 490,000 nanoseconds to account for overhead
     if(time.tv_nsec > OVERHEAD_MASK) {
         if(time.tv_sec > 0) {
             time.tv_sec  = time.tv_sec - 1;
@@ -249,6 +257,13 @@ end:
         time.tv_nsec = time.tv_nsec - (esec * 1000000000);
     }
 
+    // Wait indefinitely if -s was passed without a defined timeout
+    if((signal_wait == 0) && (time.tv_sec == 0) && (time.tv_nsec == 0)) {
+        if(verbose == 0) printf("Waiting for a signal...\n");
+        pause();
+        return 0;
+    }
+
     // Verbose output
     if(verbose == 0) {
         printf("Sleeping for ");
@@ -258,6 +273,7 @@ end:
         printf("\n");
     }
 
+    // TODO: Use sigfilset and exit to implement -s flag
     // Catch SIGINFO/SIGPWR and SIGALRM
     struct sigaction actor;
     memset(&actor, 0, sizeof(actor));

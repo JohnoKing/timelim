@@ -18,7 +18,7 @@
 .\" OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 .\" SOFTWARE.
 .\"
-.Dd March 26, 2020
+.Dd April 10, 2020
 .Dt TIMELIM 1
 .Os
 .Sh NAME
@@ -26,7 +26,7 @@
 .Nd A program capable of setting ridiculous time limits
 .Sh SYNOPSIS
 .Nm
-.Op Fl jsvV
+.Op Fl jsSvV
 number[suffix]
 .Sh DESCRIPTION
 .Nm Timelim
@@ -48,7 +48,18 @@ This causes
 .Nm Timelim
 to use the Julian calendar instead of the Gregorian calendar.
 
-.Nm -s, --sidereal
+.Nm -s, --signal
+.Nm Timelim
+will function as normal until it receives a signal,
+which will then cause it finish execution with an exit status of zero.
+If no argument is given or the argument is zero,
+.Nm Timelim
+will wait indefinitely wait for a signal without timing out.
+This option was implemented for compatibility with the
+.Nm ksh(1)
+sleep builtin.
+
+.Nm -S, --sidereal
 This causes
 .Nm Timelim
 to use the Sidereal year instead of the Gregorian year.
@@ -125,11 +136,11 @@ timelim --verbose 4m 1f 2w 2000n
 Sleep for 7 millennia and a month, using the Julian calendar:
 timelim -j 7M 1o
 
-Set a time limit to last a minute:
-timelim 1m or ./timelim 60s
+Set a time limit to last a minute unless a signal is received:
+timelim -s 1m or ./timelim -s 60s
 
 Set a time limit to last one sidereal year and three weeks:
-timelim -s 1y 3w
+timelim -S 1y 3w
 
 Set a time limit to only last 24000 nanoseconds:
 timelim 24000n
@@ -137,6 +148,6 @@ timelim 24000n
 Set a time limit to last 3.6 centuries, 2.4 decades and 4.1 months:
 timelim 3.6c 2.4D 4.1o
 .Sh SEE ALSO
-nanosleep(2), sleep(3), signal(7)
+nanosleep(2), sleep(3), signal(7), ksh(1)
 .Sh AUTHOR
 Johnothan King
