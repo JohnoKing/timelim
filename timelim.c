@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
     unsigned long centuries   = 0;
     unsigned int  signal_wait = 1;
     unsigned int  verbose     = 1;
-    struct timespec time      = {0};
+    struct timespec timer     = {0};
 
     // Long options for getopt_long
     struct option long_opts[] = {
@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
 
         // Nanoseconds
         else if(strchr(argv[args], 'n') != NULL) {
-            time.tv_nsec += atol(argv[args]);
+            timer.tv_nsec += atol(argv[args]);
             goto end;
 
         // Centuries
@@ -227,11 +227,11 @@ int main(int argc, char *argv[])
         }
 
         // Set tv_sec if goto wasn't used
-        time.tv_sec += atoi(argv[args]) * multiplier;
+        timer.tv_sec += atoi(argv[args]) * multiplier;
 
 tv_nsec_end:
         // Set tv_nsec
-        time.tv_nsec += decimal(argv[args]) * multiplier;
+        timer.tv_nsec += decimal(argv[args]) * multiplier;
 
 end:
         // Go to the next argument
@@ -239,22 +239,22 @@ end:
     }
 
     // To improve accuracy, subtract 490,000 nanoseconds to account for overhead
-    if(time.tv_nsec > OVERHEAD_MASK) {
-        if(time.tv_sec > 0) {
-            time.tv_sec  = time.tv_sec - 1;
-            time.tv_nsec = time.tv_nsec + 1000000000 - OVERHEAD_MASK;
+    if(timer.tv_nsec > OVERHEAD_MASK) {
+        if(timer.tv_sec > 0) {
+            timer.tv_sec  = timer.tv_sec - 1;
+            timer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
         } else
-            time.tv_nsec = time.tv_nsec - OVERHEAD_MASK;
+            timer.tv_nsec = timer.tv_nsec - OVERHEAD_MASK;
 
     // The natural overhead of just executing causes inaccuracy at this point, so tv_nsec is set to 0
     } else
-        time.tv_nsec = 0;
+        timer.tv_nsec = 0;
 
-    // time.tv_nsec cannot exceed one billion
-    while(time.tv_nsec > 999999999) {
-        time_t esec  = time.tv_nsec / 1000000000;
-        time.tv_sec += esec;
-        time.tv_nsec = time.tv_nsec - (esec * 1000000000);
+    // timer.tv_nsec cannot exceed one billion
+    while(timer.tv_nsec > 999999999) {
+        time_t esec  = timer.tv_nsec / 1000000000;
+        timer.tv_sec += esec;
+        timer.tv_nsec = timer.tv_nsec - (esec * 1000000000);
     }
 
     // Set up the signal handler now
@@ -279,7 +279,7 @@ end:
 #   endif
 
     // Wait indefinitely if -s was passed without a defined timeout
-    if((signal_wait == 0) && (time.tv_sec == 0) && (time.tv_nsec == 0)) {
+    if((signal_wait == 0) && (timer.tv_sec == 0) && (timer.tv_nsec == 0)) {
         if(verbose == 0) printf("Waiting for a signal...\n");
         pause();
         return 0;
@@ -288,21 +288,21 @@ end:
     // Print out the number of seconds to sleep
     if(verbose == 0) {
         printf("Sleeping for ");
-        nprint(centuries * ((unsigned)year * 100) + (unsigned)time.tv_sec, "second");
+        nprint(centuries * ((unsigned)year * 100) + (unsigned)timer.tv_sec, "second");
         printf(" and ");
-        nprint((unsigned)time.tv_nsec, "nanosecond");
+        nprint((unsigned)timer.tv_nsec, "nanosecond");
         printf("\n");
     }
 
     // Sleep
-    while(nanosleep(&time, &time) != 0) {
+    while(nanosleep(&timer, &timer) != 0) {
         if(signal_wait == 0) {
             printf("%s\n", strsignal(current_signal)); // --verbose is ignored for consistent behavior
             return 0;
         }
 
-        printf("Remaining seconds: %ld\n", (long)time.tv_sec);
-        printf("Remaining nanoseconds: %ld\n", time.tv_nsec);
+        printf("Remaining seconds: %ld\n", (long)timer.tv_sec);
+        printf("Remaining nanoseconds: %ld\n", timer.tv_nsec);
     }
 
     // Sleep for multiple centuries (workaround for 32-bit int)
