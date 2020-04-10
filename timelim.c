@@ -47,7 +47,9 @@
 #define WHITE "\x1b[1;37m"
 #define RESET "\x1b[m"
 
-// Variables
+// Universal variables
+static long nanoseconds   = 0;
+static int seconds        = 0;
 static int current_signal = 0;
 extern char *__progname;
 
@@ -73,11 +75,12 @@ static void nprint(unsigned long length, const char *unit)
         printf("s");
 }
 
-// This function properly parses decimal arguments (such as 1.12 or 4.5w)
-static long decimal(char *arg)
+// This function parses all numbers after the decimal in a floating point number
+static long parse_decimal(char *arg)
 {
     // If there is no decimal, return
-    if(strchr(arg, '.') == NULL) return 0;
+    if(strchr(arg, '.') == NULL)
+        return 0;
 
     // Set a char variable called 'base' to the relevant position
     strsep(&arg, ".");
@@ -113,6 +116,38 @@ static long decimal(char *arg)
            while(num > 999999999)
                num = num / 10;
            return num;
+    }
+}
+
+// ISO 8061 string parsing
+// NOTE: Avoid using else statements
+static void parse_iso(char *arg, unsigned int mode)
+{
+    // Parse P arguments
+    if(mode == 0) {
+        if(strchr(arg, 'Y') != NULL) {
+            char *years = strsep(&arg, "Y");
+            seconds += atoi(years);
+            nanoseconds += parse_decimal(years);
+        }
+        if(strchr(arg, 'y') != NULL) {
+            char *years = strsep(&arg, "y");
+            seconds += atoi(years);
+            nanoseconds += parse_decimal(years);
+        }
+    }
+
+    // Parse T arguments
+    if(strchr(arg, 'H') != NULL) {
+        char *hours = strsep(&arg, "H");
+        printf("%s\n", hours);
+        seconds += atoi(hours);
+        nanoseconds += parse_decimal(hours);
+    }
+    if(strchr(arg, 'h') != NULL) {
+        char *hours = strsep(&arg, "h");
+        seconds += atoi(hours);
+        nanoseconds += parse_decimal(hours);
     }
 }
 
@@ -199,6 +234,16 @@ int main(int argc, char *argv[])
         // If the argument has a dash, skip it
         if(strchr(argv[args], '-') != NULL) break;
 
+        // Parse the argument if it is detected as an ISO 8601 string
+        if((strchr(argv[args], 'P') != NULL) || (strchr(argv[args], 'p') != NULL)) {
+            parse_iso(argv[args], 0);
+            continue;
+        } else if((strchr(argv[args], 'T') != NULL) || (strchr(argv[args], 't') != NULL)) {
+            parse_iso(argv[args], 1);
+            continue;
+        }
+
+        // GNU and ISO 8601 suffix parsing
         if(strchr(argv[args],      'm') != NULL) multiplier = minute;    // Minutes
         else if(strchr(argv[args], 'h') != NULL) multiplier = hour;      // Hours
         else if(strchr(argv[args], 'd') != NULL) multiplier = day;       // Days
@@ -210,28 +255,26 @@ int main(int argc, char *argv[])
 
         // Nanoseconds
         else if(strchr(argv[args], 'n') != NULL) {
-            timer.tv_nsec += atol(argv[args]);
+            nanoseconds += atol(argv[args]);
             goto end;
 
         // Centuries
         } else if(strchr(argv[args], 'c') != NULL) {
             centuries += strtoul(argv[args], NULL, 10);
             multiplier = year * 100;
-            goto tv_nsec_end;
+            goto nano;
 
         // Millennia
         } else if(strchr(argv[args], 'M') != NULL) {
             centuries += strtoul(argv[args], NULL, 10) * 10;
             multiplier = year * 1000;
-            goto tv_nsec_end;
+            goto nano;
         }
 
-        // Set tv_sec if goto wasn't used
-        timer.tv_sec += atoi(argv[args]) * multiplier;
-
-tv_nsec_end:
-        // Set tv_nsec
-        timer.tv_nsec += decimal(argv[args]) * multiplier;
+        // Set the number of floating point seconds and nanoseconds
+        seconds += atoi(argv[args]) * multiplier;
+nano:
+        nanoseconds += parse_decimal(argv[args]) * multiplier;
 
 end:
         // Go to the next argument
@@ -239,23 +282,27 @@ end:
     }
 
     // To improve accuracy, subtract 490,000 nanoseconds to account for overhead
-    if(timer.tv_nsec > OVERHEAD_MASK) {
-        if(timer.tv_sec > 0) {
-            timer.tv_sec  = timer.tv_sec - 1;
-            timer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
+    if(nanoseconds > OVERHEAD_MASK) {
+        if(seconds > 0) {
+            seconds = seconds - 1;
+            nanoseconds = nanoseconds + 1000000000 - OVERHEAD_MASK;
         } else
-            timer.tv_nsec = timer.tv_nsec - OVERHEAD_MASK;
+            nanoseconds = nanoseconds - OVERHEAD_MASK;
 
-    // The natural overhead of just executing causes inaccuracy at this point, so tv_nsec is set to 0
+    // The overhead of just executing causes inaccuracy at this point, so just set this to zero
     } else
-        timer.tv_nsec = 0;
+        nanoseconds = 0;
 
-    // timer.tv_nsec cannot exceed one billion
-    while(timer.tv_nsec > 999999999) {
-        time_t esec  = timer.tv_nsec / 1000000000;
-        timer.tv_sec += esec;
-        timer.tv_nsec = timer.tv_nsec - (esec * 1000000000);
+    // The number of nanoseconds cannot exceed one billion
+    while(nanoseconds > 999999999) {
+        time_t esec = nanoseconds / 1000000000;
+        seconds    += esec;
+        nanoseconds = nanoseconds - (esec * 1000000000);
     }
+
+    // Store the total number of seconds and nanoseconds in the timespec struct
+    timer.tv_sec  = seconds;
+    timer.tv_nsec = nanoseconds;
 
     // Set up the signal handler now
     struct sigaction actor;
