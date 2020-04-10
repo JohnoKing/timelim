@@ -15,7 +15,7 @@ Run `make` and the timelim binary will be compiled.
 `  -s, --signal     Sleep until Timelim receives a signal or times out`
 `  -S, --sidereal   Use the Sidereal year instead of the Gregorian year`
 `  -v, --verbose    Enable verbose output`
-`  -V, --version    Show timelim's version number`
+`  -V, --version    Show Timelim's version number`
 `  -?, --help       Display this text`
 
 ## Suffixes

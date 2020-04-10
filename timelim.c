@@ -51,7 +51,7 @@
 static int current_signal = 0;
 extern char *__progname;
 
-// Display usage of timelim
+// Display usage of Timelim
 static int usage(void)
 {
     // Usage info
@@ -60,7 +60,7 @@ static int usage(void)
     printf("  -s, --signal     Sleep until Timelim receives a signal or times out\n");
     printf("  -S, --sidereal   Use the Sidereal year instead of the Gregorian year\n");
     printf("  -v, --verbose    Enable verbose output\n");
-    printf("  -V, --version    Show timelim's version number\n");
+    printf("  -V, --version    Show Timelim's version number\n");
     printf("  -?, --help       Display this text\n");
     return 1;
 }
@@ -116,7 +116,7 @@ static long decimal(char *arg)
     }
 }
 
-// Set current_signal to the signal that was sent to timelim
+// Set current_signal to the signal that was sent to Timelim
 static void sighandle(int sig)
 {
     current_signal = sig;
@@ -257,6 +257,27 @@ end:
         time.tv_nsec = time.tv_nsec - (esec * 1000000000);
     }
 
+    // Set up the signal handler now
+    struct sigaction actor;
+    actor.sa_handler = sighandle;
+    actor.sa_flags   = 0;
+
+    // When -s was passed, handle all POSIX signals that do not kill Timelim
+    if(signal_wait == 0) {
+        sigaction(SIGCHLD, &actor, NULL);
+        sigaction(SIGCONT, &actor, NULL);
+        sigaction(SIGQUIT, &actor, NULL);
+        sigaction(SIGTSTP, &actor, NULL);
+        sigaction(SIGURG,  &actor, NULL);
+    }
+
+    // Handle SIGINFO on BSD and treat SIGPWR as SIGINFO due to the lack of a System V equivalent
+#   ifdef SIGINFO
+    sigaction(SIGINFO, &actor, NULL);
+#   else
+    sigaction(SIGPWR,  &actor, NULL);
+#   endif
+
     // Wait indefinitely if -s was passed without a defined timeout
     if((signal_wait == 0) && (time.tv_sec == 0) && (time.tv_nsec == 0)) {
         if(verbose == 0) printf("Waiting for a signal...\n");
@@ -273,21 +294,13 @@ end:
         printf("\n");
     }
 
-    // TODO: Use sigfilset and exit to implement -s flag
-    // Catch SIGINFO/SIGPWR and SIGALRM
-    struct sigaction actor;
-    memset(&actor, 0, sizeof(actor));
-    actor.sa_handler = sighandle;
-    sigaction(SIGALRM, &actor, NULL);
-#   ifdef SIGINFO
-    sigaction(SIGINFO, &actor, NULL);
-#   else
-    sigaction(SIGPWR,  &actor, NULL);
-#   endif
-
     // Sleep
     while(nanosleep(&time, &time) != 0) {
-        if(current_signal == SIGALRM) return 0;
+        if(signal_wait == 0) {
+            printf("%s\n", strsignal(current_signal)); // --verbose is ignored for consistent behavior
+            return 0;
+        }
+
         printf("Remaining seconds: %ld\n", (long)time.tv_sec);
         printf("Remaining nanoseconds: %ld\n", time.tv_nsec);
     }
