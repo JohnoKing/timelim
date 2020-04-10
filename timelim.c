@@ -174,8 +174,8 @@ int main(int argc, char *argv[])
                 year = 31557600;
                 break;
 
+            // Implement ksh's sleep -s flag
             case 's':
-                // TODO: Implement ksh -s flag
                 signal_wait = 0;
                 break;
 
@@ -199,14 +199,14 @@ int main(int argc, char *argv[])
         // If the argument has a dash, skip it
         if(strchr(argv[args], '-') != NULL) break;
 
-        if(strchr(argv[args],      'm') != NULL)  multiplier = minute;    // Minutes
-        else if(strchr(argv[args], 'h') != NULL)  multiplier = hour;      // Hours
-        else if(strchr(argv[args], 'd') != NULL)  multiplier = day;       // Days
-        else if(strchr(argv[args], 'w') != NULL)  multiplier = week;      // Weeks
-        else if(strchr(argv[args], 'f') != NULL)  multiplier = fortnight; // Fortnights
-        else if(strchr(argv[args], 'o') != NULL)  multiplier = month;     // Months
-        else if(strchr(argv[args], 'y') != NULL)  multiplier = year;      // Years
-        else if(strchr(argv[args], 'D') != NULL)  multiplier = year * 10; // Decades
+        if(strchr(argv[args],      'm') != NULL) multiplier = minute;    // Minutes
+        else if(strchr(argv[args], 'h') != NULL) multiplier = hour;      // Hours
+        else if(strchr(argv[args], 'd') != NULL) multiplier = day;       // Days
+        else if(strchr(argv[args], 'w') != NULL) multiplier = week;      // Weeks
+        else if(strchr(argv[args], 'f') != NULL) multiplier = fortnight; // Fortnights
+        else if(strchr(argv[args], 'o') != NULL) multiplier = month;     // Months
+        else if(strchr(argv[args], 'y') != NULL) multiplier = year;      // Years
+        else if(strchr(argv[args], 'D') != NULL) multiplier = year * 10; // Decades
 
         // Nanoseconds
         else if(strchr(argv[args], 'n') != NULL) {
@@ -311,9 +311,8 @@ end:
         --centuries;
     }
 
-    // Notify completion
+    // Notify the user on completion
     if(verbose == 0)
         printf("Time's up!\n");
-
     return 0;
 }
