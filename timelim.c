@@ -22,7 +22,7 @@
 
 /*
  * timelim - A program capable of setting very long time limits
- * This program can function as a replacement for POSIX sleep(1)
+ * This program can function as a replacement for sleep(1)
  */
 
 #include <getopt.h>
@@ -37,7 +37,7 @@
 #define TIMELIM_VERSION "v3.0.0"
 
 /*
- * Define the number of seconds wasted during execution to subtract from the total time to sleep
+ * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
  * This number is rather conservative, most machines will benefit from increasing the OVERHEAD_MASK
  */
 #define OVERHEAD_MASK 330000
@@ -65,7 +65,7 @@ static int usage(void)
     return 1;
 }
 
-// Print seconds and nanoseconds remaining
+// Print the number of seconds and nanoseconds remaining
 static void lprint(unsigned long length, const char *unit)
 {
     printf("%lu %s", length, unit);
