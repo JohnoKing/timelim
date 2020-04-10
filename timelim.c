@@ -215,19 +215,19 @@ int main(int argc, char *argv[])
 
         // Centuries
         } else if(strchr(argv[args], 'c') != NULL) {
-            centuries    += strtoul(argv[args], NULL, 10);
+            centuries += strtoul(argv[args], NULL, 10);
             multiplier = year * 100;
             goto tv_nsec_end;
 
         // Millennia
         } else if(strchr(argv[args], 'M') != NULL) {
-            centuries    += strtoul(argv[args], NULL, 10) * 10;
+            centuries += strtoul(argv[args], NULL, 10) * 10;
             multiplier = year * 1000;
             goto tv_nsec_end;
         }
 
         // Set tv_sec if goto wasn't used
-        time.tv_sec  += atoi(argv[args])    * multiplier;
+        time.tv_sec += atoi(argv[args]) * multiplier;
 
 tv_nsec_end:
         // Set tv_nsec
