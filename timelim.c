@@ -66,7 +66,7 @@ static int usage(void)
 }
 
 // Print the number of seconds and nanoseconds remaining
-static void lprint(unsigned long length, const char *unit)
+static void nprint(unsigned long length, const char *unit)
 {
     printf("%lu %s", length, unit);
     if(length != 1)
@@ -288,9 +288,9 @@ end:
     // Verbose output
     if(verbose == 0) {
         printf("Sleeping for ");
-        lprint(centuries * ((unsigned)year * 100) + (unsigned)time.tv_sec, "second");
+        nprint(centuries * ((unsigned)year * 100) + (unsigned)time.tv_sec, "second");
         printf(" and ");
-        lprint((unsigned)time.tv_nsec, "nanosecond");
+        nprint((unsigned)time.tv_nsec, "nanosecond");
         printf("\n");
     }
 
