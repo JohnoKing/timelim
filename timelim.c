@@ -296,10 +296,7 @@ end:
 
     // Sleep
     while(nanosleep(&timer, &timer) != 0) {
-        if(signal_wait == 0) {
-            printf("%s\n", strsignal(current_signal)); // --verbose is ignored for consistent behavior
-            return 0;
-        }
+        if(signal_wait == 0) return 0;
 
         printf("Remaining seconds: %ld\n", (long)timer.tv_sec);
         printf("Remaining nanoseconds: %ld\n", timer.tv_nsec);
