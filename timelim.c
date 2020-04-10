@@ -40,7 +40,7 @@
  * Define the number of seconds wasted during execution to subtract from the total time to sleep
  * This number is rather conservative, most machines will benefit from increasing the OVERHEAD_MASK
  */
-#define OVERHEAD_MASK 335000
+#define OVERHEAD_MASK 330000
 
 // Colors
 #define CYAN  "\x1b[1;36m"
