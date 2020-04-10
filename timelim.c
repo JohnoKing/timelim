@@ -285,7 +285,7 @@ end:
         return 0;
     }
 
-    // Verbose output
+    // Print out the number of seconds to sleep
     if(verbose == 0) {
         printf("Sleeping for ");
         nprint(centuries * ((unsigned)year * 100) + (unsigned)time.tv_sec, "second");
