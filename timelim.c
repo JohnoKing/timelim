@@ -25,6 +25,7 @@
  * This program can function as a replacement for sleep(1)
  */
 
+#define _GNU_SOURCE // Timelim uses the strcasestr extension
 #include <getopt.h>
 #include <signal.h>
 #include <stdio.h>
@@ -47,10 +48,19 @@
 #define WHITE "\x1b[1;37m"
 #define RESET "\x1b[m"
 
+// Macros defining the length of various units of time (fortnights, years, etc.) in seconds.
+#define MINUTE    60
+#define HOUR      3600
+#define DAY       86400
+#define WEEK      604800
+#define FORTNIGHT 1209600
+#define MONTH     18144000
+
 // Universal variables
+static int current_signal = 0;
 static long nanoseconds   = 0;
 static int seconds        = 0;
-static int current_signal = 0;
+static int year           = 31556952; // This is a universal variable as it can be changed with -S and -j
 extern char *__progname;
 
 // Display usage of Timelim
@@ -119,36 +129,40 @@ static long parse_decimal(char *arg)
     }
 }
 
-// ISO 8601 string parsing (basically a stub right now)
+// Get the duration of an argument (case-insensitive)
+static long get_duration(const char *arg, const char *duration)
+{
+    // If the desired duration is not in the string, return 0
+    if(strcasestr(arg, duration) == NULL)
+        return 0;
+
+    // Get the number
+    unsigned int index = 0;
+    char *modarg = malloc(strlen(arg)); // Don't modify arg directly
+    while(*(arg+index) != duration[0]) {
+        modarg[index] = arg[index + 1];
+        index++;
+    }
+
+    // Free memory of modarg and return the long number
+    long result = atol(modarg);
+    free(modarg);
+    return result;
+}
+
+// ISO 8061 string parsing
 static void parse_iso(char *arg, unsigned int mode)
 {
     // Parse P arguments
     if(mode == 0) {
-        if(strchr(arg, 'Y') != NULL) {
-            char *years = strsep(&arg, "Y");
-            seconds += atoi(years);
-            nanoseconds += parse_decimal(years);
-        }
-        if(strchr(arg, 'y') != NULL) {
-            char *years = strsep(&arg, "y");
-            seconds += atoi(years);
-            nanoseconds += parse_decimal(years);
-        }
+        seconds += get_duration(arg, "Y") * year;
+        seconds += get_duration(arg, "M") * MONTH;
+        seconds += get_duration(arg, "F") * FORTNIGHT;
+        seconds += get_duration(arg, "W") * WEEK;
+        seconds += get_duration(arg, "D") * DAY;
     }
 
-    // Parse T arguments
-    if(strchr(arg, 'H') != NULL) {
-        char *hours = strsep(&arg, "H");
-        printf("%s\n", hours); // DEBUG
-        seconds += atoi(hours);
-        nanoseconds += parse_decimal(hours);
-    }
-    if(strchr(arg, 'h') != NULL) {
-        char *hours = strsep(&arg, "h");
-        printf("%s\n", hours); // DEBUG
-        seconds += atoi(hours);
-        nanoseconds += parse_decimal(hours);
-    }
+    // TODO: Parse T arguments
 }
 
 // Set current_signal to the signal that was sent to Timelim
@@ -163,15 +177,6 @@ int main(int argc, char *argv[])
     // Arguments are required
     if(argc < 2)
         return usage();
-
-    // Variables defining the length of various units of time (fortnights, years, etc.) in seconds
-    int minute    = 60;
-    int hour      = 3600;
-    int day       = 86400;
-    int week      = 604800;
-    int fortnight = 1209600;
-    int month     = 2629800;
-    int year      = 31556952;
 
     // General variables
     unsigned long centuries   = 0;
@@ -234,22 +239,22 @@ int main(int argc, char *argv[])
         // If the argument has a dash, skip it
         if(strchr(argv[args], '-') != NULL) break;
 
-        // Parse the argument if it is detected as an ISO 8601 string
-        if((strchr(argv[args], 'P') != NULL) || (strchr(argv[args], 'p') != NULL)) {
+        // Parse ISO 8601 arguments in a dedicated function
+        if(strcasestr(argv[args], "P") != NULL) {
             parse_iso(argv[args], 0);
             continue;
-        } else if((strchr(argv[args], 'T') != NULL) || (strchr(argv[args], 't') != NULL)) {
+        } else if(strcasestr(argv[args], "T") != NULL) {
             parse_iso(argv[args], 1);
             continue;
         }
 
-        // GNU and ISO 8601 suffix parsing
-        if(strchr(argv[args],      'm') != NULL) multiplier = minute;    // Minutes
-        else if(strchr(argv[args], 'h') != NULL) multiplier = hour;      // Hours
-        else if(strchr(argv[args], 'd') != NULL) multiplier = day;       // Days
-        else if(strchr(argv[args], 'w') != NULL) multiplier = week;      // Weeks
-        else if(strchr(argv[args], 'f') != NULL) multiplier = fortnight; // Fortnights
-        else if(strchr(argv[args], 'o') != NULL) multiplier = month;     // Months
+        // GNU suffix parsing
+        if(strchr(argv[args],      'm') != NULL) multiplier = MINUTE;    // Minutes
+        else if(strchr(argv[args], 'h') != NULL) multiplier = HOUR;      // Hours
+        else if(strchr(argv[args], 'd') != NULL) multiplier = DAY;       // Days
+        else if(strchr(argv[args], 'w') != NULL) multiplier = WEEK;      // Weeks
+        else if(strchr(argv[args], 'f') != NULL) multiplier = FORTNIGHT; // Fortnights
+        else if(strchr(argv[args], 'o') != NULL) multiplier = MONTH;     // Months
         else if(strchr(argv[args], 'y') != NULL) multiplier = year;      // Years
         else if(strchr(argv[args], 'D') != NULL) multiplier = year * 10; // Decades
 
@@ -289,7 +294,7 @@ end:
     if(timer.tv_nsec > OVERHEAD_MASK) {
         if(timer.tv_sec > 0) {
             timer.tv_sec   = timer.tv_sec - 1;
-            ntimer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
+            timer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
         } else
             timer.tv_nsec = timer.tv_nsec - OVERHEAD_MASK;
 
