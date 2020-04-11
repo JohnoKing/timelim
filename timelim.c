@@ -59,7 +59,8 @@
 
 // Universal variables
 static unsigned long centuries = 0;
-static int current_signal = 0;
+static int current_signal      = 0;
+static unsigned int idx = 0;
 static long nanoseconds = 0;
 static int seconds      = 0;
 static int year         = 31556952; // This is a universal variable as it can be changed with -S and -j
@@ -139,11 +140,10 @@ static long get_duration(const char *arg, char duration)
         return 0;
 
     // Get the number
-    unsigned int index = 0;
     char *modarg = malloc(strlen(arg));
-    while(arg[index] != duration) {
-        modarg[index] = arg[index + 1];
-        index++;
+    while(arg[idx] != duration) {
+        modarg[idx] = arg[idx + 1];
+        idx++;
     }
 
     // Free memory and return the long number
@@ -152,26 +152,40 @@ static long get_duration(const char *arg, char duration)
     return result;
 }
 
-// Strict ISO 8061 string parsing (does not support decades or millennia)
-static void parse_iso(char *arg, unsigned int mode)
+// ISO 8061 string parsing
+static void parse_iso(char *arg)
 {
     // Parse P arguments
-    if(mode == 0) {
-        centuries += get_duration(arg, 'C');
-        centuries += get_duration(arg, 'c');
-        seconds   += get_duration(arg, 'Y') * year;
-        seconds   += get_duration(arg, 'y') * year;
-        seconds   += get_duration(arg, 'M') * year / 12;
-        seconds   += get_duration(arg, 'm') * year / 12;
-        seconds   += get_duration(arg, 'F') * FORTNIGHT;
-        seconds   += get_duration(arg, 'f') * FORTNIGHT;
-        seconds   += get_duration(arg, 'W') * WEEK;
-        seconds   += get_duration(arg, 'w') * WEEK;
-        seconds   += get_duration(arg, 'D') * DAY;
-        seconds   += get_duration(arg, 'd') * DAY;
-    }
+    //centuries += get_duration(arg, 'C');
+    //centuries += get_duration(arg, 'c');
+    seconds += get_duration(arg, 'X') * YEAR * 10;
+    seconds += get_duration(arg, 'x') * YEAR * 10;
+    seconds += get_duration(arg, 'Y') * YEAR;
+    seconds += get_duration(arg, 'y') * YEAR;
+    //seconds += get_duration(arg, 'M') * MONTH;
+    //seconds += get_duration(arg, 'm') * MONTH;
+    seconds += get_duration(arg, 'F') * FORTNIGHT;
+    seconds += get_duration(arg, 'f') * FORTNIGHT;
+    seconds += get_duration(arg, 'W') * WEEK;
+    seconds += get_duration(arg, 'w') * WEEK;
+    seconds += get_duration(arg, 'D') * DAY;
+    seconds += get_duration(arg, 'd') * DAY;
 
-    // TODO: Parse T arguments
+    // Parse T arguments
+    if(strcasestr(arg, "T") != NULL) {
+        seconds += get_duration(arg, 'H') * HOUR;
+        seconds += get_duration(arg, 'h') * HOUR;
+        seconds += get_duration(arg, 'M') * MINUTE;
+        seconds += get_duration(arg, 'm') * MINUTE;
+        seconds += get_duration(arg, 'S');
+        seconds += get_duration(arg, 's');
+        //nanoseconds += get_duration(arg, 'M') * 1000000;
+        //nanoseconds += get_duration(arg, 'm') * 1000000;
+        nanoseconds += get_duration(arg, 'U') * 1000;
+        nanoseconds += get_duration(arg, 'u') * 1000;
+        nanoseconds += get_duration(arg, 'N');
+        nanoseconds += get_duration(arg, 'n');
+    }
 }
 
 // Set current_signal to the signal that was sent to Timelim
@@ -249,10 +263,7 @@ int main(int argc, char *argv[])
 
         // Parse ISO 8601 arguments in a dedicated function
         if(strcasestr(argv[args], "P") != NULL) {
-            parse_iso(argv[args], 0);
-            goto end;
-        } else if(strcasestr(argv[args], "T") != NULL) {
-            parse_iso(argv[args], 1);
+            parse_iso(argv[args]);
             goto end;
         }
 
@@ -264,7 +275,12 @@ int main(int argc, char *argv[])
         else if(strchr(argv[args], 'f') != NULL) multiplier = FORTNIGHT; // Fortnights
         else if(strchr(argv[args], 'o') != NULL) multiplier = year / 12; // Months
         else if(strchr(argv[args], 'y') != NULL) multiplier = year;      // Years
-        else if(strchr(argv[args], 'D') != NULL) multiplier = year * 10; // Decades
+        else if(strchr(argv[args], 'x') != NULL) multiplier = year * 10; // Decades
+
+        // Microseconds
+        else if(strchr(argv[args], 'u') != NULL) {
+            nanoseconds += atol(argv[args]) * 1000;
+            goto end;
 
         // Nanoseconds
         else if(strchr(argv[args], 'n') != NULL) {

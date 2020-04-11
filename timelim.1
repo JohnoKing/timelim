@@ -18,7 +18,7 @@
 .\" OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 .\" SOFTWARE.
 .\"
-.Dd April 10, 2020
+.Dd April 11, 2020
 .Dt TIMELIM 1
 .Os
 .Sh NAME
@@ -85,6 +85,9 @@ will also accept the following suffixes appended to arguments:
 .Nm n
 Denotes nanoseconds, cannot be a floating point argument.
 
+.Nm u
+Denotes microseconds, cannot be a floating point argument.
+
 .Nm s
 Denotes seconds, same as adding no suffix.
 
@@ -111,7 +114,7 @@ Denotes years (defaults to 31556952 seconds, passing
 --sidereal changes this to 31558150 seconds, passing
 --julian changes this to 31557600 seconds)
 
-.Nm D
+.Nm x
 Denotes decades (10 years)
 
 .Nm c

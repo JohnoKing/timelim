@@ -29,7 +29,7 @@ Timelim also accepts suffix arguments such as `10h` for 10 hours when used in pl
 `f: Fortnights`
 `o: Months`
 `y: Years`
-`D: Decades`
+`x: Decades`
 `c: Centuries`
 `M: Millennia`
 
@@ -53,4 +53,4 @@ Set a time limit to 740000 nanoseconds:
 `timelim 740000n`
 
 Set the time limit to 3.6 centuries, 2.4 decades and 4.1 months:
-`timelim 3.6c 2.4D 4.1o`
+`timelim 3.6c 2.4x 4.1o`
