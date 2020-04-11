@@ -75,7 +75,7 @@ static void nprint(unsigned long length, const char *unit)
         printf("s");
 }
 
-// This function parses all numbers after the decimal in a floating point number
+// This function parses all numbers after the decimal (such as 1.12 or 4.5w)
 static long parse_decimal(char *arg)
 {
     // If there is no decimal, return
@@ -119,8 +119,7 @@ static long parse_decimal(char *arg)
     }
 }
 
-// ISO 8061 string parsing
-// NOTE: Avoid using else statements
+// ISO 8601 string parsing (basically a stub right now)
 static void parse_iso(char *arg, unsigned int mode)
 {
     // Parse P arguments
@@ -140,12 +139,13 @@ static void parse_iso(char *arg, unsigned int mode)
     // Parse T arguments
     if(strchr(arg, 'H') != NULL) {
         char *hours = strsep(&arg, "H");
-        printf("%s\n", hours);
+        printf("%s\n", hours); // DEBUG
         seconds += atoi(hours);
         nanoseconds += parse_decimal(hours);
     }
     if(strchr(arg, 'h') != NULL) {
         char *hours = strsep(&arg, "h");
+        printf("%s\n", hours); // DEBUG
         seconds += atoi(hours);
         nanoseconds += parse_decimal(hours);
     }
@@ -281,28 +281,28 @@ end:
         --args;
     }
 
+    // Store the total number of seconds and nanoseconds in the timer struct
+    timer.tv_sec  = seconds;
+    timer.tv_nsec = nanoseconds;
+
     // To improve accuracy, subtract 490,000 nanoseconds to account for overhead
-    if(nanoseconds > OVERHEAD_MASK) {
-        if(seconds > 0) {
-            seconds = seconds - 1;
-            nanoseconds = nanoseconds + 1000000000 - OVERHEAD_MASK;
+    if(timer.tv_nsec > OVERHEAD_MASK) {
+        if(timer.tv_sec > 0) {
+            timer.tv_sec   = timer.tv_sec - 1;
+            ntimer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
         } else
-            nanoseconds = nanoseconds - OVERHEAD_MASK;
+            timer.tv_nsec = timer.tv_nsec - OVERHEAD_MASK;
 
     // The overhead of just executing causes inaccuracy at this point, so just set this to zero
     } else
-        nanoseconds = 0;
+        timer.tv_nsec = 0;
 
     // The number of nanoseconds cannot exceed one billion
-    while(nanoseconds > 999999999) {
-        time_t esec = nanoseconds / 1000000000;
-        seconds    += esec;
-        nanoseconds = nanoseconds - (esec * 1000000000);
+    while(timer.tv_nsec > 999999999) {
+        time_t esec   = timer.tv_nsec / 1000000000;
+        timer.tv_sec += esec;
+        timer.tv_nsec = timer.tv_nsec - (esec * 1000000000);
     }
-
-    // Store the total number of seconds and nanoseconds in the timespec struct
-    timer.tv_sec  = seconds;
-    timer.tv_nsec = nanoseconds;
 
     // Set up the signal handler now
     struct sigaction actor;
