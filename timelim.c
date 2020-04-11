@@ -242,10 +242,10 @@ int main(int argc, char *argv[])
         // Parse ISO 8601 arguments in a dedicated function
         if(strcasestr(argv[args], "P") != NULL) {
             parse_iso(argv[args], 0);
-            continue;
+            goto end;
         } else if(strcasestr(argv[args], "T") != NULL) {
             parse_iso(argv[args], 1);
-            continue;
+            goto end;
         }
 
         // GNU suffix parsing
