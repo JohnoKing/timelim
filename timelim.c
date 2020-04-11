@@ -28,6 +28,7 @@
 #define _GNU_SOURCE // Timelim uses the strcasestr extension
 #include <getopt.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -58,8 +59,8 @@
 #define FORTNIGHT 1209600
 
 // Universal variables
-static unsigned int suffix = 0;
-static int current_signal  = 0;
+static bool suffix = true;
+static int current_signal = 0;
 extern char *__progname;
 
 // Display usage of Timelim
@@ -95,7 +96,7 @@ static long parse_float(char *arg)
     strsep(&arg, ".");
     const char *base = strsep(&arg, ".");
     size_t sz = strlen(base);
-    if(suffix == 0)
+    if(suffix)
         --sz;
 
     // Set the multiplier depending on the length of base
@@ -201,7 +202,7 @@ int main(int argc, char *argv[])
         // If the argument has a dash, skip it
         if(strchr(argv[args], '-') != NULL) break;
 
-        // GNU suffix parsing
+        // Parse GNU-style suffixes
         if(strcasestr(argv[args],      "M") != NULL) multiplier = MINUTE;    // Minutes
         else if(strcasestr(argv[args], "H") != NULL) multiplier = HOUR;      // Hours
         else if(strcasestr(argv[args], "D") != NULL) multiplier = DAY;       // Days
@@ -242,7 +243,7 @@ int main(int argc, char *argv[])
         } else if(strcasestr(argv[args], "S") != NULL)
             continue;
         else
-            suffix = 1;
+            suffix = false;
 
         // Set the number of seconds and nanoseconds
         timer.tv_sec  += atoi(argv[args]) * multiplier;
