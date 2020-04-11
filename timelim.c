@@ -41,7 +41,9 @@
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
  * This number is rather conservative, most machines will benefit from increasing the OVERHEAD_MASK
  */
-#define OVERHEAD_MASK 330000
+#ifndef OVERHEAD_MASK
+#define OVERHEAD_MASK 350000
+#endif
 
 // Colors
 #define CYAN  "\x1b[1;36m"
@@ -86,52 +88,62 @@ static void nprint(unsigned long length, const char *unit)
         printf("s");
 }
 
-// This function parses all numbers after the decimal (such as 1.12 or 4.5w)
-static long parse_decimal(char *arg)
+// This function parses all numbers after the decimal place as nanoseconds
+static void set_nanoseconds(char *arg, int multiplier)
 {
     // If there is no decimal, return
     if(strchr(arg, '.') == NULL)
-        return 0;
+        return;
 
     // Set a char variable called 'base' to the relevant position
     strsep(&arg, ".");
     const char *base = strsep(&arg, ".");
-    size_t sz = strlen(base);
-    if(strchr(base, 'm') != NULL || strchr(base, 'h') != NULL || strchr(base, 'd') != NULL || strchr(base, 'w') != NULL || \
-        strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || strchr(base, 's') != NULL || \
-        strchr(base, 'D') != NULL || strchr(base, 'f') != NULL || strchr(base, 'M') != NULL)
-        --sz;
+    char *shortarg = malloc(strlen(base));
+    snprintf(shortarg, strlen(base), "%ld", atol(base));
 
     // Set the multiplier depending on the length of base
-    long num = atol(base);
-    switch(sz) {
+    long num = atol(shortarg);
+    switch(strlen(shortarg)) {
        case 1:
-           return num * 100000000;
+           nanoseconds += (num * 100000000) * multiplier;
+           break;
        case 2:
-           return num * 10000000;
+           nanoseconds += (num * 10000000) * multiplier;
+           break;
        case 3:
-           return num * 1000000;
+           nanoseconds += (num * 1000000) * multiplier;
+           break;
        case 4:
-           return num * 100000;
+           nanoseconds += (num * 100000) * multiplier;
+           break;
        case 5:
-           return num * 10000;
+           nanoseconds += (num * 10000) * multiplier;
+           break;
        case 6:
-           return num * 1000;
+           nanoseconds += (num * 1000) * multiplier;
+           break;
        case 7:
-           return num * 100;
+           nanoseconds += (num * 100) * multiplier;
+           break;
        case 8:
-           return num * 10;
+           nanoseconds += (num * 10) * multiplier;
+           break;
        case 9:
-           return num;
+           nanoseconds += num * multiplier;
+           break;
        default:
            while(num > 999999999)
                num = num / 10;
-           return num;
+           nanoseconds += num * multiplier;
+           break;
     }
+
+    // Free memory
+    return free(shortarg);
 }
 
 // Get the duration of an argument (case-insensitive)
-static long get_duration(const char *arg, const char *duration)
+static long get_duration(const char *arg, const char *duration, int multiplier)
 {
     // If the desired duration is not in the string, return 0
     if(strcasestr(arg, duration) == NULL)
@@ -145,10 +157,13 @@ static long get_duration(const char *arg, const char *duration)
         index++;
     }
 
-    // Free memory of modarg and return the long number
+    // Set the number of nanoseconds and result
     long result = atol(modarg);
+    set_nanoseconds(modarg, multiplier);
+
+    // Free memory and return the result
     free(modarg);
-    return result;
+    return result * multiplier;
 }
 
 // Strict ISO 8061 string parsing (does not support decades or millennia)
@@ -156,12 +171,12 @@ static void parse_iso(char *arg, unsigned int mode)
 {
     // Parse P arguments
     if(mode == 0) {
-        centuries += get_duration(arg, "C");
-        seconds   += get_duration(arg, "Y") * year;
-        seconds   += get_duration(arg, "M") * MONTH;
-        seconds   += get_duration(arg, "F") * FORTNIGHT;
-        seconds   += get_duration(arg, "W") * WEEK;
-        seconds   += get_duration(arg, "D") * DAY;
+        centuries += get_duration(arg, "C", year * 100);
+        seconds   += get_duration(arg, "Y", year);
+        seconds   += get_duration(arg, "M", MONTH);
+        seconds   += get_duration(arg, "F", FORTNIGHT);
+        seconds   += get_duration(arg, "W", WEEK);
+        seconds   += get_duration(arg, "D", DAY);
     }
 
     // TODO: Parse T arguments
@@ -280,7 +295,7 @@ int main(int argc, char *argv[])
         // Set the number of floating point seconds and nanoseconds
         seconds += atoi(argv[args]) * multiplier;
 nano:
-        nanoseconds += parse_decimal(argv[args]) * multiplier;
+        set_nanoseconds(argv[args], multiplier);
 
 end:
         // Go to the next argument
