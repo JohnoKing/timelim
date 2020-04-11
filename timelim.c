@@ -143,7 +143,7 @@ static void set_nanoseconds(char *arg, int multiplier)
 }
 
 // Get the duration of an argument (case-insensitive)
-static long get_duration(const char *arg, const char *duration, int multiplier)
+static long get_duration(char *arg, const char *duration, int multiplier)
 {
     // If the desired duration is not in the string, return 0
     if(strcasestr(arg, duration) == NULL)
@@ -152,7 +152,7 @@ static long get_duration(const char *arg, const char *duration, int multiplier)
     // Get the number
     unsigned int index = 0;
     char *modarg = malloc(strlen(arg)); // Don't modify arg directly
-    while(*(arg+index) != duration[0]) {
+    while(arg[index] != duration[0]) {
         modarg[index] = arg[index + 1];
         index++;
     }
