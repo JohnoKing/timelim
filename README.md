@@ -19,9 +19,10 @@ Run `make` and the timelim binary will be compiled.
 `  -?, --help       Display this text`
 
 ## Suffixes
-Timelim also accepts suffix arguments such as `10h` for 10 hours when used in place of the above options. Here is a list of supported suffixes:
+Timelim also accepts case-insensitive suffix arguments such as `10h` for 10 hours. These are all of the supported suffixes:
 `n: Nanoseconds`
 `u: Microseconds`
+`l: Milliseconds`
 `s: Seconds`
 `m: Minutes`
 `h: Hours`

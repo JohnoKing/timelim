@@ -58,7 +58,8 @@
 #define FORTNIGHT 1209600
 
 // Universal variables
-static int current_signal = 0;
+static unsigned int suffix = 0;
+static int current_signal  = 0;
 extern char *__progname;
 
 // Display usage of Timelim
@@ -84,7 +85,7 @@ static void nprint(unsigned long length, const char *unit)
 }
 
 // This function parses all numbers after the decimal (such as 1.12 or 4.5w)
-static long parse_decimal(char *arg)
+static long parse_float(char *arg)
 {
     // If there is no decimal, return
     if(strchr(arg, '.') == NULL)
@@ -94,9 +95,7 @@ static long parse_decimal(char *arg)
     strsep(&arg, ".");
     const char *base = strsep(&arg, ".");
     size_t sz = strlen(base);
-    if(strchr(base, 'm') != NULL || strchr(base, 'h') != NULL || strchr(base, 'd') != NULL || strchr(base, 'w') != NULL || \
-        strchr(base, 'o') != NULL || strchr(base, 'y') != NULL || strchr(base, 'c') != NULL || strchr(base, 's') != NULL || \
-        strchr(base, 'D') != NULL || strchr(base, 'f') != NULL || strchr(base, 'M') != NULL)
+    if(suffix == 0)
         --sz;
 
     // Set the multiplier depending on the length of base
@@ -203,42 +202,52 @@ int main(int argc, char *argv[])
         if(strchr(argv[args], '-') != NULL) break;
 
         // GNU suffix parsing
-        if(strchr(argv[args],      'm') != NULL) multiplier = MINUTE;    // Minutes
-        else if(strchr(argv[args], 'h') != NULL) multiplier = HOUR;      // Hours
-        else if(strchr(argv[args], 'd') != NULL) multiplier = DAY;       // Days
-        else if(strchr(argv[args], 'w') != NULL) multiplier = WEEK;      // Weeks
-        else if(strchr(argv[args], 'f') != NULL) multiplier = FORTNIGHT; // Fortnights
-        else if(strchr(argv[args], 'o') != NULL) multiplier = year / 12; // Months
-        else if(strchr(argv[args], 'y') != NULL) multiplier = year;      // Years
-        else if(strchr(argv[args], 'x') != NULL) multiplier = year * 10; // Decades
+        if(strcasestr(argv[args],      "M") != NULL) multiplier = MINUTE;    // Minutes
+        else if(strcasestr(argv[args], "H") != NULL) multiplier = HOUR;      // Hours
+        else if(strcasestr(argv[args], "D") != NULL) multiplier = DAY;       // Days
+        else if(strcasestr(argv[args], "W") != NULL) multiplier = WEEK;      // Weeks
+        else if(strcasestr(argv[args], "F") != NULL) multiplier = FORTNIGHT; // Fortnights
+        else if(strcasestr(argv[args], "O") != NULL) multiplier = year / 12; // Months
+        else if(strcasestr(argv[args], "Y") != NULL) multiplier = year;      // Years
+        else if(strcasestr(argv[args], "X") != NULL) multiplier = year * 10; // Decades
+
+        // Milliseconds
+        else if(strcasestr(argv[args], "L") != NULL) {
+            timer.tv_nsec += atol(argv[args]) * 1000;
+            goto end;
 
         // Microseconds
-        else if(strchr(argv[args], 'u') != NULL) {
+        } else if(strcasestr(argv[args], "U") != NULL) {
             timer.tv_nsec += atol(argv[args]) * 1000;
             goto end;
 
         // Nanoseconds
-        } else if(strchr(argv[args], 'n') != NULL) {
+        } else if(strcasestr(argv[args], "N") != NULL) {
             timer.tv_nsec += atol(argv[args]);
             goto end;
 
         // Centuries
-        } else if(strchr(argv[args], 'c') != NULL) {
+        } else if(strcasestr(argv[args], "C") != NULL) {
             centuries += strtoul(argv[args], NULL, 10);
             multiplier = year * 100;
             goto nano;
 
         // Millennia
-        } else if(strchr(argv[args], 'a') != NULL) {
+        } else if(strcasestr(argv[args], "A") != NULL) {
             centuries += strtoul(argv[args], NULL, 10) * 10;
             multiplier = year * 1000;
             goto nano;
-        }
 
-        // Set the number of floating point seconds and nanoseconds
+        // Normal seconds
+        } else if(strcasestr(argv[args], "S") != NULL)
+            continue;
+        else
+            suffix = 1;
+
+        // Set the number of seconds and nanoseconds
         timer.tv_sec  += atoi(argv[args]) * multiplier;
 nano:
-        timer.tv_nsec += parse_decimal(argv[args]) * multiplier;
+        timer.tv_nsec += parse_float(argv[args]) * multiplier;
 
 end:
         // Go to the next argument
@@ -303,7 +312,7 @@ end:
 
     // Sleep
     while(nanosleep(&timer, &timer) != 0) {
-        if(signal_wait == 0) return 0;
+        if((signal_wait == 0) || (current_signal == SIGALRM)) return 0;
 
         printf("Remaining seconds: %ld\n", (long)timer.tv_sec);
         printf("Remaining nanoseconds: %ld\n", timer.tv_nsec);

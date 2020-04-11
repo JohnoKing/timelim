@@ -56,7 +56,7 @@ If no argument is given or the argument is zero,
 .Nm Timelim
 will wait indefinitely wait for a signal without timing out.
 This option was implemented for compatibility with the
-.Nm ksh(1)
+.Nm ksh93(1)
 sleep builtin.
 
 .Nm -S, --sidereal
@@ -83,31 +83,34 @@ Shows usage information regarding
 will also accept the following suffixes appended to arguments:
 
 .Nm n
-Denotes nanoseconds, cannot be a floating point argument.
+Nanoseconds (cannot be a floating point)
 
 .Nm u
-Denotes microseconds, cannot be a floating point argument.
+Microseconds (cannot be a floating point)
+
+.Nm l
+Milliseconds (cannot be a floating point)
 
 .Nm s
-Denotes seconds, same as adding no suffix.
+Seconds (same as no suffix)
 
 .Nm m
-Denotes minutes (60 seconds)
+Minutes
 
 .Nm h
-Denotes hours (60 minutes)
+Hours
 
 .Nm d
-Denotes days (24 hours)
+Days
 
 .Nm w
-Denotes weeks (7 days)
+Weeks
 
 .Nm f
-Denotes fortnights (2 weeks)
+Fortnights (2 weeks)
 
 .Nm o
-Denotes months (30 days or 2629800 seconds)
+Months (equal to `year / 12`, see below)
 
 .Nm y
 Denotes years (defaults to 31556952 seconds, passing
@@ -115,13 +118,13 @@ Denotes years (defaults to 31556952 seconds, passing
 --julian changes this to 31557600 seconds)
 
 .Nm x
-Denotes decades (10 years)
+Decades
 
 .Nm c
-Denotes centuries (100 years)
+Centuries
 
 .Nm a
-Denotes millennia (1000 years)
+Millennia
 
 If
 .Nm Timelim
@@ -151,6 +154,6 @@ timelim 24000n
 Set a time limit to last 3.6 centuries, 2.4 decades and 4.1 months:
 timelim 3.6c 2.4x 4.1o
 .Sh SEE ALSO
-nanosleep(2), sleep(3), signal(7)
+nanosleep(2), sleep(3), signal(7), ksh93(1)
 .Sh AUTHOR
 Johnothan King
