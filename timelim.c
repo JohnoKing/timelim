@@ -57,10 +57,10 @@
 #define MONTH     18144000
 
 // Universal variables
-static volatile long nanoseconds = 0;
-static volatile int seconds = 0;
 static int current_signal = 0;
-static int year = 31556952; // This can't be changed with -S and -j if it is a macro
+static long nanoseconds   = 0;
+static int seconds        = 0;
+static int year           = 31556952; // This is a universal variable as it can be changed with -S and -j
 extern char *__progname;
 
 // Display usage of Timelim
