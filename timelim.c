@@ -141,10 +141,10 @@ int main(int argc, char *argv[])
         return usage();
 
     // General variables
-    struct timespec timer    = {0};
-    unsigned long centuries  = 0;
-    unsigned int signal_wait = 1;
-    unsigned int verbose     = 1;
+    struct timespec timer   = {0};
+    unsigned long centuries = 0;
+    bool signal_wait = false;
+    bool verbose     = false;
     int year = 31556952; // Gregorian year default
 
     // Long options for getopt_long
@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
 
             // Implement ksh's sleep -s flag
             case 's':
-                signal_wait = 0;
+                signal_wait = true;
                 break;
 
             // Use the Sidereal year
@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 
             // Verbose output
             case 'v':
-                verbose = 0;
+                verbose = true;
                 break;
         }
     }
@@ -280,7 +280,7 @@ end:
     actor.sa_flags   = 0;
 
     // When -s was passed, handle all POSIX signals that do not kill Timelim
-    if(signal_wait == 0) {
+    if(signal_wait) {
         sigaction(SIGCHLD, &actor, NULL);
         sigaction(SIGCONT, &actor, NULL);
         sigaction(SIGQUIT, &actor, NULL);
@@ -296,14 +296,14 @@ end:
 #   endif
 
     // Wait indefinitely if -s was passed without a defined timeout
-    if((signal_wait == 0) && (timer.tv_sec == 0) && (timer.tv_nsec == 0)) {
-        if(verbose == 0) printf("Waiting for a signal...\n");
+    if((signal_wait) && (timer.tv_sec == 0) && (timer.tv_nsec == 0)) {
+        if(verbose) printf("Waiting for a signal...\n");
         pause();
         return 0;
     }
 
     // Print out the number of seconds to sleep
-    if(verbose == 0) {
+    if(verbose) {
         printf("Sleeping for ");
         nprint(centuries * ((unsigned)year * 100) + (unsigned)timer.tv_sec, "second");
         printf(" and ");
@@ -313,7 +313,7 @@ end:
 
     // Sleep
     while(nanosleep(&timer, &timer) != 0) {
-        if((signal_wait == 0) || (current_signal == SIGALRM)) return 0;
+        if((signal_wait) || (current_signal == SIGALRM)) return 0;
 
         printf("Remaining seconds: %ld\n", (long)timer.tv_sec);
         printf("Remaining nanoseconds: %ld\n", timer.tv_nsec);
@@ -326,7 +326,7 @@ end:
     }
 
     // Notify the user on completion
-    if(verbose == 0)
+    if(verbose)
         printf("Time's up!\n");
     return 0;
 }
