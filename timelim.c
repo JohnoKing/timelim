@@ -58,12 +58,7 @@
 #define FORTNIGHT 1209600
 
 // Universal variables
-static unsigned long centuries = 0;
-static int current_signal      = 0;
-static unsigned int idx = 0;
-static long nanoseconds = 0;
-static int seconds      = 0;
-static int year         = 31556952; // This is a universal variable as it can be changed with -S and -j
+static int current_signal = 0;
 extern char *__progname;
 
 // Display usage of Timelim
@@ -132,62 +127,6 @@ static long parse_decimal(char *arg)
     }
 }
 
-// Get the duration of an argument (attempting to use strcasestr will cause memory errors)
-static long get_duration(const char *arg, char duration)
-{
-    // If the desired duration is not in the string, return 0
-    if(strchr(arg, duration) == NULL)
-        return 0;
-
-    // Get the number
-    char *modarg = malloc(strlen(arg));
-    while(arg[idx] != duration) {
-        modarg[idx] = arg[idx + 1];
-        idx++;
-    }
-
-    // Free memory and return the long number
-    long result = atol(modarg);
-    free(modarg);
-    return result;
-}
-
-// ISO 8061 string parsing
-static void parse_iso(char *arg)
-{
-    // Parse P arguments
-    //centuries += get_duration(arg, 'C');
-    //centuries += get_duration(arg, 'c');
-    seconds += get_duration(arg, 'X') * YEAR * 10;
-    seconds += get_duration(arg, 'x') * YEAR * 10;
-    seconds += get_duration(arg, 'Y') * YEAR;
-    seconds += get_duration(arg, 'y') * YEAR;
-    //seconds += get_duration(arg, 'M') * MONTH;
-    //seconds += get_duration(arg, 'm') * MONTH;
-    seconds += get_duration(arg, 'F') * FORTNIGHT;
-    seconds += get_duration(arg, 'f') * FORTNIGHT;
-    seconds += get_duration(arg, 'W') * WEEK;
-    seconds += get_duration(arg, 'w') * WEEK;
-    seconds += get_duration(arg, 'D') * DAY;
-    seconds += get_duration(arg, 'd') * DAY;
-
-    // Parse T arguments
-    if(strcasestr(arg, "T") != NULL) {
-        seconds += get_duration(arg, 'H') * HOUR;
-        seconds += get_duration(arg, 'h') * HOUR;
-        seconds += get_duration(arg, 'M') * MINUTE;
-        seconds += get_duration(arg, 'm') * MINUTE;
-        seconds += get_duration(arg, 'S');
-        seconds += get_duration(arg, 's');
-        //nanoseconds += get_duration(arg, 'M') * 1000000;
-        //nanoseconds += get_duration(arg, 'm') * 1000000;
-        nanoseconds += get_duration(arg, 'U') * 1000;
-        nanoseconds += get_duration(arg, 'u') * 1000;
-        nanoseconds += get_duration(arg, 'N');
-        nanoseconds += get_duration(arg, 'n');
-    }
-}
-
 // Set current_signal to the signal that was sent to Timelim
 static void sighandle(int sig)
 {
@@ -202,9 +141,11 @@ int main(int argc, char *argv[])
         return usage();
 
     // General variables
+    struct timespec timer    = {0};
+    unsigned long centuries  = 0;
     unsigned int signal_wait = 1;
     unsigned int verbose     = 1;
-    struct timespec timer    = {0};
+    int year = 31556952; // Gregorian year default
 
     // Long options for getopt_long
     struct option long_opts[] = {
@@ -261,12 +202,6 @@ int main(int argc, char *argv[])
         // If the argument has a dash, skip it
         if(strchr(argv[args], '-') != NULL) break;
 
-        // Parse ISO 8601 arguments in a dedicated function
-        if(strcasestr(argv[args], "P") != NULL) {
-            parse_iso(argv[args]);
-            goto end;
-        }
-
         // GNU suffix parsing
         if(strchr(argv[args],      'm') != NULL) multiplier = MINUTE;    // Minutes
         else if(strchr(argv[args], 'h') != NULL) multiplier = HOUR;      // Hours
@@ -279,12 +214,12 @@ int main(int argc, char *argv[])
 
         // Microseconds
         else if(strchr(argv[args], 'u') != NULL) {
-            nanoseconds += atol(argv[args]) * 1000;
+            timer.tv_nsec += atol(argv[args]) * 1000;
             goto end;
 
         // Nanoseconds
-        else if(strchr(argv[args], 'n') != NULL) {
-            nanoseconds += atol(argv[args]);
+        } else if(strchr(argv[args], 'n') != NULL) {
+            timer.tv_nsec += atol(argv[args]);
             goto end;
 
         // Centuries
@@ -294,25 +229,21 @@ int main(int argc, char *argv[])
             goto nano;
 
         // Millennia
-        } else if(strchr(argv[args], 'M') != NULL) {
+        } else if(strchr(argv[args], 'a') != NULL) {
             centuries += strtoul(argv[args], NULL, 10) * 10;
             multiplier = year * 1000;
             goto nano;
         }
 
         // Set the number of floating point seconds and nanoseconds
-        seconds += atoi(argv[args]) * multiplier;
+        timer.tv_sec  += atoi(argv[args]) * multiplier;
 nano:
-        nanoseconds += parse_decimal(argv[args]) * multiplier;
+        timer.tv_nsec += parse_decimal(argv[args]) * multiplier;
 
 end:
         // Go to the next argument
         --args;
     }
-
-    // Store the total number of seconds and nanoseconds in the timer struct
-    timer.tv_sec  = seconds;
-    timer.tv_nsec = nanoseconds;
 
     // To improve accuracy, subtract 490,000 nanoseconds to account for overhead
     if(timer.tv_nsec > OVERHEAD_MASK) {

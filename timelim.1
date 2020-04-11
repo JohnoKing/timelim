@@ -120,7 +120,7 @@ Denotes decades (10 years)
 .Nm c
 Denotes centuries (100 years)
 
-.Nm M
+.Nm a
 Denotes millennia (1000 years)
 
 If
@@ -137,7 +137,7 @@ Sleep for 4 months, 1 fortnight, 2 weeks and 2000 nanoseconds (with verbose outp
 timelim --verbose 4m 1f 2w 2000n
 
 Sleep for 7 millennia and a month, using the Julian calendar:
-timelim -j 7M 1o
+timelim -j 7a 1o
 
 Set a time limit to last a minute unless a signal is received:
 timelim -s 1m or ./timelim -s 60s
@@ -149,8 +149,8 @@ Set a time limit to only last 24000 nanoseconds:
 timelim 24000n
 
 Set a time limit to last 3.6 centuries, 2.4 decades and 4.1 months:
-timelim 3.6c 2.4D 4.1o
+timelim 3.6c 2.4x 4.1o
 .Sh SEE ALSO
-nanosleep(2), sleep(3), signal(7), ksh(1)
+nanosleep(2), sleep(3), signal(7)
 .Sh AUTHOR
 Johnothan King

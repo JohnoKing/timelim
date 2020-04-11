@@ -21,6 +21,7 @@ Run `make` and the timelim binary will be compiled.
 ## Suffixes
 Timelim also accepts suffix arguments such as `10h` for 10 hours when used in place of the above options. Here is a list of supported suffixes:
 `n: Nanoseconds`
+`u: Microseconds`
 `s: Seconds`
 `m: Minutes`
 `h: Hours`
@@ -31,7 +32,7 @@ Timelim also accepts suffix arguments such as `10h` for 10 hours when used in pl
 `y: Years`
 `x: Decades`
 `c: Centuries`
-`M: Millennia`
+`a: Millennia`
 
 ## Examples
 Sleep for 2 seconds with verbose output (when run as sleep):
@@ -41,7 +42,7 @@ Sleep for 4 months, 1 fortnight, 2 weeks and 2000 nanoseconds (with verbose outp
 `timelim --verbose 4m 1f 2w 2000n`
 
 Sleep for 7 millennia and a month, using the Julian calendar:
-`timelim -j 7M 1o`
+`timelim -j 7a 1o`
 
 Set a time limit to last a minute unless a signal is received:
 `timelim -s 1m` or `./timelim -s 60s`
