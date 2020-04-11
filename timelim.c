@@ -150,8 +150,8 @@ static long get_duration(char *arg, const char *duration, int multiplier)
         return 0;
 
     // Get the number
+    char *modarg = malloc(strlen(arg)); // Due to a bug in glibc, this must be done first
     unsigned int index = 0;
-    char *modarg = malloc(strlen(arg)); // Don't modify arg directly
     while(arg[index] != duration[0]) {
         modarg[index] = arg[index + 1];
         index++;
