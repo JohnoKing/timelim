@@ -57,10 +57,11 @@
 #define MONTH     18144000
 
 // Universal variables
+static unsigned long centuries = 0;
 static int current_signal = 0;
-static long nanoseconds   = 0;
-static int seconds        = 0;
-static int year           = 31556952; // This is a universal variable as it can be changed with -S and -j
+static long nanoseconds = 0;
+static int seconds      = 0;
+static int year         = 31556952; // This is a universal variable as it can be changed with -S and -j
 extern char *__progname;
 
 // Display usage of Timelim
@@ -150,16 +151,17 @@ static long get_duration(const char *arg, const char *duration)
     return result;
 }
 
-// ISO 8061 string parsing
+// Strict ISO 8061 string parsing (does not support decades or millennia)
 static void parse_iso(char *arg, unsigned int mode)
 {
     // Parse P arguments
     if(mode == 0) {
-        seconds += get_duration(arg, "Y") * year;
-        seconds += get_duration(arg, "M") * MONTH;
-        seconds += get_duration(arg, "F") * FORTNIGHT;
-        seconds += get_duration(arg, "W") * WEEK;
-        seconds += get_duration(arg, "D") * DAY;
+        centuries += get_duration(arg, "C");
+        seconds   += get_duration(arg, "Y") * year;
+        seconds   += get_duration(arg, "M") * MONTH;
+        seconds   += get_duration(arg, "F") * FORTNIGHT;
+        seconds   += get_duration(arg, "W") * WEEK;
+        seconds   += get_duration(arg, "D") * DAY;
     }
 
     // TODO: Parse T arguments
@@ -179,10 +181,9 @@ int main(int argc, char *argv[])
         return usage();
 
     // General variables
-    unsigned long centuries   = 0;
-    unsigned int  signal_wait = 1;
-    unsigned int  verbose     = 1;
-    struct timespec timer     = {0};
+    unsigned int signal_wait = 1;
+    unsigned int verbose     = 1;
+    struct timespec timer    = {0};
 
     // Long options for getopt_long
     struct option long_opts[] = {
