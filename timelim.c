@@ -132,17 +132,17 @@ static long parse_decimal(char *arg)
     }
 }
 
-// Get the duration of an argument (case-insensitive)
-static long get_duration(const char *arg, const char *duration)
+// Get the duration of an argument (attempting to use strcasestr will cause memory errors)
+static long get_duration(const char *arg, char duration)
 {
     // If the desired duration is not in the string, return 0
-    if(strcasestr(arg, duration) == NULL)
+    if(strchr(arg, duration) == NULL)
         return 0;
 
     // Get the number
-    char *modarg = malloc(strlen(arg)); // Due to a bug in glibc, this must be done first
     unsigned int index = 0;
-    while(arg[index] != duration[0]) {
+    char *modarg = malloc(strlen(arg));
+    while(arg[index] != duration) {
         modarg[index] = arg[index + 1];
         index++;
     }
@@ -158,12 +158,18 @@ static void parse_iso(char *arg, unsigned int mode)
 {
     // Parse P arguments
     if(mode == 0) {
-        centuries += get_duration(arg, "C");
-        seconds   += get_duration(arg, "Y") * year;
-        seconds   += get_duration(arg, "M") * MONTH;
-        seconds   += get_duration(arg, "F") * FORTNIGHT;
-        seconds   += get_duration(arg, "W") * WEEK;
-        seconds   += get_duration(arg, "D") * DAY;
+        centuries += get_duration(arg, 'C');
+        centuries += get_duration(arg, 'c');
+        seconds   += get_duration(arg, 'Y') * year;
+        seconds   += get_duration(arg, 'y') * year;
+        seconds   += get_duration(arg, 'M') * MONTH;
+        seconds   += get_duration(arg, 'm') * MONTH;
+        seconds   += get_duration(arg, 'F') * FORTNIGHT;
+        seconds   += get_duration(arg, 'f') * FORTNIGHT;
+        seconds   += get_duration(arg, 'W') * WEEK;
+        seconds   += get_duration(arg, 'w') * WEEK;
+        seconds   += get_duration(arg, 'D') * DAY;
+        seconds   += get_duration(arg, 'd') * DAY;
     }
 
     // TODO: Parse T arguments
