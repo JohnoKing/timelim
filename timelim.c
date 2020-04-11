@@ -56,7 +56,6 @@
 #define DAY       86400
 #define WEEK      604800
 #define FORTNIGHT 1209600
-#define MONTH     18144000
 
 // Universal variables
 static unsigned long centuries = 0;
@@ -147,7 +146,7 @@ static long get_duration(const char *arg, char duration)
         index++;
     }
 
-    // Free memory of modarg and return the long number
+    // Free memory and return the long number
     long result = atol(modarg);
     free(modarg);
     return result;
@@ -162,8 +161,8 @@ static void parse_iso(char *arg, unsigned int mode)
         centuries += get_duration(arg, 'c');
         seconds   += get_duration(arg, 'Y') * year;
         seconds   += get_duration(arg, 'y') * year;
-        seconds   += get_duration(arg, 'M') * MONTH;
-        seconds   += get_duration(arg, 'm') * MONTH;
+        seconds   += get_duration(arg, 'M') * year / 12;
+        seconds   += get_duration(arg, 'm') * year / 12;
         seconds   += get_duration(arg, 'F') * FORTNIGHT;
         seconds   += get_duration(arg, 'f') * FORTNIGHT;
         seconds   += get_duration(arg, 'W') * WEEK;
@@ -263,7 +262,7 @@ int main(int argc, char *argv[])
         else if(strchr(argv[args], 'd') != NULL) multiplier = DAY;       // Days
         else if(strchr(argv[args], 'w') != NULL) multiplier = WEEK;      // Weeks
         else if(strchr(argv[args], 'f') != NULL) multiplier = FORTNIGHT; // Fortnights
-        else if(strchr(argv[args], 'o') != NULL) multiplier = MONTH;     // Months
+        else if(strchr(argv[args], 'o') != NULL) multiplier = year / 12; // Months
         else if(strchr(argv[args], 'y') != NULL) multiplier = year;      // Years
         else if(strchr(argv[args], 'D') != NULL) multiplier = year * 10; // Decades
 
