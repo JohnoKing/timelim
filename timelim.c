@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
 
         // Normal seconds
         } else
-            if(strcasestr(argv[args], "S") != NULL) suffix = false;
+            if(strcasestr(argv[args], "S") == NULL) suffix = false;
 
         // Set the number of seconds and nanoseconds
         timer.tv_sec  += atoi(argv[args]) * multiplier;
