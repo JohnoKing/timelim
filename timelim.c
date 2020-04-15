@@ -288,7 +288,7 @@ end:
         sigaction(SIGURG,  &actor, NULL);
     }
 
-    // Handle SIGINFO on BSD and treat SIGPWR as SIGINFO due to the lack of a System V equivalent
+    // Handle SIGINFO or SIGPWR, depending on which is available
 #   ifdef SIGINFO
     sigaction(SIGINFO, &actor, NULL);
 #   else
