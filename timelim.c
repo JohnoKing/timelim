@@ -289,11 +289,11 @@ end:
     }
 
     // Handle SIGINFO or SIGPWR, depending on which is available
-#   ifdef SIGINFO
+#ifdef SIGINFO
     sigaction(SIGINFO, &actor, NULL);
-#   else
+#else
     sigaction(SIGPWR,  &actor, NULL);
-#   endif
+#endif
 
     // Wait indefinitely if -s was passed without a defined timeout
     if((signal_wait) && (timer.tv_sec == 0) && (timer.tv_nsec == 0)) {
