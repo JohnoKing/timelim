@@ -18,7 +18,7 @@
 .\" OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 .\" SOFTWARE.
 .\"
-.Dd April 11, 2020
+.Dd April 17, 2020
 .Dt TIMELIM 1
 .Os
 .Sh NAME
@@ -77,7 +77,7 @@ currently installed on the machine.
 
 .Nm -?, --help
 Shows usage information regarding
-.Nm Timelim.
+.Nm Timelim .
 
 .Nm Timelim
 will also accept the following suffixes appended to arguments:
@@ -114,8 +114,10 @@ Months (equal to `year / 12`, see below)
 
 .Nm y
 Denotes years (defaults to 31556952 seconds, passing
---sidereal changes this to 31558150 seconds, passing
---julian changes this to 31557600 seconds)
+.Nm --sidereal
+changes this to 31558150 seconds, passing
+.Nm --julian
+changes this to 31557600 seconds)
 
 .Nm x
 Decades
