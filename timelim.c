@@ -28,7 +28,6 @@
 #define _GNU_SOURCE // Timelim uses the strcasestr extension
 #include <getopt.h>
 #include <signal.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -59,8 +58,8 @@
 #define FORTNIGHT 1209600
 
 // Universal variables
+static unsigned int suffix;
 static int current_signal = 0;
-static bool suffix;
 extern char *__progname;
 
 // Display usage of Timelim
@@ -141,10 +140,10 @@ int main(int argc, char *argv[])
         return usage();
 
     // General variables
-    struct timespec timer   = {0};
-    unsigned long centuries = 0;
-    bool signal_wait = false;
-    bool verbose     = false;
+    struct timespec timer    = {0};
+    unsigned long centuries  = 0;
+    unsigned int signal_wait = 0;
+    unsigned int verbose     = 0;
     int year = 31556952; // Gregorian year default
 
     // Long options for getopt_long
@@ -179,7 +178,7 @@ int main(int argc, char *argv[])
 
             // Implement ksh's sleep -s flag
             case 's':
-                signal_wait = true;
+                signal_wait = 1;
                 break;
 
             // Use the Sidereal year
@@ -189,7 +188,7 @@ int main(int argc, char *argv[])
 
             // Verbose output
             case 'v':
-                verbose = true;
+                verbose = 1;
                 break;
         }
     }
@@ -199,7 +198,7 @@ int main(int argc, char *argv[])
     args = argc - 1;
     while(args != 0) {
         multiplier = 1;
-        suffix = true;
+        suffix = 1;
 
         // If the argument has a dash, skip it
         if(strchr(argv[args], '-') != NULL) break;
@@ -243,7 +242,7 @@ int main(int argc, char *argv[])
 
         // Normal seconds
         } else
-            if(strcasestr(argv[args], "S") == NULL) suffix = false;
+            if(strcasestr(argv[args], "S") == NULL) suffix = 0;
 
         // Set the number of seconds and nanoseconds
         timer.tv_sec  += atoi(argv[args]) * multiplier;
