@@ -50,7 +50,7 @@ to use the Julian calendar instead of the Gregorian calendar.
 
 .Nm -s, --signal
 .Nm Timelim
-will function as normal until it receives a signal defined by the POSIX standard,
+will function as normal until it receives a POSIX signal or SIGINFO,
 which will then cause it finish execution with an exit status of zero.
 If no argument is given or the argument is zero,
 .Nm Timelim
