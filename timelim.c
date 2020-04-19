@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
 
     // Parse the options
     int args;
-    while((args = getopt_long(argc, argv, "jsSvV?", long_opts, NULL)) != -1) {
+    while((args = getopt_long(argc, argv, "jsSvV?", long_opts, NULL)) != -1)
         switch(args) {
 
             // Usage
@@ -191,7 +191,6 @@ int main(int argc, char *argv[])
                 verbose = 1;
                 break;
         }
-    }
 
     // Parse suffixes
     int multiplier;
