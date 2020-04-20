@@ -27,7 +27,6 @@
 
 #define _GNU_SOURCE // Timelim uses the strcasestr extension
 #include <getopt.h>
-#include <libintl.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +35,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v3.0.1"
+#define TIMELIM_VERSION "v3.0.0"
 
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
@@ -67,13 +66,13 @@ extern char *__progname;
 static int usage(void)
 {
     // Usage info
-    printf("Usage: %s [-jsvV?] %s ...\n", __progname, gettext("number[suffix]"));
-    printf("  -j, --julian     %s\n", gettext("Use the Julian calendar instead of the Gregorian calendar"));
-    printf("  -s, --signal     %s\n", gettext("Sleep until Timelim receives a signal or times out"));
-    printf("  -S, --sidereal   %s\n", gettext("Use the Sidereal year instead of the Gregorian year"));
-    printf("  -v, --verbose    %s\n", gettext("Enable verbose output"));
-    printf("  -V, --version    %s\n", gettext("Show Timelim's version number"));
-    printf("  -?, --help       %s\n", gettext("Display this text"));
+    printf("Usage: %s [-jsvV?] number[suffix] ...\n", __progname);
+    printf("  -j, --julian     Use the Julian calendar instead of the Gregorian calendar\n");
+    printf("  -s, --signal     Sleep until Timelim receives a signal or times out\n");
+    printf("  -S, --sidereal   Use the Sidereal year instead of the Gregorian year\n");
+    printf("  -v, --verbose    Enable verbose output\n");
+    printf("  -V, --version    Show Timelim's version number\n");
+    printf("  -?, --help       Display this text\n");
     return 1;
 }
 
@@ -150,9 +149,6 @@ int main(int argc, char *argv[])
     {  0,                   0,    0,  0  }
     };
 
-    // Set the locale
-    setlocale(LC_ALL, "");
-
     // Parse the options
     int args;
     while((args = getopt_long(argc, argv, "jsSvV?", long_opts, NULL)) != -1)
@@ -164,7 +160,7 @@ int main(int argc, char *argv[])
 
             // Version info
             case 'V':
-                printf(WHITE "Timelim " CYAN "%s" RESET "\n", gettext(TIMELIM_VERSION));
+                printf(WHITE "Timelim " CYAN TIMELIM_VERSION RESET "\n");
                 return 0;
 
             // Use the Julian calendar
@@ -291,23 +287,26 @@ end:
 
     // Wait indefinitely if -s was passed without a defined timeout
     if((signal_wait) && (timer.tv_sec == 0) && (timer.tv_nsec == 0)) {
-        if(verbose) printf("%s\n", gettext("Waiting for a signal...\n"));
+        if(verbose) printf("Waiting for a signal...\n");
         pause();
         return 0;
     }
 
     // Print out the number of seconds to sleep
     if(verbose) {
-        printf("%s: %ld\n", gettext("Remaining seconds"), timer.tv_sec);
-        printf("%s: %ld\n", gettext("Remaining nanoseconds"), timer.tv_nsec);
+        printf("Sleeping for ");
+        nprint(centuries * ((unsigned)year * 100) + (unsigned)timer.tv_sec, "second");
+        printf(" and ");
+        nprint((unsigned)timer.tv_nsec, "nanosecond");
+        printf("\n");
     }
 
     // Sleep
     while(nanosleep(&timer, &timer) != 0) {
         if((signal_wait) || (current_signal == SIGALRM)) return 0;
 
-        printf("%s: %ld\n", gettext("Remaining seconds"), timer.tv_sec);
-        printf("%s: %ld\n", gettext("Remaining nanoseconds"), timer.tv_nsec);
+        printf("Remaining seconds: %ld\n", (long)timer.tv_sec);
+        printf("Remaining nanoseconds: %ld\n", timer.tv_nsec);
     }
 
     // Sleep for multiple centuries (workaround for 32-bit int)
@@ -318,6 +317,6 @@ end:
 
     // Notify the user on completion
     if(verbose)
-        printf("%s\n", gettext("Time's up!"));
+        printf("Time's up!\n");
     return 0;
 }
