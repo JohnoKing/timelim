@@ -76,6 +76,14 @@ static int usage(void)
     return 1;
 }
 
+// Print the number of seconds and nanoseconds remaining
+static void nprint(unsigned long length, const char *unit)
+{
+    printf("%lu %s", length, unit);
+    if(length != 1)
+        printf("s");
+}
+
 // This function parses all numbers after the decimal (such as 1.12 or 4.5w)
 static long parse_float(char *arg)
 {
