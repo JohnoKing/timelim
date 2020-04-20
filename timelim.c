@@ -35,7 +35,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v3.0.0"
+#define TIMELIM_VERSION "v3.0.1"
 
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
