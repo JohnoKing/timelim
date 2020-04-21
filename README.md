@@ -10,13 +10,15 @@ There is no real point to this program, it is just something to experiment with.
 Run `make` and the timelim binary will be compiled.
 
 ## Usage
-`Usage: timelim [-jsSvV?] number[suffix] ...`  
-`  -j, --julian     Use the Julian calendar instead of the Gregorian calendar`  
-`  -s, --signal     Sleep until Timelim receives a signal or times out`  
-`  -S, --sidereal   Use the Sidereal year instead of the Gregorian year`  
-`  -v, --verbose    Enable verbose output`  
-`  -V, --version    Show Timelim's version number`  
-`  -?, --help       Display this text`  
+```
+Usage: timelim [-jsSvV?] number[suffix] ...
+  -j, --julian     Use the Julian calendar instead of the Gregorian calendar
+  -s, --signal     Sleep until Timelim receives a signal or times out
+  -S, --sidereal   Use the Sidereal year instead of the Gregorian year
+  -v, --verbose    Enable verbose output
+  -V, --version    Show Timelim's version number
+  -?, --help       Display this text
+```
 
 ## Suffixes
 Timelim also accepts case insensitive suffix arguments such as `10h` for 10 hours. These are all of the supported suffixes:  
