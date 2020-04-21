@@ -21,20 +21,20 @@ Run `make` and the timelim binary will be compiled.
 ## Suffixes
 Timelim also accepts case insensitive suffix arguments such as `10h` for 10 hours. These are all of the supported suffixes:  
 ```
-n: Nanoseconds  
-u: Microseconds  
-l: Milliseconds  
-s: Seconds  
-m: Minutes  
-h: Hours  
-d: Days  
-w: Weeks  
-f: Fortnights  
-o: Months  
-y: Years  
-x: Decades  
-c: Centuries  
-a: Millennia  
+n: Nanoseconds
+u: Microseconds
+l: Milliseconds
+s: Seconds
+m: Minutes
+h: Hours
+d: Days
+w: Weeks
+f: Fortnights
+o: Months
+y: Years
+x: Decades
+c: Centuries
+a: Millennia
 ```
 
 ## Examples
