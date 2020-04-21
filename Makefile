@@ -20,13 +20,13 @@
 #
 
 # Variables (each one may be overridden)
-CC       := cc
-STRIP    := strip
-CFLAGS   := $(CFLAGS)   -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -pipe
-CPPFLAGS := $(CPPFLAGS) -D_FORTIFY_SOURCE=2
-WFLAGS   := $(WFLAGS)   -Wall -Wextra -Wpedantic
-LDFLAGS  := $(LDFLAGS)  -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
-prefix   := /usr/local
+CC       = cc
+STRIP    = strip
+CFLAGS   = -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -pipe
+CPPFLAGS = -D_FORTIFY_SOURCE=2
+WFLAGS   = -Wall -Wextra -Wpedantic
+LDFLAGS  = -Wl,-O1,--sort-common,--as-needed,-z,relro,-z,now
+prefix   = /usr/local
 
 # Compile timelim
 all:
