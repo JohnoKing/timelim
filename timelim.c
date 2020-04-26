@@ -21,7 +21,7 @@
  */
 
 /*
- * timelim - A program capable of setting very long time limits
+ * timelim -- A program capable of setting very long time limits
  * This program can function as a replacement for sleep(1)
  */
 
