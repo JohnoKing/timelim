@@ -253,7 +253,7 @@ end:
         --args;
     }
 
-    // To improve accuracy, subtract 490,000 nanoseconds to account for overhead
+    // To improve accuracy, subtract 330,000 nanoseconds to account for overhead
     if(timer.tv_nsec > OVERHEAD_MASK) {
         if(timer.tv_sec > 0) {
             timer.tv_sec   = timer.tv_sec - 1;
