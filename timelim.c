@@ -58,8 +58,8 @@
 #define FORTNIGHT 1209600
 
 // Universal variables
-static unsigned int suffix;
 static int current_signal = 0;
+static bool suffix;
 extern char *__progname;
 
 // Display usage of Timelim
@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
     args = argc - 1;
     while(args != 0) {
         multiplier = 1;
-        suffix = 1;
+        suffix = true;
 
         // If the argument has a dash, skip it
         if(strchr(argv[args], '-') != NULL) break;
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
 
         // Normal seconds
         } else
-            if(strcasestr(argv[args], "S") == NULL) suffix = 0;
+            if(strcasestr(argv[args], "S") == NULL) suffix = false;
 
         // Set the number of seconds and nanoseconds
         timer.tv_sec  += atoi(argv[args]) * multiplier;
