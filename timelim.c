@@ -208,11 +208,11 @@ int main(int argc, char *argv[])
         else if(strcasestr(argv[args], "D") != NULL) multiplier = DAY;       // Days
         else if(strcasestr(argv[args], "W") != NULL) multiplier = WEEK;      // Weeks
         else if(strcasestr(argv[args], "F") != NULL) multiplier = FORTNIGHT; // Fortnights
-        else if(strcasestr(argv[args], "O") != NULL) multiplier = year / 12; // Months
+        else if(strcasestr(argv[args], "O") != NULL) multiplier = year / 12; // Months (different from ISO 8601)
         else if(strcasestr(argv[args], "Y") != NULL) multiplier = year;      // Years
         else if(strcasestr(argv[args], "X") != NULL) multiplier = year * 10; // Decades
 
-        // Milliseconds
+        // Milliseconds (different from ISO 8601)
         else if(strcasestr(argv[args], "L") != NULL) {
             timer.tv_nsec += atol(argv[args]) * 1000;
             goto end;
