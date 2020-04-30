@@ -3,7 +3,7 @@ timelim
 _A program capable of setting ridiculous time limits_
 
 ## What is this
-Timelim is an implementation of the sleep(1) utility capable of setting time limits as short as a few nanoseconds or as long as multiple centuries.
+Timelim is an implementation of the Unix `sleep` utility capable of setting time limits as short as a few nanoseconds or as long as multiple centuries.
 There is no real point to this program, it is just something to experiment with.
 
 ## Building and Usage
