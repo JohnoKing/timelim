@@ -28,6 +28,7 @@
 #define _GNU_SOURCE // Timelim uses the strcasestr extension
 #include <getopt.h>
 #include <signal.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
