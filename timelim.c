@@ -67,13 +67,13 @@ extern char *__progname;
 static int usage(void)
 {
     // Usage info
-    printf("Usage: %s [-jsvV?] number[suffix] ...\n", __progname);
-    printf("  -j, --julian     Use the Julian calendar instead of the Gregorian calendar\n");
-    printf("  -s, --signal     Sleep until Timelim receives a signal or times out\n");
-    printf("  -S, --sidereal   Use the Sidereal year instead of the Gregorian year\n");
-    printf("  -v, --verbose    Enable verbose output\n");
-    printf("  -V, --version    Show Timelim's version number\n");
-    printf("  -?, --help       Display this text\n");
+    printf("Usage: %s [-jsvV?] number[suffix] ...\n"
+           "  -j, --julian     Use the Julian calendar instead of the Gregorian calendar\n"
+           "  -s, --signal     Sleep until Timelim receives a signal or times out\n"
+           "  -S, --sidereal   Use the Sidereal year instead of the Gregorian year\n"
+           "  -v, --verbose    Enable verbose output\n"
+           "  -V, --version    Show Timelim's version number\n"
+           "  -?, --help       Display this text\n", __progname);
     return 1;
 }
 
@@ -314,8 +314,8 @@ end:
     while(nanosleep(&timer, &timer) != 0) {
         if((signal_wait) || (current_signal == SIGALRM)) return 0;
 
-        printf("Remaining seconds: %ld\n", (long)timer.tv_sec);
-        printf("Remaining nanoseconds: %ld\n", timer.tv_nsec);
+        printf("Remaining seconds: %ld\n"
+               "Remaining nanoseconds: %ld\n", (long)timer.tv_sec, timer.tv_nsec);
     }
 
     // Sleep for multiple centuries (workaround for 32-bit int)
