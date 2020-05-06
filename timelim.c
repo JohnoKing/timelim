@@ -295,7 +295,7 @@ end:
 #endif
 
     // Wait indefinitely if -s was passed without a defined timeout
-    if((signal_wait) && (timer.tv_sec == 0) && (timer.tv_nsec == 0)) {
+    if(signal_wait && timer.tv_sec == 0 && timer.tv_nsec == 0) {
         if(verbose) printf("Waiting for a signal...\n");
         pause();
         return 0;
