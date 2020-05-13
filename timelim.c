@@ -51,7 +51,7 @@
 #define WHITE "\x1b[1;37m"
 #define RESET "\x1b[m"
 
-// Macros defining the length of various units of time (fortnights, years, etc.) in seconds.
+// Macros defining the length of various units of time (weeks, years, etc.) in seconds.
 #define MINUTE    60
 #define HOUR      3600
 #define DAY       86400
