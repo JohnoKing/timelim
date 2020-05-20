@@ -300,7 +300,7 @@ end:
     if(signal_wait && timer.tv_sec == 0 && timer.tv_nsec == 0) {
         if(verbose) printf("Waiting for a signal...\n");
         pause();
-        return 0; // pause(2) does not always return 0
+        return 0; // pause(2) does not return 0, so it must be done separately
     }
 
     // Print out the number of seconds to sleep
