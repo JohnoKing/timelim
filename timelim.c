@@ -31,6 +31,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdnoreturn.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
@@ -64,7 +65,7 @@ static bool suffix;
 extern char *__progname;
 
 // Display usage of Timelim
-static int usage(void)
+static noreturn void usage(void)
 {
     // Usage info
     printf("Usage: %s [-jsvV?] number[suffix] ...\n"
@@ -74,7 +75,7 @@ static int usage(void)
            "  -v, --verbose    Enable verbose output\n"
            "  -V, --version    Show Timelim's version number\n"
            "  -?, --help       Display this text\n", __progname);
-    return 1;
+    exit(1);
 }
 
 // Print the number of seconds and nanoseconds remaining
@@ -138,7 +139,7 @@ int main(int argc, char *argv[])
 {
     // Arguments are required
     if(argc < 2)
-        return usage();
+        usage();
 
     // General variables
     struct timespec timer    = {0};
@@ -162,10 +163,6 @@ int main(int argc, char *argv[])
     int args;
     while((args = getopt_long(argc, argv, "jsSvV?", long_opts, NULL)) != -1)
         switch(args) {
-
-            // Usage
-            case '?':
-                return usage();
 
             // Version info
             case 'V':
@@ -191,6 +188,10 @@ int main(int argc, char *argv[])
             case 'v':
                 verbose = 1;
                 break;
+
+            // Usage
+            case '?':
+                usage();
         }
 
     // Parse suffixes
