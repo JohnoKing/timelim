@@ -39,6 +39,10 @@
 // Timelim's version number
 #define TIMELIM_VERSION "v3.0.2"
 
+// Macros for compiler optimization
+#define likely(x) __builtin_expect((x), true)
+#define unlikely(x) __builtin_expect((x), false)
+
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
  * This number is rather conservative, most machines will benefit from increasing the OVERHEAD_MASK
@@ -81,7 +85,7 @@ static noreturn void usage(void)
 // Print the number of seconds and nanoseconds remaining
 static void nprint(unsigned long length, const char *unit)
 {
-    if(length == 1)
+    if(unlikely(length == 1)) // While `sleep 1` is common, `sleep -v 1` is not
         printf("%lu %s", length, unit);
     else
         printf("%lu %ss", length, unit);
@@ -139,7 +143,7 @@ static void sighandle(int sig)
 int main(int argc, char *argv[])
 {
     // Arguments are required
-    if(argc < 2)
+    if(unlikely(argc < 2))
         usage();
 
     // General variables
@@ -202,7 +206,8 @@ int main(int argc, char *argv[])
         suffix = true;
 
         // If the argument has a dash, skip it
-        if(strchr(argv[args], '-') != NULL) break;
+        if(strchr(argv[args], '-') != NULL)
+            goto end;
 
         // Parse GNU-style suffixes
         if(strcasestr(argv[args],      "M") != NULL) multiplier = MINUTE;    // Minutes
@@ -257,8 +262,8 @@ end:
 
     // To improve accuracy, subtract 330,000 nanoseconds to account for overhead
     if(timer.tv_nsec > OVERHEAD_MASK) {
-        if(timer.tv_sec > 0) {
-            timer.tv_sec   = timer.tv_sec - 1;
+        if(likely(timer.tv_sec > 0)) {
+            timer.tv_sec  = timer.tv_sec - 1;
             timer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
         } else
             timer.tv_nsec = timer.tv_nsec - OVERHEAD_MASK;
