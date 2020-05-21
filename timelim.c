@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
     { "verbose",  no_argument, NULL, 'v' },
     { "version",  no_argument, NULL, 'V' },
     { "help",     no_argument, NULL, '?' },
-    {  0,                   0,    0,  0  }
+    {  NULL,                0, NULL,  0  }
     };
 
     // Parse the options
