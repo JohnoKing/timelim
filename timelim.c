@@ -65,7 +65,7 @@ static bool suffix;
 extern char *__progname;
 
 // Display usage of Timelim
-noreturn static void usage(void)
+static noreturn void usage(void)
 {
     // Usage info
     printf("Usage: %s [-jsvV?] number[suffix] ...\n"
