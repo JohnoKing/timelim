@@ -65,7 +65,7 @@ static bool suffix;
 extern char *__progname;
 
 // Display usage of Timelim
-static noreturn void usage(void)
+noreturn static void usage(void)
 {
     // Usage info
     printf("Usage: %s [-jsvV?] number[suffix] ...\n"
@@ -143,10 +143,9 @@ int main(int argc, char *argv[])
         usage();
 
     // General variables
-    struct timespec timer    = {0};
-    unsigned long centuries  = 0;
-    unsigned int signal_wait = 0;
-    unsigned int verbose     = 0;
+    struct timespec timer = { 0 };
+    unsigned long centuries = 0;
+    bool signal_wait = false, verbose = false;
     int year = 31556952; // Gregorian year default
 
     // Long options for getopt_long
@@ -177,7 +176,7 @@ int main(int argc, char *argv[])
 
             // Implement ksh's sleep -s flag
             case 's':
-                signal_wait = 1;
+                signal_wait = true;
                 break;
 
             // Use the Sidereal year
@@ -187,7 +186,7 @@ int main(int argc, char *argv[])
 
             // Verbose output
             case 'v':
-                verbose = 1;
+                verbose = true;
                 break;
 
             // Usage
@@ -314,7 +313,7 @@ end:
 
     // Sleep
     while(nanosleep(&timer, &timer) != 0) {
-        if((signal_wait) || (current_signal == SIGALRM)) return 0;
+        if(signal_wait || current_signal == SIGALRM) return 0;
 
         printf("Remaining seconds: %ld\n"
                "Remaining nanoseconds: %ld\n", (long)timer.tv_sec, timer.tv_nsec);
