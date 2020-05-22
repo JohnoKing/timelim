@@ -25,7 +25,6 @@
  * This program can function as a replacement for sleep(1)
  */
 
-#define _GNU_SOURCE // Timelim uses the strcasestr extension
 #include <getopt.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -37,7 +36,7 @@
 #include <unistd.h>
 
 // Timelim's version number
-#define TIMELIM_VERSION "v3.0.2"
+#define TIMELIM_VERSION "v3.1.0"
 
 // Macros for compiler optimization
 #define likely(x) (__builtin_expect((x), true))
