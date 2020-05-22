@@ -42,6 +42,11 @@
 // Macros for compiler optimization
 #define likely(x) (__builtin_expect((x), true))
 #define unlikely(x) (__builtin_expect((x), false))
+#if __has_builtin(__builtin_expect_with_probability)
+#define priority(x, y, z) __builtin_expect_with_probability((x), y, z)
+#else
+#define priority(x) (x)
+#endif
 
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
@@ -213,45 +218,54 @@ int main(int argc, char *argv[])
             goto end;
 
         // Parse GNU-style suffixes
-        if(strcasestr(argv[args],      "M") != NULL) multiplier = MINUTE;    // Minutes
-        else if(strcasestr(argv[args], "H") != NULL) multiplier = HOUR;      // Hours
-        else if(strcasestr(argv[args], "D") != NULL) multiplier = DAY;       // Days
-        else if(strcasestr(argv[args], "W") != NULL) multiplier = WEEK;      // Weeks
-        else if(strcasestr(argv[args], "F") != NULL) multiplier = FORTNIGHT; // Fortnights
-        else if(strcasestr(argv[args], "O") != NULL) multiplier = year / 12; // Months (different from ISO 8601)
-        else if(strcasestr(argv[args], "Y") != NULL) multiplier = year;      // Years
-        else if(strcasestr(argv[args], "X") != NULL) multiplier = year * 10; // Decades
+        if(priority(strcasestr(argv[args], "M") != NULL, true, 0.85))       // Minutes
+            multiplier = MINUTE;
+        else if(priority(strcasestr(argv[args], "H") != NULL, true, 0.80))  // Hours
+            multiplier = HOUR;
+        else if(priority(strcasestr(argv[args], "D") != NULL, true, 0.75))  // Days
+            multiplier = DAY;
+        else if(priority(strcasestr(argv[args], "W") != NULL, true, 0.70))  // Weeks
+            multiplier = WEEK;
+        else if(priority(strcasestr(argv[args], "F") != NULL, true, 0.60))  // Fortnights (lower priority)
+            multiplier = FORTNIGHT;
+        else if(priority(strcasestr(argv[args], "O") != NULL, true, 0.65))  // Months (different from ISO 8601)
+            multiplier = year / 12;
+        else if(priority(strcasestr(argv[args], "Y") != NULL, false, 0.35)) // Years
+            multiplier = year;
+        else if(priority(strcasestr(argv[args], "X") != NULL, false, 0.30)) // Decades
+            multiplier = year * 10;
 
         // Milliseconds (different from ISO 8601)
-        else if(strcasestr(argv[args], "L") != NULL) {
+        else if(priority(strcasestr(argv[args], "L") != NULL, false, 0.25)) {
             timer.tv_nsec += atol(argv[args]) * 1000;
             goto end;
 
         // Microseconds
-        } else if(strcasestr(argv[args], "U") != NULL) {
+        } else if(priority(strcasestr(argv[args], "U") != NULL, false, 0.20)) {
             timer.tv_nsec += atol(argv[args]) * 1000;
             goto end;
 
         // Nanoseconds
-        } else if(strcasestr(argv[args], "N") != NULL) {
+        } else if(priority(strcasestr(argv[args], "N") != NULL, false, 0.15)) {
             timer.tv_nsec += atol(argv[args]);
             goto end;
 
         // Centuries
-        } else if(strcasestr(argv[args], "C") != NULL) {
+        } else if(priority(strcasestr(argv[args], "C") != NULL, false, 0.10)) {
             centuries += strtoul(argv[args], NULL, 10);
             multiplier = year * 100;
             goto nano;
 
         // Millennia
-        } else if(strcasestr(argv[args], "A") != NULL) {
+        } else if(priority(strcasestr(argv[args], "A") != NULL, false, 0.05)) {
             centuries += strtoul(argv[args], NULL, 10) * 10;
             multiplier = year * 1000;
             goto nano;
 
         // Normal seconds
         } else
-            if(strcasestr(argv[args], "S") == NULL) suffix = false;
+            if(priority(strcasestr(argv[args], "S") == NULL, true, 0.90))
+                suffix = false;
 
         // Set the number of seconds and nanoseconds
         timer.tv_sec  += atoi(argv[args]) * multiplier;
