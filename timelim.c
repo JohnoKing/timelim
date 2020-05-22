@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
     // General variables
     struct timespec timer = { 0 };
     unsigned long centuries = 0;
-    bool signal_wait = false, verbose = false, suffix;
+    bool signal_wait = false, verbose = false;
     int year = 31556952; // Gregorian year default
 
     // Long options for getopt_long
@@ -202,6 +202,7 @@ int main(int argc, char *argv[])
 
     // Parse suffixes
     int multiplier;
+    bool suffix;
     args = argc - 1;
     while(args != 0) {
         multiplier = 1;
