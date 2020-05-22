@@ -64,7 +64,6 @@
 
 // Universal variables
 static int current_signal = 0;
-static bool suffix;
 extern char *__progname;
 
 // Display usage of Timelim
@@ -91,7 +90,7 @@ static void nprint(unsigned long length, const char *unit)
 }
 
 // This function parses all numbers after the decimal (such as 1.12 or 4.5w)
-static long parse_float(char *arg)
+static long parse_float(char *arg, bool suffix)
 {
     // If there is no decimal, return
     if(strchr(arg, '.') == NULL)
@@ -150,7 +149,7 @@ int main(int argc, char *argv[])
     // General variables
     struct timespec timer = { 0 };
     unsigned long centuries = 0;
-    bool signal_wait = false, verbose = false;
+    bool signal_wait = false, verbose = false, suffix;
     int year = 31556952; // Gregorian year default
 
     // Long options for getopt_long
@@ -194,7 +193,8 @@ int main(int argc, char *argv[])
                 verbose = true;
                 break;
 
-            // Usage
+            // Usage (with ksh93u+ compatibility)
+            case ':':
             case '?':
                 usage();
                 __builtin_unreachable();
@@ -290,7 +290,7 @@ int main(int argc, char *argv[])
         // Set the number of seconds and nanoseconds
         timer.tv_sec  += atoi(argv[args]) * multiplier;
 nano:
-        timer.tv_nsec += parse_float(argv[args]) * multiplier;
+        timer.tv_nsec += parse_float(argv[args], suffix) * multiplier;
 
 end:
         // Go to the next argument
