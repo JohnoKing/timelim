@@ -218,17 +218,17 @@ int main(int argc, char *argv[])
             goto end;
 
         // Parse GNU-style suffixes
-        if(priority(strcasestr(argv[args], "M") != NULL, true, 0.85))       // Minutes
+        if(priority(strcasestr(argv[args], "M") != NULL, true, 0.80))       // Minutes
             multiplier = MINUTE;
-        else if(priority(strcasestr(argv[args], "H") != NULL, true, 0.80))  // Hours
+        else if(priority(strcasestr(argv[args], "H") != NULL, true, 0.75))  // Hours
             multiplier = HOUR;
-        else if(priority(strcasestr(argv[args], "D") != NULL, true, 0.75))  // Days
+        else if(priority(strcasestr(argv[args], "D") != NULL, true, 0.70))  // Days
             multiplier = DAY;
-        else if(priority(strcasestr(argv[args], "W") != NULL, true, 0.70))  // Weeks
+        else if(priority(strcasestr(argv[args], "W") != NULL, true, 0.65))  // Weeks
             multiplier = WEEK;
-        else if(priority(strcasestr(argv[args], "F") != NULL, true, 0.60))  // Fortnights (lower priority)
+        else if(priority(strcasestr(argv[args], "F") != NULL, true, 0.55))  // Fortnights (lower priority)
             multiplier = FORTNIGHT;
-        else if(priority(strcasestr(argv[args], "O") != NULL, true, 0.65))  // Months (different from ISO 8601)
+        else if(priority(strcasestr(argv[args], "O") != NULL, true, 0.60))  // Months (different from ISO 8601)
             multiplier = year / 12;
         else if(priority(strcasestr(argv[args], "Y") != NULL, false, 0.35)) // Years
             multiplier = year;
@@ -264,7 +264,7 @@ int main(int argc, char *argv[])
 
         // Normal seconds
         } else
-            if(priority(strcasestr(argv[args], "S") == NULL, true, 0.90))
+            if(priority(strcasestr(argv[args], "S") == NULL, true, 0.85))
                 suffix = false;
 
         // Set the number of seconds and nanoseconds
