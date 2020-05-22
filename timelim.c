@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
 
         // Milliseconds (different from ISO 8601)
         else if(priority(strcasestr(argv[args], "L") != NULL, false, 0.25)) {
-            timer.tv_nsec += atol(argv[args]) * 1000;
+            timer.tv_nsec += atol(argv[args]) * 1000000;
             goto end;
 
         // Microseconds
