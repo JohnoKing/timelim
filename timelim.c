@@ -42,11 +42,6 @@
 // Macros for compiler optimization
 #define likely(x) (__builtin_expect((x), true))
 #define unlikely(x) (__builtin_expect((x), false))
-#if __has_builtin(__builtin_expect_with_probability)
-#define priority(x, y, z) __builtin_expect_with_probability((x), y, z)
-#else
-#define priority(x) (x)
-#endif
 
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
@@ -219,6 +214,18 @@ int main(int argc, char *argv[])
 
         // GNU suffix parsing with partial compatibility for ksh93u+ behavior
         switch(argv[args][strlen(argv[args]) - 1]) {
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                suffix = false;
+                // FALLTHRU
             case 'S':
                 break; // Do nothing
             case 'M':
@@ -262,9 +269,9 @@ int main(int argc, char *argv[])
                 centuries += strtoul(argv[args], NULL, 10) * 10;
                 multiplier = year * 1000;
                 goto nano;
-            default:
-                suffix = false;
-                break;
+            default: // Reject invalid arguments
+                usage();
+                __builtin_unreachable();
         }
 
         // Set the number of seconds and nanoseconds
