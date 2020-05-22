@@ -227,45 +227,59 @@ int main(int argc, char *argv[])
                 suffix = false;
                 // FALLTHRU
             case 'S':
+            case 's':
                 break; // Do nothing
             case 'M':
+            case 'm':
                 multiplier = MINUTE;
                 break;
             case 'H':
+            case 'h':
                 multiplier = HOUR;
                 break;
             case 'D':
+            case 'd':
                 multiplier = DAY;
                 break;
             case 'W':
+            case 'w':
                 multiplier = WEEK;
                 break;
             case 'F':
+            case 'f':
                 multiplier = FORTNIGHT;
                 break;
             case 'O':
+            case 'o':
                 multiplier = year / 12; // Different from ISO 8601
                 break;
             case 'Y':
+            case 'y':
                 multiplier = year;
                 break;
             case 'X':
+            case 'x':
                 multiplier = year * 10;
                 break;
             case 'L':
+            case 'l':
                 timer.tv_nsec += atol(argv[args]) * 1000000;
                 goto end;
             case 'U':
+            case 'u':
                 timer.tv_nsec += atol(argv[args]) * 1000;
                 goto end;
             case 'N':
+            case 'n':
                 timer.tv_nsec += atol(argv[args]);
                 goto end;
             case 'C':
+            case 'c':
                 centuries += strtoul(argv[args], NULL, 10);
                 multiplier = year * 100;
                 goto nano;
             case 'A':
+            case 'a':
                 centuries += strtoul(argv[args], NULL, 10) * 10;
                 multiplier = year * 1000;
                 goto nano;
