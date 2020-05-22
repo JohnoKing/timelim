@@ -284,8 +284,8 @@ int main(int argc, char *argv[])
                 multiplier = year * 1000;
                 goto nano;
             default: // Reject invalid arguments
-                usage();
-                __builtin_unreachable();
+                printf("The suffix '%c' is invalid!\n", argv[args][strlen(argv[args]) - 1]);
+                return 1;
         }
 
         // Set the number of seconds and nanoseconds
