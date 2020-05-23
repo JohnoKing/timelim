@@ -39,8 +39,8 @@
 #define TIMELIM_VERSION "v3.1.0"
 
 // Macros for compiler optimization
-#define likely(x) (__builtin_expect((x), true))
-#define unlikely(x) (__builtin_expect((x), false))
+#define likely(x) (__builtin_expect((x), 1))
+#define unlikely(x) (__builtin_expect((x), 0))
 
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
