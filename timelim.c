@@ -93,7 +93,7 @@ static void nprint(unsigned long length, const char *unit)
 static long parse_float(char *arg, bool suffix)
 {
     // If there is no decimal, return
-    if(strchr(arg, '.') == NULL)
+    if(!strchr(arg, '.'))
         return 0;
 
     // Set a char variable called 'base' to the relevant position
