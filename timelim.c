@@ -356,7 +356,11 @@ end:
 
     // Sleep
     while(nanosleep(&timer, &timer) != 0) {
-        if(signal_wait || current_signal == SIGALRM) return 0;
+        if(signal_wait || current_signal == SIGALRM) {
+            if(verbose)
+                printf("Got signal %s!\n", strsignal(current_signal));
+            return 0;
+        }
 
         printf("Remaining seconds: %ld\n"
                "Remaining nanoseconds: %ld\n", (long)timer.tv_sec, timer.tv_nsec);
