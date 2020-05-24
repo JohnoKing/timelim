@@ -89,19 +89,19 @@ static void nprint(unsigned long length, const char *unit)
 static long parse_float(char *arg, bool suffix)
 {
     // If there is no decimal, return
-    if(!strchr(arg, '.'))
+    if (!strchr(arg, '.'))
         return 0;
 
     // Set a char variable called 'base' to the relevant position
     strsep(&arg, ".");
     const char *base = strsep(&arg, ".");
     size_t sz = strlen(base);
-    if(suffix)
+    if (suffix)
         --sz;
 
     // Set the multiplier depending on the length of base
     long num = atol(base);
-    switch(sz) {
+    switch (sz) {
        case 1:
            return num * 100000000;
        case 2:
@@ -121,7 +121,7 @@ static long parse_float(char *arg, bool suffix)
        case 9:
            return num;
        default:
-           while(num > 999999999)
+           while (num > 999999999)
                num = num / 10;
            return num;
     }
@@ -161,8 +161,8 @@ int main(int argc, char *argv[])
 
     // Parse the options
     int args;
-    while((args = getopt_long(argc, argv, "jsSvV?", long_opts, NULL)) != -1)
-        switch(args) {
+    while ((args = getopt_long(argc, argv, "jsSvV?", long_opts, NULL)) != -1)
+        switch (args) {
 
             // Version info
             case 'V':
@@ -200,16 +200,16 @@ int main(int argc, char *argv[])
     int multiplier;
     bool suffix;
     args = argc - 1;
-    while(args != 0) {
+    while (args != 0) {
         multiplier = 1;
         suffix = true;
 
         // If the argument has a dash, skip it
-        if(strchr(argv[args], '-') != NULL)
+        if (strchr(argv[args], '-') != NULL)
             goto end;
 
         // GNU suffix parsing with partial compatibility for ksh93u+ behavior
-        switch(argv[args][strlen(argv[args]) - 1]) {
+        switch (argv[args][strlen(argv[args]) - 1]) {
             case '0':
             case '1':
             case '2':
@@ -295,7 +295,7 @@ end:
     }
 
     // To improve accuracy, subtract 330,000 nanoseconds to account for overhead
-    if(timer.tv_nsec > OVERHEAD_MASK) {
+    if (timer.tv_nsec > OVERHEAD_MASK) {
         if (timer.tv_sec > 0) {
             timer.tv_sec  = timer.tv_sec - 1;
             timer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
@@ -307,7 +307,7 @@ end:
         timer.tv_nsec = 0;
 
     // The number of nanoseconds cannot exceed one billion
-    while(timer.tv_nsec > 999999999) {
+    while (timer.tv_nsec > 999999999) {
         time_t esec   = timer.tv_nsec / 1000000000;
         timer.tv_sec += esec;
         timer.tv_nsec = timer.tv_nsec - (esec * 1000000000);
@@ -319,7 +319,7 @@ end:
     actor.sa_flags   = 0;
 
     // When -s was passed, handle all POSIX signals that do not kill Timelim
-    if(signal_wait) {
+    if (signal_wait) {
         sigaction(SIGCHLD, &actor, NULL);
         sigaction(SIGCONT, &actor, NULL);
         sigaction(SIGQUIT, &actor, NULL);
@@ -335,14 +335,14 @@ end:
 #endif
 
     // Wait indefinitely if -s was passed without a defined timeout
-    if(signal_wait && timer.tv_sec == 0 && timer.tv_nsec == 0) {
-        if(verbose) printf("Waiting for a signal...\n");
+    if (signal_wait && timer.tv_sec == 0 && timer.tv_nsec == 0) {
+        if (verbose) printf("Waiting for a signal...\n");
         pause();
         return 0; // pause(2) does not return 0, so it must be done separately
     }
 
     // Print out the number of seconds to sleep
-    if(verbose) {
+    if (verbose) {
         printf("Sleeping for ");
         nprint(centuries * ((unsigned)year * 100) + (unsigned)timer.tv_sec, "second");
         printf(" and ");
@@ -351,9 +351,9 @@ end:
     }
 
     // Sleep
-    while(nanosleep(&timer, &timer) != 0) {
-        if(signal_wait || current_signal == SIGALRM) {
-            if(verbose)
+    while (nanosleep(&timer, &timer) != 0) {
+        if (signal_wait || current_signal == SIGALRM) {
+            if (verbose)
                 printf("Got signal %s!\n", strsignal(current_signal));
             return 0;
         }
@@ -363,13 +363,13 @@ end:
     }
 
     // Sleep for multiple centuries (workaround for 32-bit int)
-    while(centuries != 0) {
+    while (centuries != 0) {
         sleep((unsigned)year * 100);
         --centuries;
     }
 
     // Notify the user on completion
-    if(verbose)
+    if (verbose)
         printf("Time's up!\n");
     return 0;
 }
