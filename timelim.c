@@ -190,7 +190,6 @@ int main(int argc, char *argv[])
                 break;
 
             // Usage (with ksh93u+ compatibility)
-            case ':':
             case '?':
                 usage();
                 __builtin_unreachable();
