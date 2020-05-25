@@ -197,7 +197,7 @@ int main(int argc, char *argv[])
         }
 
     // Parse suffixes
-    int multiplier;
+    int multiplier, suffix_location; // Both must be int, suffixes due to `- 1`
     bool suffix;
     args = argc - 1;
     while (args != 0) {
@@ -208,8 +208,15 @@ int main(int argc, char *argv[])
         if (strchr(argv[args], '-') != NULL)
             goto end;
 
+        // Reject zero length (-1) arguments
+        suffix_location = strlen(argv[args]) - 1;
+        if (suffix_location < 0) {
+            usage();
+            __builtin_unreachable();
+        }
+
         // GNU suffix parsing with partial compatibility for ksh93u+ behavior
-        switch (argv[args][strlen(argv[args]) - 1]) {
+        switch (argv[args][suffix_location]) {
             case '0':
             case '1':
             case '2':
@@ -280,7 +287,7 @@ int main(int argc, char *argv[])
                 multiplier = year * 1000;
                 goto nano;
             default: // Reject invalid arguments
-                printf("The suffix '%c' is invalid!\n", argv[args][strlen(argv[args]) - 1]);
+                printf("The suffix '%c' is invalid!\n", argv[args][suffix_location]);
                 return 1;
         }
 
