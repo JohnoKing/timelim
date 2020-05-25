@@ -203,16 +203,16 @@ int main(int argc, char *argv[])
         multiplier = 1;
         suffix = true;
 
-        // If the argument has a dash, skip it
-        if (strchr(argv[args], '-') != NULL)
-            goto end;
-
         // Reject zero length (-1) arguments
         suffix_location = strlen(argv[args]) - 1;
         if (suffix_location < 0) {
             usage();
             __builtin_unreachable();
         }
+
+        // If the argument has a dash, skip it
+        if (strchr(argv[args], '-') != NULL)
+            goto end;
 
         // GNU suffix parsing with partial compatibility for ksh93u+ behavior
         switch (argv[args][suffix_location]) {
