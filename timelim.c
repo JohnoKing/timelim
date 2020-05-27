@@ -86,15 +86,16 @@ static void nprint(unsigned long length, const char *unit)
 }
 
 // This function parses all numbers after the decimal (such as 1.12 or 4.5w)
-static long parse_float(char *arg, bool suffix)
+static long parse_float(const char *arg, bool suffix)
 {
     // If there is no decimal, return
     if (!strchr(arg, '.'))
         return 0;
 
     // Set a char variable called 'base' to the relevant position
-    char *saveptr;
-    const char *base = strtok_r(arg, ".", &saveptr);
+    char *modarg = strdup(arg); // Avoid modification of the original argument
+    strsep(&modarg, ".");
+    const char *base = strsep(&modarg, ".");
     size_t sz = strlen(base);
     if (suffix)
         --sz;
