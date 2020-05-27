@@ -93,8 +93,8 @@ static long parse_float(char *arg, bool suffix)
         return 0;
 
     // Set a char variable called 'base' to the relevant position
-    strsep(&arg, ".");
-    const char *base = strsep(&arg, ".");
+    char *saveptr;
+    const char *base = strtok_r(arg, ".", &saveptr);
     size_t sz = strlen(base);
     if (suffix)
         --sz;
