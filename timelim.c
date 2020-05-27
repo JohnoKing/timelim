@@ -148,6 +148,7 @@ int main(int argc, char *argv[])
     unsigned long centuries = 0;
     bool signal_wait = false, verbose = false;
     int year = 31556952; // Gregorian year default
+    const char *number;
 
     // Long options for getopt_long
     struct option long_opts[] = {
@@ -199,24 +200,24 @@ int main(int argc, char *argv[])
     // Parse suffixes
     int multiplier, suffix_location; // Both must be int, suffixes due to `- 1`
     bool suffix;
-    args = argc - 1;
-    while (args != 0) {
+    argv += 1;
+    while ((number = *argv++)) {
         multiplier = 1;
         suffix = true;
 
         // Reject zero length (-1) arguments
-        suffix_location = strlen(argv[args]) - 1;
+        suffix_location = strlen(number) - 1;
         if (suffix_location < 0) {
             usage();
             __builtin_unreachable();
         }
 
         // If the argument has a dash, skip it
-        if (strchr(argv[args], '-') != NULL)
-            goto end;
+        if (strchr(number, '-') != NULL)
+            continue;
 
         // GNU suffix parsing with partial compatibility for ksh93u+ behavior
-        switch (argv[args][suffix_location]) {
+        switch (number[suffix_location]) {
             case '0':
             case '1':
             case '2':
@@ -266,48 +267,44 @@ int main(int argc, char *argv[])
                 break;
             case 'L':
             case 'l':
-                timer.tv_nsec += atol(argv[args]) * 1000000;
-                goto end;
+                timer.tv_nsec += atol(number) * 1000000;
+                continue;
             case 'U':
             case 'u':
-                timer.tv_nsec += atol(argv[args]) * 1000;
-                goto end;
+                timer.tv_nsec += atol(number) * 1000;
+                continue;
             case 'N':
             case 'n':
-                timer.tv_nsec += atol(argv[args]);
-                goto end;
+                timer.tv_nsec += atol(number);
+                continue;
             case 'C':
             case 'c':
-                centuries += strtoul(argv[args], NULL, 10);
+                centuries += strtoul(number, NULL, 10);
                 multiplier = year * 100;
                 goto nano;
             case 'A':
             case 'a':
-                centuries += strtoul(argv[args], NULL, 10) * 10;
+                centuries += strtoul(number, NULL, 10) * 10;
                 multiplier = year * 1000;
                 goto nano;
             default: // Reject invalid arguments
-                printf("The suffix '%c' is invalid!\n", argv[args][suffix_location]);
+                printf("The suffix '%c' is invalid!\n", number[suffix_location]);
                 return 1;
         }
 
         // Set the number of seconds and nanoseconds
-        timer.tv_sec  += atoi(argv[args]) * multiplier;
+        timer.tv_sec  += atoi(number) * multiplier;
 nano:
-        timer.tv_nsec += parse_float(argv[args], suffix) * multiplier;
-
-end:
-        // Go to the next argument
-        --args;
+        timer.tv_nsec += parse_float(number, suffix) * multiplier;
     }
 
     // To improve accuracy, subtract 330,000 nanoseconds to account for overhead
     if (timer.tv_nsec > OVERHEAD_MASK) {
         if (timer.tv_sec > 0) {
-            timer.tv_sec  = timer.tv_sec - 1;
-            timer.tv_nsec = timer.tv_nsec + 1000000000 - OVERHEAD_MASK;
+            timer.tv_sec  -= 1;
+            timer.tv_nsec += 1000000000 - OVERHEAD_MASK;
         } else
-            timer.tv_nsec = timer.tv_nsec - OVERHEAD_MASK;
+            timer.tv_nsec -= OVERHEAD_MASK;
 
     // The overhead of just executing causes inaccuracy at this point, so just set this to zero
     } else
@@ -315,9 +312,9 @@ end:
 
     // The number of nanoseconds cannot exceed one billion
     while (timer.tv_nsec > 999999999) {
-        time_t esec   = timer.tv_nsec / 1000000000;
-        timer.tv_sec += esec;
-        timer.tv_nsec = timer.tv_nsec - (esec * 1000000000);
+        time_t esec    = timer.tv_nsec / 1000000000;
+        timer.tv_sec  += esec;
+        timer.tv_nsec -= esec * 1000000000;
     }
 
     // Set up the signal handler now
