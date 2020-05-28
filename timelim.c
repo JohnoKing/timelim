@@ -38,6 +38,11 @@
 // Timelim's version number
 #define TIMELIM_VERSION "v3.1.0"
 
+// Macros for compiler optimization
+#define cold __attribute__((__cold__))
+#define likely(x) (__builtin_expect((x), 1))
+#define unlikely(x) (__builtin_expect((x), 0))
+
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
  * This number is rather conservative, most machines will benefit from increasing the OVERHEAD_MASK
@@ -63,7 +68,7 @@ static int current_signal = 0;
 extern char *__progname;
 
 // Display usage of Timelim
-static noreturn void usage(void)
+static cold noreturn void usage(void)
 {
     // Usage info
     printf("Usage: %s [-jsvV?] number[suffix] ...\n"
@@ -79,7 +84,7 @@ static noreturn void usage(void)
 // Print the number of seconds and nanoseconds remaining
 static void nprint(unsigned long length, const char *unit)
 {
-    if (length == 1) // While `sleep 1` is common, `sleep -v 1` is not
+    if unlikely(length == 1) // While `sleep 1` is common, `sleep -v 1` is not
         printf("%lu %s", length, unit);
     else
         printf("%lu %ss", length, unit);
@@ -138,7 +143,7 @@ static void sighandle(int sig)
 int main(int argc, char *argv[])
 {
     // Arguments are required
-    if (argc < 2) {
+    if unlikely (argc < 2) {
         usage();
         __builtin_unreachable();
     }
@@ -300,7 +305,7 @@ nano:
 
     // To improve accuracy, subtract 330,000 nanoseconds to account for overhead
     if (timer.tv_nsec > OVERHEAD_MASK) {
-        if (timer.tv_sec > 0) {
+        if likely (timer.tv_sec > 0) {
             timer.tv_sec  -= 1;
             timer.tv_nsec += 1000000000 - OVERHEAD_MASK;
         } else
