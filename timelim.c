@@ -84,7 +84,7 @@ static cold noreturn void usage(void)
 // Print the number of seconds and nanoseconds remaining
 static void nprint(unsigned long length, const char *unit)
 {
-    if unlikely(length == 1) // While `sleep 1` is common, `sleep -v 1` is not
+    if unlikely (length == 1) // While `sleep 1` is common, `sleep -v 1` is not
         printf("%lu %s", length, unit);
     else
         printf("%lu %ss", length, unit);
