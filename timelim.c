@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 
         // Reject zero length (-1) arguments
         suffix_location = strlen(number) - 1;
-        if (suffix_location < 0) {
+        if unlikely (suffix_location < 0) {
             usage();
             __builtin_unreachable();
         }
