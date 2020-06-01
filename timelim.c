@@ -39,8 +39,8 @@
 #define TIMELIM_VERSION "v3.1.0"
 
 // Macros for compiler optimization
-#define cold __attribute__((__cold__))
-#define likely(x) (__builtin_expect((x), 1))
+#define cold        __attribute__((__cold__))
+#define likely(x)   (__builtin_expect((x), 1))
 #define unlikely(x) (__builtin_expect((x), 0))
 
 /*
@@ -77,7 +77,8 @@ static cold noreturn void usage(void)
            "  -S, --sidereal   Use the Sidereal year instead of the Gregorian year\n"
            "  -v, --verbose    Enable verbose output\n"
            "  -V, --version    Show Timelim's version number\n"
-           "  -?, --help       Display this text\n", __progname);
+           "  -?, --help       Display this text\n",
+           __progname);
     exit(1);
 }
 
@@ -108,36 +109,33 @@ static long parse_float(const char *arg, bool suffix)
     // Set the multiplier depending on the length of base
     long num = atol(base);
     switch (sz) {
-       case 1:
-           return num * 100000000;
-       case 2:
-           return num * 10000000;
-       case 3:
-           return num * 1000000;
-       case 4:
-           return num * 100000;
-       case 5:
-           return num * 10000;
-       case 6:
-           return num * 1000;
-       case 7:
-           return num * 100;
-       case 8:
-           return num * 10;
-       case 9:
-           return num;
-       default:
-           while (num > 999999999)
-               num = num / 10;
-           return num;
+        case 1:
+            return num * 100000000;
+        case 2:
+            return num * 10000000;
+        case 3:
+            return num * 1000000;
+        case 4:
+            return num * 100000;
+        case 5:
+            return num * 10000;
+        case 6:
+            return num * 1000;
+        case 7:
+            return num * 100;
+        case 8:
+            return num * 10;
+        case 9:
+            return num;
+        default:
+            while (num > 999999999)
+                num = num / 10;
+            return num;
     }
 }
 
 // Set current_signal to the signal that was sent to Timelim
-static void sighandle(int sig)
-{
-    current_signal = sig;
-}
+static void sighandle(int sig) { current_signal = sig; }
 
 // Main function
 int main(int argc, char *argv[])
@@ -156,15 +154,13 @@ int main(int argc, char *argv[])
     const char *number;
 
     // Long options for getopt_long
-    struct option long_opts[] = {
-    { "julian",   no_argument, NULL, 'j' },
-    { "signal",   no_argument, NULL, 's' },
-    { "sidereal", no_argument, NULL, 'S' },
-    { "verbose",  no_argument, NULL, 'v' },
-    { "version",  no_argument, NULL, 'V' },
-    { "help",     no_argument, NULL, '?' },
-    {  NULL,                0, NULL,  0  }
-    };
+    struct option long_opts[] = { { "julian", no_argument, NULL, 'j' },
+                                  { "signal", no_argument, NULL, 's' },
+                                  { "sidereal", no_argument, NULL, 'S' },
+                                  { "verbose", no_argument, NULL, 'v' },
+                                  { "version", no_argument, NULL, 'V' },
+                                  { "help", no_argument, NULL, '?' },
+                                  { NULL, 0, NULL, 0 } };
 
     // Parse the options
     int args;
@@ -303,34 +299,34 @@ int main(int argc, char *argv[])
         }
 
         // Set the number of seconds and nanoseconds
-        timer.tv_sec  += (time_t)seconds * multiplier;
-nano:
+        timer.tv_sec += (time_t)seconds * multiplier;
+    nano:
         timer.tv_nsec += parse_float(number, suffix) * multiplier;
     }
 
     // To improve accuracy, subtract 330,000 nanoseconds to account for overhead
     if (timer.tv_nsec > OVERHEAD_MASK) {
         if likely (timer.tv_sec > 0) {
-            timer.tv_sec  -= 1;
+            timer.tv_sec -= 1;
             timer.tv_nsec += 1000000000 - OVERHEAD_MASK;
         } else
             timer.tv_nsec -= OVERHEAD_MASK;
 
-    // The overhead of just executing causes inaccuracy at this point, so just set this to zero
+        // The overhead of just executing causes inaccuracy at this point, so just set this to zero
     } else
         timer.tv_nsec = 0;
 
     // The number of nanoseconds cannot exceed one billion
     while (timer.tv_nsec > 999999999) {
-        time_t esec    = timer.tv_nsec / 1000000000;
-        timer.tv_sec  += esec;
+        time_t esec = timer.tv_nsec / 1000000000;
+        timer.tv_sec += esec;
         timer.tv_nsec -= esec * 1000000000;
     }
 
     // Set up the signal handler now
     struct sigaction actor;
     actor.sa_handler = sighandle;
-    actor.sa_flags   = 0;
+    actor.sa_flags = 0;
 
     // When -s was passed, handle all POSIX signals that do not kill Timelim
     if (signal_wait) {
@@ -338,19 +334,20 @@ nano:
         sigaction(SIGCONT, &actor, NULL);
         sigaction(SIGQUIT, &actor, NULL);
         sigaction(SIGTSTP, &actor, NULL);
-        sigaction(SIGURG,  &actor, NULL);
+        sigaction(SIGURG, &actor, NULL);
     }
 
     // Handle SIGINFO or SIGPWR, depending on which is available
 #ifdef SIGINFO
     sigaction(SIGINFO, &actor, NULL);
 #else
-    sigaction(SIGPWR,  &actor, NULL);
+    sigaction(SIGPWR, &actor, NULL);
 #endif
 
     // Wait indefinitely if -s was passed without a defined timeout
     if (signal_wait && timer.tv_sec == 0 && timer.tv_nsec == 0) {
-        if (verbose) printf("Waiting for a signal...\n");
+        if (verbose)
+            printf("Waiting for a signal...\n");
         pause();
         return 0; // pause(2) does not return 0, so it must be done separately
     }
@@ -373,7 +370,8 @@ nano:
         }
 
         printf("Remaining seconds: %ld\n"
-               "Remaining nanoseconds: %ld\n", (long)timer.tv_sec, timer.tv_nsec);
+               "Remaining nanoseconds: %ld\n",
+               (long)timer.tv_sec, timer.tv_nsec);
     }
 
     // Sleep for multiple centuries (workaround for 32-bit int)
