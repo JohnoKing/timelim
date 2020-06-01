@@ -203,7 +203,8 @@ int main(int argc, char *argv[])
         }
 
     // Parse suffixes
-    int multiplier, seconds, suffix_location; // All of these must be int
+    int multiplier, suffix_location; // These must be int
+    long seconds;
     char *check_number;
     bool suffix;
     argv += 1;
@@ -219,7 +220,7 @@ int main(int argc, char *argv[])
         }
 
         // Reject invalid numbers
-        seconds = (int)strtod(number, &check_number);
+        seconds = (long)strtod(number, &check_number);
         if (*check_number && strlen(check_number) > 1) {
             usage();
             __builtin_unreachable();
@@ -276,15 +277,15 @@ int main(int argc, char *argv[])
                 break;
             case 'L':
             case 'l':
-                timer.tv_nsec += atol(number) * 1000000;
+                timer.tv_nsec += seconds * 1000000;
                 continue;
             case 'U':
             case 'u':
-                timer.tv_nsec += atol(number) * 1000;
+                timer.tv_nsec += seconds * 1000;
                 continue;
             case 'N':
             case 'n':
-                timer.tv_nsec += atol(number);
+                timer.tv_nsec += seconds;
                 continue;
             case 'C':
             case 'c':
@@ -302,7 +303,7 @@ int main(int argc, char *argv[])
         }
 
         // Set the number of seconds and nanoseconds
-        timer.tv_sec  += seconds * multiplier;
+        timer.tv_sec  += (time_t)seconds * multiplier;
 nano:
         timer.tv_nsec += parse_float(number, suffix) * multiplier;
     }
