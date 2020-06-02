@@ -318,7 +318,7 @@ int main(int argc, char *argv[])
 
     // The number of nanoseconds cannot exceed one billion
     while (timer.tv_nsec > 999999999) {
-        time_t esec = timer.tv_nsec / 1000000000;
+        long esec = timer.tv_nsec / 1000000000;
         timer.tv_sec += esec;
         timer.tv_nsec -= esec * 1000000000;
     }
