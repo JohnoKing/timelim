@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
         }
 
         // Set the number of seconds and nanoseconds
-        timer.tv_sec  += atoi(number) * multiplier;
+        timer.tv_sec += (time_t)atol(number) * multiplier;
     nano:
         timer.tv_nsec += parse_float(number, suffix) * multiplier;
     }
