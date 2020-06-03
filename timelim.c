@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
                 multiplier = year * 1000;
                 goto nano;
             default: // Reject invalid arguments
-                printf("The suffix '%c' is invalid!\n", number[suffix_location]);
+                printf("`%c` not a valid suffix!\n", number[suffix_location]);
                 return 1;
         }
 
