@@ -213,6 +213,10 @@ int main(int argc, char *argv[])
             __builtin_unreachable();
         }
 
+        // If the argument has a dash, skip it
+        if (strchr(number, '-') != NULL)
+            continue;
+
         // GNU suffix parsing with partial compatibility for ksh93u+ behavior
         switch (number[suffix_location]) {
             case '0':
