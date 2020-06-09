@@ -25,6 +25,7 @@
  * This program can function as a replacement for sleep(1)
  */
 
+#include <assert.h>
 #include <getopt.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -99,15 +100,18 @@ static long parse_float(const char *arg, bool suffix)
         return 0;
 
     // Set a char variable called 'base' to the relevant position
-    char *modarg = strdup(arg); // Avoid modification of the original argument
+    char *modarg, *tofree, *base;
+    tofree = modarg = strdup(arg); // Avoid modification of the original argument
+    assert(modarg != NULL);
     strsep(&modarg, ".");
-    const char *base = strsep(&modarg, ".");
+    base = strsep(&modarg, ".");
     size_t sz = strlen(base);
     if (suffix)
         --sz;
 
     // Set the multiplier depending on the length of base
     long num = atol(base);
+    free(tofree); // Now the duplicated string can be freed from memory
     switch (sz) {
         case 1:
             return num * 100000000;
