@@ -6,8 +6,6 @@ _A program capable of setting ridiculous time limits_
 Timelim is an implementation of the Unix `sleep` utility capable of setting time limits as short as a few nanoseconds or as long as multiple centuries.
 There is no real point to this program, it is just something to experiment with.
 
-This tool is primarily developed on Gitlab at [https://gitlab.com/JohnoKing/timelim](https://gitlab.com/JohnoKing/timelim).
-
 ## Building and Usage
 Run `make` and the timelim binary will be compiled.
 
