@@ -19,7 +19,7 @@
 # SOFTWARE.
 #
 
-# Variables (each one may be overridden)
+# Variables
 CC       := cc
 STRIP    := strip
 CFLAGS   := -O2 -ffast-math -fomit-frame-pointer -fpic -fno-plt -pipe
