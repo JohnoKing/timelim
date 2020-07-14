@@ -95,16 +95,19 @@ static void nprint(unsigned long length, const char *unit)
 // This function parses all numbers after the decimal (such as 1.12 or 4.5w)
 static long parse_float(const char *arg, bool suffix)
 {
-    // If there is no decimal, return
-    if (!strchr(arg, '.'))
-        return 0;
+    // Get the radix point
+    char *radix = ".";
+    if (strchr(arg, ','))
+        radix = ",";
+    else if (!strchr(arg, '.'))
+        return 0; // Not a floating point
 
     // Set a char variable called 'base' to the relevant position
     char *modarg, *tofree, *base;
     tofree = modarg = strdup(arg); // Avoid modification of the original argument
     assert(modarg != NULL);
-    strsep(&modarg, ".");
-    base = strsep(&modarg, ".");
+    strsep(&modarg, radix);
+    base = strsep(&modarg, radix);
     size_t sz = strlen(base);
     if (suffix)
         --sz;
