@@ -343,7 +343,12 @@ int main(int argc, char *argv[])
 #ifdef SIGINFO
     sigaction(SIGINFO, &actor, NULL);
 #else
+#define SIGINFO 0
+#endif
+#ifdef SIGPWR
     sigaction(SIGPWR, &actor, NULL);
+#else
+#define SIGPWR 0
 #endif
 
     // Wait indefinitely if -s was passed without a defined timeout
@@ -371,9 +376,13 @@ int main(int argc, char *argv[])
             return 0;
         }
 
-        printf("Remaining seconds: %ld\n"
-               "Remaining nanoseconds: %ld\n",
-               (long)timer.tv_sec, timer.tv_nsec);
+        // Show remaining seconds and nanoseconds
+#if defined(SIGINFO) || defined(SIGPWR)
+        if(current_signal == SIGINFO || current_signal == SIGPWR)
+            printf("Remaining seconds: %ld\n"
+                   "Remaining nanoseconds: %ld\n",
+                   (long)timer.tv_sec, timer.tv_nsec);
+#endif
     }
 
     // Sleep for multiple centuries (workaround for 32-bit int)
