@@ -362,9 +362,9 @@ int main(int argc, char *argv[])
     // Print out the number of seconds to sleep
     if (verbose) {
         printf("Sleeping for ");
-        nprint(centuries * ((unsigned)year * 100) + (unsigned)timer.tv_sec, "second");
+        nprint(centuries * ((unsigned long)year * 100) + (unsigned long)timer.tv_sec, "second");
         printf(" and ");
-        nprint((unsigned)timer.tv_nsec, "nanosecond");
+        nprint((unsigned long)timer.tv_nsec, "nanosecond");
         printf("\n");
     }
 
@@ -387,7 +387,7 @@ int main(int argc, char *argv[])
 
     // Sleep for multiple centuries (workaround for 32-bit int)
     while (centuries != 0) {
-        sleep((unsigned)year * 100);
+        sleep((unsigned int)year * 100);
         --centuries;
     }
 
