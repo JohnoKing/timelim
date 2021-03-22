@@ -25,6 +25,10 @@
  * This program can function as a replacement for sleep(1)
  */
 
+#if defined(__TINYC__)
+#undef _FORTIFY_SOURCE // Silence warnings
+#endif
+
 #include <assert.h>
 #include <getopt.h>
 #include <signal.h>
@@ -41,8 +45,14 @@
 
 // Macros for compiler optimization
 #define cold        __attribute__((__cold__))
+#if !defined(__TINYC__)
 #define likely(x)   (__builtin_expect((x), 1))
 #define unlikely(x) (__builtin_expect((x), 0))
+#else
+#define likely(x)                (x)
+#define unlikely(x)              (x)
+#define __builtin_unreachable()
+#endif
 
 /*
  * Define the number of nanoseconds wasted during execution to subtract from the total time to sleep
