@@ -30,6 +30,7 @@
 #endif
 
 #include <assert.h>
+#include <errno.h>
 #include <getopt.h>
 #include <signal.h>
 #include <stdbool.h>
@@ -379,7 +380,7 @@ int main(int argc, char *argv[])
     }
 
     // Sleep
-    while (nanosleep(&timer, &timer) != 0) {
+    while (nanosleep(&timer, &timer) != 0 && errno == EINTR) {
         if (signal_wait || current_signal == SIGALRM) {
             if (verbose)
                 printf("Got signal %s!\n", strsignal(current_signal));
