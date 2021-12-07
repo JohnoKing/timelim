@@ -1,4 +1,4 @@
-.\" Copyright © 2020 Johnothan King. All rights reserved.
+.\" Copyright © 2020-2021 Johnothan King. All rights reserved.
 .\"
 .\" Permission is hereby granted, free of charge, to any person obtaining a copy
 .\" of this software and associated documentation files (the "Software"), to deal
@@ -18,7 +18,7 @@
 .\" OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 .\" SOFTWARE.
 .\"
-.Dd April 20, 2020
+.Dd December 7, 2021
 .Dt TIMELIM 1
 .Os
 .Sh NAME
@@ -37,15 +37,15 @@ few nanoseconds or as long as multiple centuries.
 .Nm Timelim
 will accept floating point arguments, but they will be
 processed as integers internally with the decimal being used as a delimiter.
-
+.sp
 .Nm Timelim
 accepts the following flags:
-
+.sp
 .Nm -j, --julian
 This causes
 .Nm Timelim
 to use the Julian calendar instead of the Gregorian calendar.
-
+.sp
 .Nm -s, --signal
 .Nm Timelim
 will function as normal until it receives a POSIX signal or SIGINFO,
@@ -56,76 +56,76 @@ will wait indefinitely wait for a signal without timing out.
 This option was implemented for compatibility with the
 .Nm ksh93(1)
 sleep builtin.
-
+.sp
 .Nm -S, --sidereal
 This causes
 .Nm Timelim
 to use the Sidereal year instead of the Gregorian year.
-
+.sp
 .Nm -v, --verbose
 This will cause
 .Nm Timelim
 to print out the number of seconds and nanoseconds it will wait for,
 then output `Time's up!` when finished.
-
+.sp
 .Nm -V, --version
 Prints the version of
 .Nm Timelim
 currently installed on the machine.
-
+.sp
 .Nm -?, --help
 Shows usage information regarding
 .Nm Timelim .
-
+.sp
 .Nm Timelim
 will also accept the following suffixes appended to arguments:
-
+.sp
 .Nm n
 Nanoseconds (cannot be a floating point)
-
+.sp
 .Nm u
 Microseconds (cannot be a floating point)
-
+.sp
 .Nm l
 Milliseconds (cannot be a floating point)
-
+.sp
 .Nm s
 Seconds (same as no suffix)
-
+.sp
 .Nm m
 Minutes
-
+.sp
 .Nm h
 Hours
-
+.sp
 .Nm d
 Days
-
+.sp
 .Nm w
 Weeks
-
+.sp
 .Nm f
 Fortnights (2 weeks)
-
+.sp
 .Nm o
 Months (equal to `year / 12`, see below)
-
+.sp
 .Nm y
 Denotes years (defaults to 31556952 seconds, passing
 .Nm --sidereal
 changes this to 31558150 seconds, passing
 .Nm --julian
 changes this to 31557600 seconds)
-
+.sp
 .Nm x
 Decades
-
+.sp
 .Nm c
 Centuries
-
+.sp
 .Nm a
 Millennia
-
+.sp
 If
 .Nm Timelim
 is sent SIGPWR or SIGINFO, it will show the user how
@@ -135,22 +135,23 @@ finishes execution.
 .Sh EXAMPLES
 Sleep for 2 seconds with verbose output (when run as sleep):
 sleep -v 2 or sleep -v 2s
-
-Sleep for 4 months, 1 fortnight, 2 weeks and 2000 nanoseconds (with verbose output, suffixes):
+.sp
+Sleep for 4 months, 1 fortnight, 2 weeks and 2000
+nanoseconds (with verbose output, suffixes):
 timelim --verbose 4m 1f 2w 2000n
-
+.sp
 Sleep for 7 millennia and a month, using the Julian calendar:
 timelim -j 7a 1o
-
+.sp
 Set a time limit to last a minute unless a signal is received:
 timelim -s 1m or ./timelim -s 60s
-
+.sp
 Set a time limit to last one sidereal year and three weeks:
 timelim -S 1y 3w
-
+.sp
 Set a time limit to only last 24000 nanoseconds:
 timelim 24000n
-
+.sp
 Set a time limit to last 3.6 centuries, 2.4 decades and 4.1 months:
 timelim 3.6c 2.4x 4.1o
 .Sh SEE ALSO
